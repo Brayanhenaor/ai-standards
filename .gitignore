@@ -1,5 +1,6 @@
 # Claude Code personal settings (no commitear)
-.claude/
+/.claude/
+/global/.claude/
 
 ### macOS
 # Finder metadata
