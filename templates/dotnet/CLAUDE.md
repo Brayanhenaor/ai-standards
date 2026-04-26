@@ -2,6 +2,18 @@
 
 > Ejecuta `/user:init-dotnet` para adaptar este archivo al proyecto actual.
 
+## Reglas de contexto
+
+Reglas detalladas que se cargan automáticamente al trabajar en archivos específicos:
+
+| Al tocar... | Se carga |
+|---|---|
+| `Dockerfile`, `docker-compose*.yml`, `.dockerignore` | `.claude/rules/docker.md` |
+| `*Client.cs`, `*Gateway.cs`, `*Extensions.cs`, `Program.cs` | `.claude/rules/resilience.md` |
+| `*Repository*.cs`, `*DbContext*.cs`, `Migrations/`, `*Configuration.cs` | `.claude/rules/ef-advanced.md` |
+
+---
+
 ## Stack
 - [.NET Version] / [C# Version]
 - [ASP.NET Core Web API / Worker Service / Blazor] — [rol: principal / consumer / híbrido]
