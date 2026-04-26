@@ -26,6 +26,12 @@ download() {
     curl -fsSL "$url" -o "$dest"
 }
 
+# Extrae contenido entre dos tags XML — compatible con BSD y GNU sed
+xml_value() {
+    # xml_value <tag> <content>
+    echo "$2" | sed -n "s|.*<$1>\([^<]*\)</$1>.*|\1|p" | head -1
+}
+
 # ─── Detección de tecnología ─────────────────────────────────────────────────
 
 detect_tech() {
@@ -56,7 +62,7 @@ detect_dotnet_metadata() {
     # Version de .NET desde global.json
     if [ -f "global.json" ] && command -v python3 &>/dev/null; then
         local v
-        v=$(python3 -c "import json,sys; d=json.load(open('global.json')); print(d.get('sdk',{}).get('version','').split('.')[0])" 2>/dev/null)
+        v=$(python3 -c "import json; d=json.load(open('global.json')); print(d.get('sdk',{}).get('version','').split('.')[0])" 2>/dev/null)
         [ -n "$v" ] && DOTNET_VERSION="$v"
     fi
 
@@ -69,28 +75,28 @@ detect_dotnet_metadata() {
         echo "$content" | grep -q "Sdk.Worker" && PROJECT_TYPE="Worker Service"
         echo "$content" | grep -q "Sdk.Razor"  && PROJECT_TYPE="Blazor"
 
-        # Version de .NET
+        # Version de .NET desde TargetFramework (ej: net8.0 → 8.0)
         local tf
-        tf=$(echo "$content" | grep -oP '(?<=<TargetFramework>net)[\d.]+(?=<)' | head -1)
+        tf=$(xml_value "TargetFramework" "$content" | sed 's/^net//')
         [ -n "$tf" ] && DOTNET_VERSION="$tf"
 
         # Version de C#
         local lv
-        lv=$(echo "$content" | grep -oP '(?<=<LangVersion>)[\w.]+(?=<)' | head -1)
+        lv=$(xml_value "LangVersion" "$content")
         [ -n "$lv" ] && CSHARP_VERSION="$lv"
 
-        # Packages
+        # Packages — extrae el atributo Include de cada PackageReference
         local pkgs
-        pkgs=$(echo "$content" | grep -oP '(?<=PackageReference Include=")[^"]+')
+        pkgs=$(echo "$content" | sed -n 's/.*PackageReference Include="\([^"]*\)".*/\1/p')
         PACKAGES="$PACKAGES $pkgs"
 
     done < <(find . -maxdepth 4 -name "*.csproj" 2>/dev/null)
 
     # DB provider
-    echo "$PACKAGES" | grep -qi "Npgsql"           && DB_PROVIDER="PostgreSQL"
-    echo "$PACKAGES" | grep -qi "SqlServer\|SqlClient" && DB_PROVIDER="SQL Server"
-    echo "$PACKAGES" | grep -qi "Sqlite"            && DB_PROVIDER="SQLite"
-    echo "$PACKAGES" | grep -qi "MongoDB"           && DB_PROVIDER="MongoDB"
+    echo "$PACKAGES" | grep -qi "Npgsql"                  && DB_PROVIDER="PostgreSQL"
+    echo "$PACKAGES" | grep -qi "SqlServer\|SqlClient"    && DB_PROVIDER="SQL Server"
+    echo "$PACKAGES" | grep -qi "Sqlite"                  && DB_PROVIDER="SQLite"
+    echo "$PACKAGES" | grep -qi "MongoDB"                 && DB_PROVIDER="MongoDB"
 
     # Docker
     [ -f "docker-compose.yml" ] && HAS_DOCKER=true
@@ -101,26 +107,21 @@ detect_dotnet_metadata() {
 customize_claude_md() {
     local file="$1"
 
-    # Reemplazos básicos con sed
     sed -i.bak \
         -e "s/\[NombreProyecto\]/$PROJECT_NAME/g" \
         -e "s/\[\.NET Version\]/NET $DOTNET_VERSION/g" \
         -e "s/\[C# Version\]/C# $CSHARP_VERSION/g" \
         "$file"
 
-    # DB provider
     if [ -n "$DB_PROVIDER" ]; then
         sed -i.bak "s|\[SQL Server / PostgreSQL / SQLite / MongoDB\]|$DB_PROVIDER|g" "$file"
     fi
 
-    # Tipo de proyecto
     sed -i.bak "s|\[ASP\.NET Core Web API / Worker Service / Blazor\].*|$PROJECT_TYPE|g" "$file"
 
-    # Packages detectados (top 10 ignorando Microsoft.* y System.*)
     if [ -n "$PACKAGES" ]; then
         local clean_pkgs
         clean_pkgs=$(echo "$PACKAGES" | tr ' ' '\n' | grep -v "^$\|^Microsoft\.\|^System\." | sort -u | head -10 | sed 's/^/- /' | tr '\n' '|' | sed 's/|$//')
-        # Reemplazar línea de packages
         sed -i.bak "s|- \[Completar: MediatR, Serilog, etc\.\]|$clean_pkgs|g" "$file"
     fi
 
@@ -134,7 +135,6 @@ echo "  Claude Code — Setup de proyecto"
 echo "  =================================="
 echo ""
 
-# Detectar tecnología
 TECH=$(detect_tech)
 
 if [ -z "$TECH" ]; then
@@ -145,7 +145,6 @@ fi
 
 info "Tecnología detectada: $TECH"
 
-# Verificar CLAUDE.md existente
 if [ -f "CLAUDE.md" ] && [ "$FORCE" != "true" ]; then
     warn "Ya existe CLAUDE.md."
     printf "  ¿Sobreescribir? (s/N): "
@@ -156,7 +155,6 @@ if [ -f "CLAUDE.md" ] && [ "$FORCE" != "true" ]; then
     fi
 fi
 
-# Descargar y personalizar CLAUDE.md
 info "Descargando plantilla CLAUDE.md..."
 download "$BASE_URL/templates/$TECH/CLAUDE.md" "CLAUDE.md"
 
@@ -174,7 +172,6 @@ fi
 
 ok "CLAUDE.md generado"
 
-# Descargar comandos
 info "Descargando comandos..."
 COMMANDS=("review" "pr" "task" "fix" "commit-message" "plan-implementation")
 CMD_COUNT=0
@@ -190,15 +187,13 @@ for cmd in "${COMMANDS[@]}"; do
     fi
 done
 
-# Descargar settings.json
 if download "$BASE_URL/templates/$TECH/.claude/settings.json" "$CLAUDE_DIR/settings.json" 2>/dev/null; then
     ok ".claude/settings.json"
 fi
 
-# Verificar placeholders pendientes
-PENDING=$(grep -oP '\[[^\]]+\]' CLAUDE.md 2>/dev/null | grep -v "^$" | sort -u | head -8 || true)
+# Placeholders pendientes — compatible con BSD grep
+PENDING=$(grep -o '\[[^]]*\]' CLAUDE.md 2>/dev/null | sort -u | head -8 || true)
 
-# Resumen
 echo ""
 echo "  ─────────────────────────────────────────"
 echo "  Listo. Archivos generados:"
