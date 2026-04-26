@@ -40,25 +40,27 @@ Explora el proyecto con profundidad antes de escribir nada.
 
 ---
 
-## Fase 2 — Generar el CLAUDE.md adaptado
+## Fase 2 — Descargar el template base y adaptarlo
 
-Con todo el análisis completo, genera un CLAUDE.md que:
+**Primero descarga el template completo — nunca generes el CLAUDE.md desde cero.**
 
-1. **Mantiene las reglas base** — los estándares de calidad, seguridad, testing y patrones del template base no se negocian
-2. **Refleja la realidad del proyecto** — la sección de arquitectura describe LO QUE HAY, no lo ideal
-3. **Es honesto sobre las desviaciones** — si el proyecto no usa Clean Architecture, dice qué arquitectura usa y cómo trabajar dentro de ella
-4. **Adapta las convenciones** — usa el naming y los patrones que el proyecto ya tiene (no introduce inconsistencias)
-5. **Incluye el contexto específico** — stack real, nombre real, tipo de proyecto real
+```bash
+curl -fsSL "https://raw.githubusercontent.com/Brayanhenaor/ai-standards/master/templates/dotnet/CLAUDE.md" -o CLAUDE.md
+```
 
-### Estructura del CLAUDE.md generado
+Luego lee el archivo descargado y aplica las siguientes adaptaciones sobre él:
 
-El archivo debe tener estas secciones adaptadas al proyecto:
+### Secciones que DEBES modificar
+- **Título** (`# [NombreProyecto]`) → nombre real del proyecto
+- **Stack** → versiones y paquetes reales detectados en los `.csproj`
+- **Arquitectura** → describe LO QUE HAY realmente: capas reales, carpetas reales, patrones reales
+- **Convenciones C#** → ajusta solo lo que el proyecto ya hace distinto (naming, var vs tipo explícito, etc.)
 
-- **Stack** — versiones y paquetes reales detectados
-- **Arquitectura** — descripción de la arquitectura REAL con sus capas/carpetas reales
-- **Cómo aplicar estas reglas** — adaptado: qué partes del proyecto están bien, cuáles tienen deuda
-- **Convenciones C#** — ajustadas a lo que el proyecto ya usa
-- **[Resto de secciones del template]** — mantenidas con ajustes menores si aplica
+### Secciones que NO debes tocar
+Todo lo demás se mantiene exactamente como está en el template:
+- Manejo de errores, logging, seguridad, performance, resiliencia
+- EF Core, Mapster, DTOs, testing, calidad de código
+- Docker, documentación, lo que NO hacer
 
 ### Balance reglas base vs adaptación
 
@@ -93,8 +95,8 @@ Si detectas desviaciones significativas de los estándares, agrega esta sección
 
 ## Fase 3 — Escribir y confirmar
 
-1. Escribe el CLAUDE.md completo y adaptado en la raíz del proyecto
-2. Elimina el bloque `<!--INIT ... ENDINIT-->` del archivo
+1. Escribe el CLAUDE.md adaptado sobre el archivo descargado
+2. Si hay deuda técnica significativa, agrega la sección `## Estado actual del proyecto` antes de `## Comandos disponibles`
 3. Presenta al dev el siguiente resumen:
 
 ```
