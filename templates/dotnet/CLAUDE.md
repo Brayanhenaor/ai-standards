@@ -6,9 +6,11 @@
 
 **Antes de escribir código, evalúa si aplica alguna de estas reglas y léela primero.**
 
-- **Docker** — vas a escribir o modificar un `Dockerfile`, `docker-compose.yml`, healthchecks, configuración de contenedores o políticas de reinicio → lee `.claude/rules/docker.md`
-- **Resiliencia** — vas a registrar un `HttpClient`, consumir una API externa, integrar un servicio de terceros, o configurar retry/timeout/circuit breaker → lee `.claude/rules/resilience.md`
-- **EF avanzado** — vas a escribir operaciones bulk (`ExecuteUpdateAsync`/`ExecuteDeleteAsync`), queries con múltiples joins o includes, crear o modificar migrations, o diseñar índices → lee `.claude/rules/ef-advanced.md`
+- **Docker** — vas a escribir o modificar un `Dockerfile`, `docker-compose.yml`, healthchecks o configuración de contenedores → lee `~/.claude/rules/docker.md`
+- **Resiliencia** — vas a registrar un `HttpClient`, consumir una API externa, integrar un servicio de terceros o configurar retry/timeout/circuit breaker → lee `~/.claude/rules/resilience.md`
+- **EF avanzado** — vas a escribir operaciones bulk, queries con múltiples joins/includes, crear migrations o diseñar índices → lee `~/.claude/rules/ef-advanced.md`
+- **Testing** — vas a escribir unit tests o integration tests → lee `~/.claude/rules/testing.md`
+- **Seguridad** — vas a implementar autenticación, autorización, JWT, manejo de datos sensibles, CORS o rate limiting → lee `~/.claude/rules/security.md`
 
 ---
 

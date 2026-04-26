@@ -40,8 +40,11 @@ if (fs.existsSync(globalClaude)) {
   console.log('');
 }
 
+const RULES_DIR = path.join(CLAUDE_DIR, 'rules');
+
 copyFile(path.join(ROOT, 'global', 'CLAUDE.md'), globalClaude);
 copyDir(path.join(ROOT, 'global', 'commands'), COMMANDS_DIR);
+copyDir(path.join(ROOT, 'global', 'rules'), RULES_DIR);
 
 console.log('');
 console.log('  Listo. Abre el proyecto en Claude Code y ejecuta:');

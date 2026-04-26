@@ -45,15 +45,10 @@ Explora el proyecto con profundidad antes de escribir nada.
 **Primero descarga el template completo — nunca generes el CLAUDE.md desde cero.**
 
 ```bash
-BASE="https://raw.githubusercontent.com/Brayanhenaor/ai-standards/master"
-
-curl -fsSL "$BASE/templates/dotnet/CLAUDE.md" -o CLAUDE.md
-
-mkdir -p .claude/rules
-curl -fsSL "$BASE/templates/dotnet/.claude/rules/docker.md"      -o .claude/rules/docker.md
-curl -fsSL "$BASE/templates/dotnet/.claude/rules/resilience.md"  -o .claude/rules/resilience.md
-curl -fsSL "$BASE/templates/dotnet/.claude/rules/ef-advanced.md" -o .claude/rules/ef-advanced.md
+curl -fsSL "https://raw.githubusercontent.com/Brayanhenaor/ai-standards/master/templates/dotnet/CLAUDE.md" -o CLAUDE.md
 ```
+
+El proyecto solo tendrá este archivo. Las reglas detalladas (`docker.md`, `resilience.md`, `ef-advanced.md`, `testing.md`, `security.md`) ya están instaladas globalmente en `~/.claude/rules/` por el `npx` setup — no se necesitan en el proyecto.
 
 Luego lee el archivo descargado y aplica las siguientes adaptaciones sobre él:
 

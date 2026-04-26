@@ -43,21 +43,31 @@ Claude analiza el proyecto y genera el `CLAUDE.md` adaptado a su arquitectura re
 
 ```
 global/
-  CLAUDE.md              ← reglas globales de empresa (~/.claude/CLAUDE.md)
-  commands/
+  CLAUDE.md              ← reglas globales de empresa  (~/.claude/CLAUDE.md)
+  commands/              ←                              ~/.claude/commands/
     init-dotnet.md
     plan-dotnet.md
     review-dotnet.md
     commit-dotnet.md
     test-dotnet.md
+    docker-dotnet.md
     standup.md
+  rules/                 ← reglas detalladas por área   ~/.claude/rules/
+    docker.md
+    resilience.md
+    ef-advanced.md
+    testing.md
+    security.md
 
 templates/
   dotnet/
     CLAUDE.md            ← base para proyectos .NET (init-dotnet lo adapta)
+                           único archivo que queda en el proyecto
 
 bin/
   cli.js                 ← entry point del npx
 
 package.json
 ```
+
+El proyecto solo tiene `CLAUDE.md`. Todo lo demás es global e invisible al dev.
