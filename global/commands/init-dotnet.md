@@ -95,11 +95,75 @@ If you detect significant deviations from standards, add this section to CLAUDE.
 
 ---
 
-## Phase 3 — Write and confirm
+## Phase 3 — Write CLAUDE.md and generate PROJECT_STATUS.md
 
+### 3a — Write CLAUDE.md
 1. Write the adapted CLAUDE.md over the downloaded file
 2. If there is significant technical debt, add the `## Current project state` section before `## Available commands`
-3. Present the following summary to the dev:
+
+### 3b — Generate docs/PROJECT_STATUS.md
+
+Create `docs/PROJECT_STATUS.md` as a living snapshot of the project's health. This file is for the team — not for Claude rules. Use the findings from Phase 1.
+
+```markdown
+# Project Status — [ProjectName]
+
+> Analysis date: [current date]
+> Analyzed by: `/user:init-dotnet`
+
+## Overview
+[What the project does, its purpose, and type of system — inferred from the code]
+
+## Architecture
+[Description of the actual architecture found: layers, patterns, dependency direction]
+
+## Stack
+| Component | Version / Package |
+|---|---|
+| .NET | X.X |
+| [Key package] | X.X.X |
+| ... | ... |
+
+## Technical debt
+
+### 🔴 Critical
+Items that affect security, correctness, or cause silent bugs.
+- [description] — [affected files or areas]
+
+### 🟡 Improvements
+Standards violations or design issues that should be addressed in upcoming sprints.
+- [description] — [affected files or areas]
+
+### 🔵 Technical
+Minor cleanup, naming, or structural issues.
+- [description]
+
+## Security observations
+[Any auth gaps, hardcoded secrets, missing input validation, exposed IDs, etc. — or "None detected"]
+
+## Performance observations
+[N+1 risks, missing pagination, unbounded queries, socket issues, etc. — or "None detected"]
+
+## Test coverage
+[What is tested, what is missing, whether critical paths are covered]
+
+## Missing documentation
+[Missing README sections, ADRs that should exist, undocumented config, etc. — or "None detected"]
+
+## Recommended evolution roadmap
+Ordered by priority:
+1. [First thing to fix — why]
+2. [Second thing — why]
+3. ...
+```
+
+If a section has nothing to report, write `None detected` rather than omitting the section — this confirms the area was checked.
+
+---
+
+## Phase 4 — Confirm
+
+Present the following summary to the dev:
 
 ```
 ✅ Project initialized: [ProjectName]
@@ -113,7 +177,11 @@ Stack detected:
 Architecture detected:
   • [1–2 line description of what you found]
 
-[If debt exists]: ⚠️ N technical debt items detected — see "Current project state" in CLAUDE.md
+Files generated:
+  • CLAUDE.md              — rules adapted to this project
+  • docs/PROJECT_STATUS.md — project health snapshot
+
+[If debt exists]: ⚠️ N technical debt items detected — see docs/PROJECT_STATUS.md
 
 Available commands:
   /user:init-dotnet   — this command (already executed)

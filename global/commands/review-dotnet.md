@@ -2,30 +2,34 @@
 
 Perform a comprehensive review of all changes in the current branch against main.
 
-## Step 1 — Load context
+## Step 0 — Load project context
 
-Run these commands before reviewing:
+**Before reviewing anything, read `CLAUDE.md` to understand this project's actual architecture and conventions.**
+
+The architecture check in Step 2 must be based on what CLAUDE.md describes — not on an assumed ideal. If the project uses simple 3-layer architecture, evaluate against that. If it uses Clean Architecture, evaluate against that. Never report a deviation against an architecture the project does not claim to follow.
+
+Then run:
 - `git diff main...HEAD` — full diff
 - `git diff main...HEAD --stat` — list of changed files
 - `git log main...HEAD --oneline` — commit history
 
-## Step 2 — Review dimensions
+---
+
+## Step 1 — Review dimensions
 
 Evaluate every changed file across all dimensions below. Not every dimension applies to every file — use judgment.
 
----
-
 ### Business logic
 - Does the change correctly implement the intended behavior?
-- Is business logic placed in Domain or Application — not in controllers, infrastructure or middlewares?
+- Is business logic in the correct layer according to the architecture described in CLAUDE.md?
 - Are edge cases handled (empty collections, nulls, boundary values)?
 - Does the change affect existing behavior unintentionally?
 
 ### Architecture and SOLID
-- Do dependencies respect the direction: API → Application → Domain ← Infrastructure?
+- Do dependencies respect the layer direction described in CLAUDE.md?
 - Does each class have a single responsibility?
 - Are new types/behaviors added via extension rather than modifying existing classes (OCP)?
-- Are abstractions used correctly — no leaking infrastructure concerns into Application or Domain?
+- Are abstractions used correctly — no leaking lower-layer concerns upward?
 - Are interfaces used for dependencies — no `new` for services?
 
 ### Design patterns
@@ -64,8 +68,9 @@ Evaluate every changed file across all dimensions below. Not every dimension app
 - Is sensitive data being logged (passwords, tokens, PII)?
 
 ### Naming and conventions
+- Do conventions match what is described in CLAUDE.md (not a universal standard)?
 - Do all async methods have the `Async` suffix?
-- Are DTOs named `XRequest` / `XResponse`?
+- Are DTOs named as described in CLAUDE.md (`XRequest`/`XResponse` or whatever the project uses)?
 - Are constants used instead of hardcoded strings (except log messages)?
 - Is the code in English?
 
@@ -96,10 +101,11 @@ Evaluate every changed file across all dimensions below. Not every dimension app
 ### Documentation
 - If the change affects architecture or a significant design decision — was an ADR created in `/docs/adr/`?
 - If the change adds/modifies configuration, endpoints or deployment — was `README.md` updated?
+- If new technical debt is introduced — was `docs/PROJECT_STATUS.md` updated?
 
 ---
 
-## Step 3 — Output format
+## Step 2 — Output format
 
 Group findings by severity. Only include sections that have findings.
 
@@ -120,7 +126,7 @@ Non-urgent observations, style, or opportunities to improve quality.
 
 ### ⚠️ Refactor opportunities (out of scope)
 Problems detected in existing code not touched by this PR — for the backlog.
-- [file] [CRÍTICO / MEJORA / TÉCNICO] Description
+- [file] [CRITICAL / IMPROVEMENT / TECHNICAL] Description
 
 ### ℹ️ Notices
 - New environment variables added: [list them]
@@ -128,6 +134,7 @@ Problems detected in existing code not touched by this PR — for the backlog.
 - README updated: yes / no / not required
 - ADR created: yes / no / not required
 - Tests added: yes / no / not required
+- PROJECT_STATUS.md updated: yes / no / not required
 ```
 
 Close with one of:
