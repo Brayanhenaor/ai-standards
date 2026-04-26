@@ -53,5 +53,6 @@ console.log('    /user:plan-dotnet   — planea un requerimiento antes de implem
 console.log('    /user:review-dotnet — revisión completa de cambios antes de PR');
 console.log('    /user:commit-dotnet — genera mensaje de commit en Conventional Commits');
 console.log('    /user:test-dotnet   — genera unit tests de cambios pendientes o de un commit');
+console.log('    /user:docker-dotnet — revisa o genera configuración Docker/Compose');
 console.log('    /user:standup       — resumen del trabajo del día');
 console.log('');

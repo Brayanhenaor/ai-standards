@@ -1,6 +1,6 @@
 # [NombreProyecto]
 
-> Ejecuta `/project:init-btw` para adaptar este archivo al proyecto actual.
+> Ejecuta `/user:init-dotnet` para adaptar este archivo al proyecto actual.
 
 ## Stack
 - [.NET Version] / [C# Version]
@@ -181,13 +181,8 @@ Clean Architecture. Proyectos de la solución:
 
 ## Configuración (Options pattern)
 
-- Leer configuración en servicios exclusivamente con `IOptions<T>`, `IOptionsSnapshot<T>` o `IOptionsMonitor<T>` — nunca inyectar `IConfiguration` fuera de `Host/`
-- Crear una clase de opciones por cada sección de configuración (`SmtpOptions`, `JwtOptions`, etc.)
-- Validar opciones al iniciar la aplicación con `.ValidateDataAnnotations().ValidateOnStart()` — fallar rápido si falta configuración crítica
-- Regla de uso:
-  - `IOptions<T>`: valor fijo durante toda la vida de la app (singleton)
-  - `IOptionsSnapshot<T>`: valor que puede cambiar entre requests (scoped)
-  - `IOptionsMonitor<T>`: valor que cambia en caliente sin reiniciar (singleton con callback)
+- Leer configuración en servicios con `IOptions<T>`, `IOptionsSnapshot<T>` o `IOptionsMonitor<T>` — nunca `IConfiguration` fuera de `Host/`
+- Una clase de opciones por sección (`SmtpOptions`, `JwtOptions`, etc.) con `.ValidateDataAnnotations().ValidateOnStart()`
 
 ---
 
@@ -222,47 +217,19 @@ Registrar cada servicio con el lifetime correcto — los bugs por lifetime incor
 
 ## Performance y gestión de recursos
 
-### Consultas y base de datos
-- Paginación obligatoria en toda query que devuelva colecciones (cursor o offset según el caso)
+- Nunca `new HttpClient()` — siempre `IHttpClientFactory` para evitar socket exhaustion
+- `IDisposable` / `IAsyncDisposable` en clases con recursos no administrados; siempre con `using` / `await using`
+- `async void` solo en event handlers — en cualquier otro caso `async Task`
+- No capturar `this` en closures de larga vida sin desuscribirse — memory leak clásico
+- `StringBuilder` en loops — nunca `string +=` dentro de iteraciones
 - `IAsyncEnumerable<T>` para streaming de grandes volúmenes — nunca `.ToList()` de miles de registros
 - Operaciones bulk con `ExecuteUpdateAsync` / `ExecuteDeleteAsync` — nunca cargar entidades solo para modificarlas masivamente
-- Evaluar índices al diseñar queries; proponer los necesarios en el ADR
-- Evitar `.ToList()` innecesario en medio de una cadena LINQ — materializar solo al final
-
-### Caching
-- Caching solo cuando haya un problema de performance medido — no preventivo
-- Definir siempre TTL explícito; nunca cachear indefinidamente
-- Invalidar cache cuando los datos cambien — no depender solo del TTL para consistencia
-
-### Memoria y recursos
-- Nunca usar `new HttpClient()` directamente — siempre `IHttpClientFactory` para evitar socket exhaustion
-- Implementar `IDisposable` / `IAsyncDisposable` en toda clase que gestione recursos no administrados
-- Usar `using` o `await using` para liberar recursos garantizando el dispose aunque haya excepción
-- `async void` solo en event handlers — en cualquier otro caso usar `async Task`; `async void` traga excepciones y causa memory leaks
-- No capturar `this` en closures de larga vida (eventos estáticos, callbacks de librerías) sin desuscribirse — fuente clásica de memory leaks
-- `StringBuilder` para concatenación en loops — nunca `string +=` dentro de iteraciones
-- `ArrayPool<T>` / `MemoryPool<T>` para buffers temporales de alto volumen — evitar presión en el GC
-- `Span<T>` / `Memory<T>` para procesamiento de datos sin allocations innecesarias en paths críticos
-- Desuscribirse de eventos en el `Dispose` cuando el subscriber tiene menor lifetime que el publisher
-
-### Diagnóstico
-- Ante un problema de performance: medir primero con profiler o logs antes de optimizar
-- Optimizaciones prematuras requieren justificación — documentar en ADR con la métrica que las motivó
 
 ---
 
 ## Resiliencia
 
-Toda llamada a un servicio externo (HTTP, colas, servicios de terceros) debe tener políticas de resiliencia explícitas:
-
-- Usar `Microsoft.Extensions.Http.Resilience` (.NET 8+) o Polly directamente
-- Configurar mediante `IHttpClientFactory` con `AddResilienceHandler` — nunca en cada llamada individual
-- Políticas mínimas para servicios externos:
-  - **Timeout**: siempre; sin timeout, un servicio lento bloquea threads indefinidamente
-  - **Retry con backoff exponencial**: para errores transitorios (5xx, red); máximo 3 reintentos
-  - **Circuit breaker**: abrir el circuito tras N fallos consecutivos para no saturar un servicio caído
-- No reintentar errores del cliente (4xx) — son fallos permanentes, reintentar no ayuda
-- Documentar en el ADR los valores de timeout y retry elegidos y por qué
+Toda llamada a servicio externo (HTTP, colas, terceros) necesita timeout + retry con backoff + circuit breaker, configurados via `IHttpClientFactory` con `AddResilienceHandler` — nunca inline en cada llamada. No reintentar 4xx.
 
 ---
 
@@ -281,21 +248,6 @@ Usa `/user:test-dotnet` para generar tests de cambios pendientes o de un commit 
 ---
 
 ## Calidad de código y patrones
-
-### Eliminar condicionales con polimorfismo y patrones
-
-Cuando veas condicionales que crecen, proponer el patrón adecuado:
-
-| Smell detectado | Patrón a proponer |
-|---|---|
-| `if/else` o `switch` que varía comportamiento por tipo | Strategy |
-| `switch` sobre un discriminador para ejecutar distintas acciones | Command + diccionario de handlers |
-| `if` anidados para construir un objeto complejo | Builder |
-| Reglas de negocio complejas combinadas con `&&` / `||` | Specification |
-| `switch` que crece cada vez que se agrega un nuevo tipo | Polimorfismo / Factory Method |
-| Validaciones encadenadas con múltiples `if` de guarda | Chain of Responsibility |
-
-Regla práctica: si agregar un nuevo "caso" requiere modificar un `switch` o `if` existente, la solución viola OCP — proponer un diseño extensible.
 
 ### Guard clauses
 
@@ -401,60 +353,10 @@ Proceso de despliegue por ambiente (dev / staging / prod).
 
 ---
 
-## Docker y Docker Compose
-
-### Dockerfile
-- Usar multi-stage build: stage de build separado del de runtime
-- Imagen base de runtime lo más pequeña posible (`mcr.microsoft.com/dotnet/aspnet`, no SDK)
-- No correr el contenedor como root — definir usuario no privilegiado
-- No copiar archivos innecesarios (`.dockerignore` siempre presente)
-
-### Docker Compose
-Todo servicio en `docker-compose.yml` debe tener:
-
-**Healthcheck obligatorio:**
-```yaml
-healthcheck:
-  test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
-  interval: 30s
-  timeout: 10s
-  retries: 3
-  start_period: 40s
-```
-
-**Política de reinicio:**
-```yaml
-restart: unless-stopped   # servicios de larga vida
-restart: on-failure       # workers o jobs
-```
-
-**Dependencias con condición de salud** — nunca solo `depends_on` por nombre:
-```yaml
-depends_on:
-  db:
-    condition: service_healthy
-  redis:
-    condition: service_healthy
-```
-
-**Reglas adicionales:**
-- Variables de entorno sensibles desde `.env` — nunca hardcodeadas en el `docker-compose.yml`
-- El archivo `.env.example` commiteado con todas las variables y valores de ejemplo
-- Definir `mem_limit` y `cpus` en servicios que puedan consumir recursos descontroladamente
-- Volumes con nombre explícito para datos persistentes — nunca paths relativos para datos de producción
-- Exponer solo los puertos estrictamente necesarios al host
-
-### Health checks en la API
-- Registrar health checks con `AddHealthChecks()` en `Host/`
-- Endpoint `/health` para liveness (el proceso está vivo)
-- Endpoint `/health/ready` para readiness (dependencias disponibles: DB, cache, servicios externos)
-- Incluir checks de DB, Redis u otros servicios críticos en el readiness check
-
----
-
 ## Comandos disponibles
-- `/user:init-dotnet`   — configuración inicial del proyecto (ejecutar una sola vez)
-- `/user:plan-dotnet`   — planea un requerimiento con trade-offs antes de implementar
-- `/user:review-dotnet` — revisión completa de todos los cambios del branch
-- `/user:commit-dotnet` — genera mensaje de commit en Conventional Commits
-- `/user:test-dotnet`   — genera unit tests de cambios pendientes o de un commit
+- `/user:init-dotnet`    — configuración inicial del proyecto (ejecutar una sola vez)
+- `/user:plan-dotnet`    — planea un requerimiento con trade-offs antes de implementar
+- `/user:review-dotnet`  — revisión completa de todos los cambios del branch
+- `/user:commit-dotnet`  — genera mensaje de commit en Conventional Commits
+- `/user:test-dotnet`    — genera unit tests de cambios pendientes o de un commit
+- `/user:docker-dotnet`  — revisa o genera configuración Docker/Compose

@@ -119,4 +119,5 @@ Comandos disponibles:
   /user:review-dotnet — revisión completa de cambios antes de PR
   /user:commit-dotnet — genera mensaje de commit en Conventional Commits
   /user:test-dotnet   — genera unit tests de cambios pendientes o de un commit
+  /user:docker-dotnet — revisa o genera configuración Docker/Compose
 ```
