@@ -72,18 +72,18 @@ detect_dotnet_metadata() {
         content=$(cat "$csproj" 2>/dev/null)
 
         # Tipo de proyecto
-        echo "$content" | grep -q "Sdk.Worker" && PROJECT_TYPE="Worker Service"
-        echo "$content" | grep -q "Sdk.Razor"  && PROJECT_TYPE="Blazor"
+        if echo "$content" | grep -q "Sdk.Worker"; then PROJECT_TYPE="Worker Service"; fi
+        if echo "$content" | grep -q "Sdk.Razor";  then PROJECT_TYPE="Blazor"; fi
 
         # Version de .NET desde TargetFramework (ej: net8.0 → 8.0)
         local tf
         tf=$(xml_value "TargetFramework" "$content" | sed 's/^net//')
-        [ -n "$tf" ] && DOTNET_VERSION="$tf"
+        if [ -n "$tf" ]; then DOTNET_VERSION="$tf"; fi
 
         # Version de C#
         local lv
         lv=$(xml_value "LangVersion" "$content")
-        [ -n "$lv" ] && CSHARP_VERSION="$lv"
+        if [ -n "$lv" ]; then CSHARP_VERSION="$lv"; fi
 
         # Packages — extrae el atributo Include de cada PackageReference
         local pkgs
@@ -93,13 +93,14 @@ detect_dotnet_metadata() {
     done < <(find . -maxdepth 4 -name "*.csproj" 2>/dev/null)
 
     # DB provider
-    echo "$PACKAGES" | grep -qi "Npgsql"                  && DB_PROVIDER="PostgreSQL"
-    echo "$PACKAGES" | grep -qi "SqlServer\|SqlClient"    && DB_PROVIDER="SQL Server"
-    echo "$PACKAGES" | grep -qi "Sqlite"                  && DB_PROVIDER="SQLite"
-    echo "$PACKAGES" | grep -qi "MongoDB"                 && DB_PROVIDER="MongoDB"
+    if echo "$PACKAGES" | grep -qi "Npgsql";               then DB_PROVIDER="PostgreSQL"
+    elif echo "$PACKAGES" | grep -qi "SqlServer\|SqlClient"; then DB_PROVIDER="SQL Server"
+    elif echo "$PACKAGES" | grep -qi "Sqlite";               then DB_PROVIDER="SQLite"
+    elif echo "$PACKAGES" | grep -qi "MongoDB";              then DB_PROVIDER="MongoDB"
+    fi
 
     # Docker
-    [ -f "docker-compose.yml" ] && HAS_DOCKER=true
+    if [ -f "docker-compose.yml" ]; then HAS_DOCKER=true; fi
 }
 
 # ─── Personalizar CLAUDE.md ──────────────────────────────────────────────────
@@ -158,8 +159,8 @@ if [ "$TECH" = "dotnet" ]; then
     ok "Proyecto: $PROJECT_NAME"
     ok ".NET $DOTNET_VERSION / C# $CSHARP_VERSION"
     ok "Tipo: $PROJECT_TYPE"
-    [ -n "$DB_PROVIDER" ] && ok "Base de datos: $DB_PROVIDER"
-    $HAS_DOCKER && ok "Docker Compose detectado"
+    if [ -n "$DB_PROVIDER" ]; then ok "Base de datos: $DB_PROVIDER"; fi
+    if [ "$HAS_DOCKER" = "true" ]; then ok "Docker Compose detectado"; fi
 fi
 
 ok "CLAUDE.md generado"
