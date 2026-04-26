@@ -4,13 +4,11 @@
 
 ## Reglas de contexto
 
-Reglas detalladas que se cargan automáticamente al trabajar en archivos específicos:
+**Antes de escribir código, evalúa si aplica alguna de estas reglas y léela primero.**
 
-| Al tocar... | Se carga |
-|---|---|
-| `Dockerfile`, `docker-compose*.yml`, `.dockerignore` | `.claude/rules/docker.md` |
-| `*Client.cs`, `*Gateway.cs`, `*Extensions.cs`, `Program.cs` | `.claude/rules/resilience.md` |
-| `*Repository*.cs`, `*DbContext*.cs`, `Migrations/`, `*Configuration.cs` | `.claude/rules/ef-advanced.md` |
+- **Docker** — vas a escribir o modificar un `Dockerfile`, `docker-compose.yml`, healthchecks, configuración de contenedores o políticas de reinicio → lee `.claude/rules/docker.md`
+- **Resiliencia** — vas a registrar un `HttpClient`, consumir una API externa, integrar un servicio de terceros, o configurar retry/timeout/circuit breaker → lee `.claude/rules/resilience.md`
+- **EF avanzado** — vas a escribir operaciones bulk (`ExecuteUpdateAsync`/`ExecuteDeleteAsync`), queries con múltiples joins o includes, crear o modificar migrations, o diseñar índices → lee `.claude/rules/ef-advanced.md`
 
 ---
 
