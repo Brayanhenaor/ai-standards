@@ -1,4 +1,7 @@
 # [NombreProyecto]
+<!-- SETUP: Si ves placeholders [entre corchetes] en este archivo, analiza el proyecto
+     (.csproj, estructura de carpetas, Program.cs) y reemplázalos con los valores reales.
+     Elimina este comentario al terminar. -->
 
 ## Stack
 - [.NET Version] / [C# Version]

@@ -11,11 +11,14 @@ COMMANDS_DIR="$CLAUDE_DIR/commands"
 ok()   { echo "  ✓  $1"; }
 info() { echo "  →  $1"; }
 warn() { echo "  ⚠  $1"; }
+fail() { echo "  ✗  $1"; exit 1; }
 
 download() {
     mkdir -p "$(dirname "$2")"
     curl -fsSL "$1" -o "$2"
 }
+
+# ─── Detección de tecnología ───────────────────────────────���──────────────────
 
 detect_tech() {
     if find . -maxdepth 1 -name "*.sln" 2>/dev/null | grep -q .; then echo "dotnet"; return; fi
@@ -24,94 +27,76 @@ detect_tech() {
     echo ""
 }
 
-detect_dotnet_metadata() {
-    PROJECT_NAME="$(basename "$(pwd)")"
-    DOTNET_VERSION="8"
-    CSHARP_VERSION="12"
-    PROJECT_TYPE="ASP.NET Core Web API"
-    DB_PROVIDER=""
-    PACKAGES=""
-    HAS_DOCKER="false"
+# ─── Recolectar contexto del proyecto ───────────────────────────────���────────
 
-    # Nombre desde .sln
-    local sln
-    sln=$(find . -maxdepth 1 -name "*.sln" 2>/dev/null | head -1)
-    if [ -n "$sln" ]; then
-        PROJECT_NAME=$(basename "$sln" .sln)
-    fi
-
-    # Leer todos los .csproj en un archivo temporal para evitar process substitution
+collect_project_context() {
+    # .csproj files
+    CSPROJ_CONTENT=""
     local tmpfile
     tmpfile=$(mktemp /tmp/csproj_list.XXXXXX)
     find . -maxdepth 4 -name "*.csproj" 2>/dev/null > "$tmpfile"
-
-    while IFS= read -r csproj; do
-        local content
-        content=$(cat "$csproj" 2>/dev/null) || continue
-
-        # Tipo de proyecto
-        if echo "$content" | grep -q "Sdk.Worker"; then PROJECT_TYPE="Worker Service"; fi
-        if echo "$content" | grep -q "Sdk.Razor";  then PROJECT_TYPE="Blazor"; fi
-
-        # Version de .NET
-        local tf
-        tf=$(echo "$content" | sed -n 's|.*<TargetFramework>net\([^<]*\)</TargetFramework>.*|\1|p' | head -1)
-        if [ -n "$tf" ]; then DOTNET_VERSION="$tf"; fi
-
-        # Version de C#
-        local lv
-        lv=$(echo "$content" | sed -n 's|.*<LangVersion>\([^<]*\)</LangVersion>.*|\1|p' | head -1)
-        if [ -n "$lv" ]; then CSHARP_VERSION="$lv"; fi
-
-        # Packages
-        local pkgs
-        pkgs=$(echo "$content" | sed -n 's/.*PackageReference Include="\([^"]*\)".*/\1/p' | tr '\n' ' ')
-        PACKAGES="$PACKAGES $pkgs"
-
+    while IFS= read -r f; do
+        CSPROJ_CONTENT="$CSPROJ_CONTENT
+=== $f ===
+$(cat "$f" 2>/dev/null)"
     done < "$tmpfile"
     rm -f "$tmpfile"
 
-    # DB provider
-    if echo "$PACKAGES" | grep -qi "Npgsql"; then
-        DB_PROVIDER="PostgreSQL"
-    elif echo "$PACKAGES" | grep -qi "SqlServer\|SqlClient"; then
-        DB_PROVIDER="SQL Server"
-    elif echo "$PACKAGES" | grep -qi "Sqlite"; then
-        DB_PROVIDER="SQLite"
-    elif echo "$PACKAGES" | grep -qi "MongoDB"; then
-        DB_PROVIDER="MongoDB"
-    fi
+    # Estructura de carpetas (ignorando bin/obj/.git)
+    FOLDER_STRUCT=$(find . -maxdepth 4 -type d \
+        ! -path "*/bin/*" ! -path "*/obj/*" ! -path "*/.git/*" \
+        ! -path "*/.vs/*" ! -path "*/node_modules/*" 2>/dev/null | sort | head -50)
 
-    if [ -f "docker-compose.yml" ]; then HAS_DOCKER="true"; fi
+    # Program.cs principal
+    PROGRAM_CS=$(find . -maxdepth 4 -name "Program.cs" 2>/dev/null | head -1 | xargs cat 2>/dev/null | head -100)
+
+    # appsettings.json (sin valores sensibles)
+    APPSETTINGS=$(find . -maxdepth 4 -name "appsettings.json" 2>/dev/null | head -1 | xargs cat 2>/dev/null | head -60)
 }
 
-customize_claude_md() {
-    local file="$1"
+# ─── Completar CLAUDE.md con Claude CLI ──────────────────────────────────────
 
-    sed -i.bak \
-        -e "s/\[NombreProyecto\]/$PROJECT_NAME/g" \
-        -e "s/\[\.NET Version\]/NET $DOTNET_VERSION/g" \
-        -e "s/\[C# Version\]/C# $CSHARP_VERSION/g" \
-        "$file"
+complete_with_claude() {
+    local template
+    template=$(cat CLAUDE.md)
 
-    if [ -n "$DB_PROVIDER" ]; then
-        sed -i.bak "s|\[SQL Server / PostgreSQL / SQLite / MongoDB\]|$DB_PROVIDER|g" "$file"
+    local prompt
+    prompt="You are setting up a .NET project's CLAUDE.md configuration file.
+
+The CLAUDE.md below has placeholders in [brackets] that need to be filled with real values from this project.
+
+YOUR TASK:
+- Replace every [placeholder] with the actual value detected from the project files
+- If you cannot determine a value, replace it with a sensible default based on the project type
+- Keep all rules, sections and formatting exactly as-is
+- Return ONLY the completed CLAUDE.md raw content — no explanations, no code blocks, nothing else
+
+--- CURRENT CLAUDE.md (with placeholders) ---
+$template
+
+--- .CSPROJ FILES ---
+$CSPROJ_CONTENT
+
+--- FOLDER STRUCTURE ---
+$FOLDER_STRUCT
+
+--- PROGRAM.CS ---
+$PROGRAM_CS
+
+--- APPSETTINGS.JSON ---
+$APPSETTINGS"
+
+    local result
+    result=$(claude -p "$prompt" 2>/dev/null)
+
+    if [ -n "$result" ]; then
+        echo "$result" > CLAUDE.md
+        return 0
     fi
-
-    sed -i.bak "s|\[ASP\.NET Core Web API / Worker Service / Blazor\].*|$PROJECT_TYPE|g" "$file"
-
-    if [ -n "$PACKAGES" ]; then
-        local clean_pkgs
-        clean_pkgs=$(echo "$PACKAGES" | tr ' ' '\n' | grep -v "^$\|^Microsoft\.\|^System\." | sort -u | head -10 | sed 's/^/- /' | tr '\n' '|' | sed 's/|$//')
-        if [ -n "$clean_pkgs" ]; then
-            sed -i.bak "s|- \[Completar: MediatR, Serilog, etc\.\]|$clean_pkgs|g" "$file"
-        fi
-    fi
-
-    rm -f "$file.bak"
+    return 1
 }
 
-# ─── Main ────────────────────────────────────────────────────────────────────
+# ─── Main ─────────────────────────────���───────────────────────────────────────
 
 echo ""
 echo "  Claude Code — Setup de proyecto"
@@ -119,38 +104,18 @@ echo "  =================================="
 echo ""
 
 TECH=$(detect_tech)
-
 if [ -z "$TECH" ]; then
-    warn "No se detectó tecnología conocida (.sln, .csproj, angular.json)."
-    exit 1
+    fail "No se detectó tecnología conocida (.sln, .csproj, angular.json)."
 fi
-
 info "Tecnología detectada: $TECH"
 
-if [ -f "CLAUDE.md" ]; then
-    warn "Ya existe CLAUDE.md — sobreescribiendo."
-fi
-
-info "Descargando plantilla CLAUDE.md..."
+# Descargar CLAUDE.md template
+info "Descargando plantilla..."
 if ! download "$BASE_URL/templates/$TECH/CLAUDE.md" "CLAUDE.md"; then
-    warn "Error descargando CLAUDE.md. Verifica la conexión."
-    exit 1
+    fail "Error descargando CLAUDE.md. Verifica la conexión y que el repo sea público."
 fi
 
-if [ "$TECH" = "dotnet" ]; then
-    info "Analizando proyecto .NET..."
-    detect_dotnet_metadata
-    customize_claude_md "CLAUDE.md"
-
-    ok "Proyecto: $PROJECT_NAME"
-    ok ".NET $DOTNET_VERSION / C# $CSHARP_VERSION"
-    ok "Tipo: $PROJECT_TYPE"
-    if [ -n "$DB_PROVIDER" ]; then ok "Base de datos: $DB_PROVIDER"; fi
-    if [ "$HAS_DOCKER" = "true" ]; then ok "Docker Compose detectado"; fi
-fi
-
-ok "CLAUDE.md generado"
-
+# Descargar comandos
 info "Descargando comandos..."
 CMD_COUNT=0
 for cmd in review pr task fix commit-message plan-implementation; do
@@ -162,12 +127,30 @@ for cmd in review pr task fix commit-message plan-implementation; do
     fi
 done
 
+# Descargar settings.json
 if download "$BASE_URL/templates/$TECH/.claude/settings.json" "$CLAUDE_DIR/settings.json" 2>/dev/null; then
     ok ".claude/settings.json"
 fi
 
-PENDING=$(grep -o '\[[^]]*\]' CLAUDE.md 2>/dev/null | sort -u | head -8 || true)
+# Completar CLAUDE.md
+if command -v claude &>/dev/null; then
+    info "Analizando proyecto con Claude..."
+    collect_project_context
 
+    if complete_with_claude; then
+        ok "CLAUDE.md completado con análisis inteligente"
+        SMART=true
+    else
+        warn "Claude no pudo completar el análisis. El CLAUDE.md tiene placeholders pendientes."
+        SMART=false
+    fi
+else
+    warn "claude CLI no encontrado — CLAUDE.md quedará con placeholders."
+    warn "Instala Claude Code CLI para análisis automático: https://claude.ai/download"
+    SMART=false
+fi
+
+# Resumen
 echo ""
 echo "  ─────────────────────────────────────────"
 echo "  Listo. Archivos generados:"
@@ -175,16 +158,19 @@ echo "    CLAUDE.md"
 echo "    .claude/settings.json"
 echo "    .claude/commands/  ($CMD_COUNT comandos)"
 
-if [ -n "$PENDING" ]; then
+if [ "$SMART" = "true" ]; then
     echo ""
-    warn "Secciones por completar en CLAUDE.md:"
-    echo "$PENDING" | while read -r line; do echo "    $line"; done
-    echo ""
-    echo "  Abre el proyecto en Claude Code — Claude completará"
-    echo "  los placeholders analizando el código existente."
+    echo "  El proyecto está listo para usar Claude Code."
 else
-    echo ""
-    echo "  CLAUDE.md completamente configurado."
+    PENDING=$(grep -o '\[[^]]*\]' CLAUDE.md 2>/dev/null | sort -u | head -8 || true)
+    if [ -n "$PENDING" ]; then
+        echo ""
+        warn "Placeholders pendientes en CLAUDE.md:"
+        echo "$PENDING" | while read -r line; do echo "    $line"; done
+        echo ""
+        echo "  Abre el proyecto en Claude Code y Claude los completará"
+        echo "  analizando el código al inicio de la conversación."
+    fi
 fi
 
 echo ""
