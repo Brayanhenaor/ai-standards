@@ -1,85 +1,89 @@
 # ai-standards
 
-Estándares de Claude Code para el equipo de desarrollo de [Empresa].
+Estándares de Claude Code para el equipo de desarrollo.
+
+---
 
 ## Setup en un proyecto (1 comando)
 
-Desde la **raíz del proyecto**, ejecutar:
-
-**Windows (PowerShell):**
-```powershell
-iwr https://raw.githubusercontent.com/Brayanhenaor/ai-standards/master/scripts/setup-project.ps1 | iex
-```
+Desde la **raíz del proyecto**:
 
 **Mac / Linux:**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Brayanhenaor/ai-standards/master/scripts/setup-project.sh | bash
+curl -fsSL "https://raw.githubusercontent.com/Brayanhenaor/ai-standards/master/scripts/setup-project.sh?t=$(date +%s)" | bash
 ```
 
-El script detecta la tecnología automáticamente y genera:
-- `CLAUDE.md` personalizado con los datos reales del proyecto
-- `.claude/commands/` con los 6 comandos estándar
-- `.claude/settings.json` con permisos preconfigurados
+**Windows (PowerShell):**
+```powershell
+iwr "https://raw.githubusercontent.com/Brayanhenaor/ai-standards/master/scripts/setup-project.ps1?t=$([DateTimeOffset]::UtcNow.ToUnixTimeSeconds())" | iex
+```
 
-Los placeholders que no se puedan detectar quedan marcados como `[COMPLETAR]`. Al abrir el proyecto en Claude Code, Claude los completa analizando el código.
+Luego abre el proyecto en Claude Code y ejecuta:
+```
+/project:init-btw
+```
 
-| Repo contiene | Plantilla aplicada |
+Claude analizará el proyecto y completará la configuración automáticamente.
+
+---
+
+## ¿Qué instala?
+
+| Archivo | Descripción |
 |---|---|
-| `*.csproj` / `*.sln` | .NET (Clean Architecture, EF Core, Mapster) |
+| `CLAUDE.md` | Reglas y estándares del proyecto |
+| `.claude/settings.json` | Permisos pre-configurados |
+| `.claude/commands/init-btw.md` | `/project:init-btw` — configuración inicial |
+| `.claude/commands/review.md` | `/project:review` — revisión completa antes de PR |
+| `.claude/commands/commit-message.md` | `/project:commit-message` — conventional commits |
+| `.claude/commands/pr.md` | `/project:pr` — descripción de PR |
+| `.claude/commands/plan-implementation.md` | `/project:plan-implementation` — planificación |
+| `.claude/commands/task.md` | `/project:task` — desglose técnico |
+| `.claude/commands/fix.md` | `/project:fix` — debugging sistemático |
 
 ---
 
 ## Setup global (opcional)
 
-Instala comandos globales disponibles en **todos los proyectos** de la máquina:
-
-**Windows (PowerShell):**
-```powershell
-iwr https://raw.githubusercontent.com/Brayanhenaor/ai-standards/master/scripts/setup.ps1 | iex
-```
+Instala reglas globales y el comando `/user:standup` en `~/.claude/`:
 
 **Mac / Linux:**
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Brayanhenaor/ai-standards/master/scripts/setup.sh | bash
 ```
 
-Instala en `~/.claude/`:
-- `CLAUDE.md` — reglas globales de la empresa
-- `commands/standup.md` — `/user:standup`
+**Windows:**
+```powershell
+iwr https://raw.githubusercontent.com/Brayanhenaor/ai-standards/master/scripts/setup.ps1 | iex
+```
 
-## Estructura
+---
+
+## Estructura del repo
 
 ```
-global/                              # Se instala en ~/.claude/
-  CLAUDE.md                          # Reglas globales de la empresa
+templates/dotnet/          ← plantilla para proyectos .NET
+  CLAUDE.md                ← reglas del proyecto
+  .claude/
+    settings.json
+    commands/              ← 7 comandos /project:*
+
+global/                    ← se instala en ~/.claude/
+  CLAUDE.md                ← reglas globales de empresa
   commands/
-    init-repo.md                     # /user:init-repo (detecta tech automáticamente)
-    standup.md                       # /user:standup
-
-templates/
-  dotnet/                            # Repos .NET / ASP.NET Core
-    CLAUDE.md
-    .claude/
-      settings.json
-      commands/
-        review.md                    # /project:review
-        pr.md                        # /project:pr
-        task.md                      # /project:task
-        fix.md                       # /project:fix
-
+    standup.md             ← /user:standup
 
 scripts/
-  setup.ps1                          # Instalador Windows
-  setup.sh                           # Instalador Mac/Linux
+  setup-project.sh         ← instalador de proyecto (Mac/Linux)
+  setup-project.ps1        ← instalador de proyecto (Windows)
+  setup.sh                 ← instalador global (Mac/Linux)
+  setup.ps1                ← instalador global (Windows)
 ```
 
-## Agregar una tecnología nueva
+---
+
+## Agregar soporte para otra tecnología
 
 1. Crea `templates/[tech]/CLAUDE.md` con las convenciones del stack
-2. Crea `templates/[tech]/.claude/commands/` con los 4 comandos estándar
-3. Agrega la detección en `global/commands/init-repo.md` (tabla del Paso 1)
-
-## Actualizar estándares
-
-Edita los archivos en este repo y haz commit a main.
-Cada dev re-ejecuta el script de instalación para obtener la versión actualizada.
+2. Crea `templates/[tech]/.claude/commands/` con los 7 comandos estándar
+3. El script detecta la tech por archivos característicos (`*.csproj` → dotnet, `angular.json` → angular)

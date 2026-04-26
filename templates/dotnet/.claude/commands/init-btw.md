@@ -21,7 +21,7 @@ Stack detectado:
   • [tecnología, versión, DB, etc.]
 
 Comandos disponibles:
-  /project:init               — este comando (solo primera vez)
+  /project:init-btw           — este comando (solo primera vez)
   /project:plan-implementation — planea un requerimiento antes de implementar
   /project:review             — revisión completa de cambios antes de PR
   /project:commit-message     — genera mensaje de commit en Conventional Commits
