@@ -1,22 +1,22 @@
-# Generar resumen de standup
+# Generate standup summary
 
-Genera un resumen del trabajo del día para el standup del equipo.
+Generate a daily standup summary based on git activity.
 
-## Pasos
+## Steps
 
-1. Ejecuta `git log --oneline --since="yesterday" --author="$(git config user.name)"` para ver commits propios
-2. Ejecuta `git diff --stat HEAD~5..HEAD` si no hay commits recientes
-3. Revisa si hay algún archivo abierto o cambio sin commitear con `git status`
+1. Run `git log --oneline --since="yesterday" --author="$(git config user.name)"` to get own commits
+2. Run `git diff --stat HEAD~5..HEAD` if no recent commits found
+3. Check for uncommitted work with `git status`
 
-## Formato de respuesta
+## Output format
 
-**Ayer hice:**
-- [lista de tareas completadas basada en commits]
+**Yesterday:**
+- [list of completed tasks based on commits]
 
-**Hoy voy a hacer:**
-- [infiere del trabajo en progreso o pregunta si no es claro]
+**Today:**
+- [infer from work in progress, or ask if unclear]
 
-**Bloqueos:**
-- [menciona solo si hay ramas desactualizadas, conflictos, o PRs esperando review]
+**Blockers:**
+- [mention only if there are outdated branches, conflicts, or PRs waiting for review]
 
-Sé breve. Máximo 5 bullets en total.
+Keep it brief. 5 bullets maximum in total.

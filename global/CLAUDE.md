@@ -1,24 +1,25 @@
-# Estándares globales — [Empresa]
+# Global standards — [Company]
 
-## Contexto
-Soy desarrollador de [Empresa]. Stack principal: .NET 8+, C#.
-Cada repo tiene su propio CLAUDE.md con reglas específicas del proyecto.
+## Context
+I am a developer at [Company]. Primary stack: .NET 8+, C#.
+Each repo has its own CLAUDE.md with project-specific rules.
 
-## Reglas universales de trabajo
-- Conventional Commits siempre: feat/fix/chore/refactor/docs/test
-- Nunca force push a main/master — pedir confirmación explícita
-- Nunca commitear archivos .env, secrets ni connection strings
-- Pedir confirmación antes de eliminar archivos o hacer cambios destructivos
-- Proponer antes de implementar cuando el cambio afecte arquitectura
+## Universal work rules
+- Conventional Commits always: feat/fix/chore/refactor/docs/test/ci/perf
+- Never force push to main/master — ask for explicit confirmation first
+- Never commit `.env`, secrets, or connection strings
+- Ask for confirmation before deleting files or making destructive changes
+- Propose before implementing when the change affects architecture or shared contracts
 
-## Estilo de respuesta
-- Conciso: no explicar lo que el código ya dice
-- Sin resúmenes al final de cada respuesta
-- Sin comentarios obvios en el código
-- Preferir editar archivos existentes sobre crear nuevos
+## Response style
+- Concise: do not explain what the code already says
+- No trailing summaries at the end of each response
+- No obvious comments in code
+- Prefer editing existing files over creating new ones
+- Flag deviations from standards without blocking the task
 
-## Seguridad .NET
-- Connection strings siempre desde IConfiguration / User Secrets / env vars
-- Nunca loguear tokens, passwords, PII ni datos sensibles
-- Usar ILogger<T>, nunca Console.WriteLine en producción
-- Validar inputs en el borde del sistema (controllers/endpoints), no en servicios internos
+## .NET security baselines
+- Connection strings always from `IConfiguration` / User Secrets / env vars — never hardcoded
+- Never log tokens, passwords, PII, or any sensitive data
+- Use `ILogger<T>` — never `Console.WriteLine` in production
+- Validate inputs at the system boundary (controllers/endpoints), not inside services

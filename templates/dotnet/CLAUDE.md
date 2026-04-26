@@ -1,374 +1,374 @@
-# [NombreProyecto]
+# [ProjectName]
 
-> Ejecuta `/user:init-dotnet` para adaptar este archivo al proyecto actual.
+> Run `/user:init-dotnet` to adapt this file to the current project.
 
-## Reglas de contexto
+## Context rules
 
-**Antes de escribir código, evalúa si aplica alguna de estas reglas y léela primero.**
+**Before writing code, evaluate whether any of these rules apply and read it first.**
 
-- **Docker** — vas a escribir o modificar un `Dockerfile`, `docker-compose.yml`, healthchecks o configuración de contenedores → lee `~/.claude/rules/docker.md`
-- **Resiliencia** — vas a registrar un `HttpClient`, consumir una API externa, integrar un servicio de terceros o configurar retry/timeout/circuit breaker → lee `~/.claude/rules/resilience.md`
-- **EF avanzado** — vas a escribir operaciones bulk, queries con múltiples joins/includes, crear migrations o diseñar índices → lee `~/.claude/rules/ef-advanced.md`
-- **Testing** — vas a escribir unit tests o integration tests → lee `~/.claude/rules/testing.md`
-- **Seguridad** — vas a implementar autenticación, autorización, JWT, manejo de datos sensibles, CORS o rate limiting → lee `~/.claude/rules/security.md`
+- **Docker** — you are writing or modifying a `Dockerfile`, `docker-compose.yml`, healthchecks, or container configuration → read `~/.claude/rules/docker.md`
+- **Resilience** — you are registering an `HttpClient`, consuming an external API, integrating a third-party service, or configuring retry/timeout/circuit breaker → read `~/.claude/rules/resilience.md`
+- **EF advanced** — you are writing bulk operations (`ExecuteUpdateAsync`/`ExecuteDeleteAsync`), queries with multiple joins/includes, creating migrations, or designing indexes → read `~/.claude/rules/ef-advanced.md`
+- **Testing** — you are writing unit tests or integration tests → read `~/.claude/rules/testing.md`
+- **Security** — you are implementing authentication, authorization, JWT, sensitive data handling, CORS, or rate limiting → read `~/.claude/rules/security.md`
 
 ---
 
 ## Stack
 - [.NET Version] / [C# Version]
-- [ASP.NET Core Web API / Worker Service / Blazor] — [rol: principal / consumer / híbrido]
+- [ASP.NET Core Web API / Worker Service / Blazor] — [role: primary / consumer / hybrid]
 - Entity Framework Core + [SQL Server / PostgreSQL / SQLite / MongoDB]
-- [Completar: MediatR, Serilog, etc.]
-- Mapster (mapeo de objetos)
+- [Complete: MediatR, Serilog, etc.]
+- Mapster (object mapping)
 
 ---
 
-## Cómo aplicar estas reglas
+## How to apply these rules
 
-Este documento define el estándar ideal. No todos los proyectos lo cumplen al 100% — muchos tienen deuda técnica, arquitectura inconsistente o patrones heredados.
+This document defines the ideal standard. Not all projects comply 100% — many have technical debt, inconsistent architecture, or legacy patterns.
 
-**Regla general: no rompas lo que funciona para cumplir el estándar.**
+**General rule: do not break what works in order to meet the standard.**
 
-### Al escribir código nuevo
-Aplicar siempre los estándares de este documento, aunque el código existente alrededor no los siga.
+### When writing new code
+Always apply the standards in this document, even if the surrounding existing code does not follow them.
 
-### Al modificar código existente
-- Aplicar los estándares en el código que tocas
-- Si el contexto inmediato tiene problemas, incluir al final de tu respuesta una sección `⚠️ Sugerencias de refactor` con lo detectado
-- No refactorizar fuera del alcance de la tarea — solo señalarlo
+### When modifying existing code
+- Apply standards to the code you touch
+- If the immediate context has issues, include a `⚠️ Refactor suggestions` section at the end of your response
+- Do not refactor outside the scope of the task — only flag it
 
-### Formato de advertencias
-Cuando detectes algo que no cumple los estándares, reportarlo así al final de la respuesta:
+### Warning format
+When you detect something that does not meet the standards, report it at the end of the response:
 
 ```
-⚠️ Sugerencias de refactor detectadas
+⚠️ Refactor suggestions detected
 
-[CRÍTICO] Descripción del problema — impacto en seguridad, correctitud o mantenibilidad
-[MEJORA]  Descripción del problema — mejora recomendada pero no urgente
-[TÉCNICO] Deuda técnica menor — para considerar en un sprint de refactor
+[CRITICAL]     Description — impact on security, correctness, or maintainability
+[IMPROVEMENT]  Description — recommended improvement, not urgent
+[TECHNICAL]    Minor technical debt — to address in a future refactor sprint
 ```
 
-- `[CRÍTICO]`: memory leak, captive dependency, lógica de negocio en controller, secrets hardcodeados
-- `[MEJORA]`: violación de SOLID, código duplicado, método largo, falta de tests
-- `[TÉCNICO]`: naming incorrecto, comentarios innecesarios, estructura de carpetas inconsistente
+- `[CRITICAL]`: memory leak, captive dependency, business logic in controller, hardcoded secrets
+- `[IMPROVEMENT]`: SOLID violation, duplicated code, long method, missing tests
+- `[TECHNICAL]`: incorrect naming, unnecessary comments, inconsistent folder structure
 
-### Lo que nunca debes hacer
-- No reescribir código funcional sin que el dev lo pida explícitamente
-- No bloquear una tarea porque el proyecto no tiene la arquitectura ideal
-- No aplicar el estándar de forma dogmática si rompe compatibilidad con el resto del proyecto
+### What you must never do
+- Do not rewrite working code unless the dev explicitly asks
+- Do not block a task because the project does not have the ideal architecture
+- Do not apply standards dogmatically if it breaks compatibility with the rest of the project
 
 ---
 
-## Arquitectura
+## Architecture
 
-Clean Architecture. Proyectos de la solución:
+Clean Architecture. Solution projects:
 
-| Proyecto | Responsabilidad |
+| Project | Responsibility |
 |---|---|
-| `Domain/` | Entidades, value objects, domain events, enums de dominio |
-| `Application/` | Commands, queries, DTOs, interfaces de repositorios y servicios, validators |
-| `Infrastructure/` | EF Core, repositorios, servicios externos, migraciones, integraciones |
-| `API/` | Controllers, filtros, mapeos de request/response |
-| `Host/` | Program.cs vía extension methods, middlewares, configuración de DI |
-| `Shared/` | (Opcional) Constantes, helpers, extensiones transversales |
+| `Domain/` | Entities, value objects, domain events, domain enums |
+| `Application/` | Commands, queries, DTOs, repository and service interfaces, validators |
+| `Infrastructure/` | EF Core, repositories, external services, migrations, integrations |
+| `API/` | Controllers, filters, request/response mappings |
+| `Host/` | Program.cs via extension methods, middlewares, DI configuration |
+| `Shared/` | (Optional) Constants, helpers, cross-cutting extensions |
 
-**Reglas de dependencia:**
-- Dirección: `API` → `Application` → `Domain` ← `Infrastructure`
-- Cualquier proyecto puede referenciar `Shared`
-- `API` usa `Host` para configuración
-- `Domain` no referencia ningún otro proyecto de la solución
+**Dependency rules:**
+- Direction: `API` → `Application` → `Domain` ← `Infrastructure`
+- Any project may reference `Shared`
+- `API` uses `Host` for configuration
+- `Domain` does not reference any other project in the solution
 
-**Reglas de diseño:**
-- Lógica de negocio SOLO en `Domain` y `Application`, nunca en controllers ni infraestructura
-- **CQRS con MediatR**: solo si el proyecto lo requiere explícitamente — no forzarlo
-  - Si aplica: un command/query y su handler en el mismo archivo
-  - Si no aplica: el controller llama directamente a un service de `Application/` mediante su interfaz
-- Siempre aplicar principios SOLID; si viola uno, explicar el trade-off
-- Siempre usar DI, nunca instanciar servicios con `new`
-- Aplicar patrones de diseño cuando aporten valor real (Factory, Builder, Specification, etc.) — nunca por convención
-- Responsabilidades claramente separadas; si un método hace más de una cosa, separarlo
-- Todo el código en inglés
-- Sin comentarios obvios; usar `/// <summary>` solo cuando el comportamiento no es inferible del nombre
+**Design rules:**
+- Business logic ONLY in `Domain` and `Application` — never in controllers or infrastructure
+- **CQRS with MediatR**: only if the project explicitly requires it — do not force it
+  - If applicable: one command/query and its handler in the same file
+  - If not: controller calls a service in `Application/` directly via its interface
+- Always apply SOLID principles; if one is violated, explain the trade-off
+- Always use DI — never instantiate services with `new`
+- Apply design patterns when they add real value (Factory, Builder, Specification, etc.) — never by convention
+- Clearly separated responsibilities; if a method does more than one thing, split it
+- All code in English
+- No obvious comments; use `/// <summary>` only when behavior is not inferrable from the name
 
-**Antes de implementar cualquier cosa:**
-- Evalúa el estado real del proyecto — si no sigue Clean Architecture, adapta la solución a lo que existe
-- Haz las preguntas necesarias para tener contexto completo
-- Propón al menos dos opciones con sus trade-offs (complejidad, mantenibilidad, performance, testabilidad)
-- Toda decisión de arquitectura o diseño relevante → ADR en `/docs/adr/`
-- Si la mejor solución implica refactorizar algo fuera del alcance, mencionarlo como `[MEJORA]` sin hacerlo
+**Before implementing anything:**
+- Evaluate the real state of the project — if it does not follow Clean Architecture, adapt to what exists
+- Ask the necessary questions to have full context
+- Propose at least two options with their trade-offs (complexity, maintainability, performance, testability)
+- Any relevant architecture or design decision → ADR in `/docs/adr/`
+- If the best solution requires refactoring something out of scope, flag it as `[IMPROVEMENT]` without doing it
 
 ---
 
 ## Controllers
 
-- Thin controllers: solo reciben request, llaman Application, retornan response
-- Siempre retornan `ApiResponse<T>` (con campos: `Success`, `Result`, `Message`)
-- Rutas en PascalCase iniciando con `/api` — ej: `/api/Users/{id}`
-- Documentar todos los posibles códigos de respuesta para Swagger con `[ProducesResponseType]`
-- Versioning de API cuando hay breaking changes — nunca modificar un endpoint existente sin versionar
+- Thin controllers: only receive request, call Application, return response
+- Always return `ApiResponse<T>` (fields: `Success`, `Result`, `Message`)
+- Routes in PascalCase starting with `/api` — e.g. `/api/Users/{id}`
+- Document all possible response codes for Swagger with `[ProducesResponseType]`
+- API versioning on breaking changes — never modify an existing endpoint without versioning
 
 ---
 
-## Manejo de errores
+## Error handling
 
-- Exception handler global en middleware — nunca `try/catch` en controllers
-- Excepciones de dominio/aplicación heredan de una base y declaran explícitamente su código HTTP
-- `Result<T>` para errores esperados y flujos alternativos — nunca usar exceptions para control de flujo
-- Errores de validación → 400 con detalle de campos
-- Errores de negocio → código HTTP explícito en la excepción personalizada
-- Errores inesperados → 500 logueado con correlationId, sin exponer stack trace al cliente
+- Global exception handler middleware — never `try/catch` in controllers
+- Domain/application exceptions inherit from a base class and declare their HTTP code explicitly
+- `Result<T>` for expected errors and alternative flows — never use exceptions for control flow
+- Validation errors → 400 with field details
+- Business errors → explicit HTTP code in the custom exception
+- Unexpected errors → 500 logged with correlationId, without exposing stack trace to the client
 
 ---
 
-## Convenciones C#
+## C# conventions
 
-- `PascalCase`: clases, métodos, propiedades, eventos, constantes
-- Constantes en clases estáticas agrupadas por dominio (`ErrorCodes`, `PolicyNames`, `RouteConstants`, etc.) — nunca strings literales dispersos en el código
-- Única excepción permitida: mensajes de log (pueden ser strings literales inline)
-- `camelCase`: parámetros, variables locales, campos privados
+- `PascalCase`: classes, methods, properties, events, constants
+- Constants in static classes grouped by domain (`ErrorCodes`, `PolicyNames`, `RouteConstants`, etc.) — never scattered string literals in code
+- Only exception allowed: log messages (can be inline string literals)
+- `camelCase`: parameters, local variables, private fields
 - `I` prefix: interfaces (`IUserRepository`)
-- `Async` suffix: todo método async (`GetUserAsync`)
-- Records para DTOs y value objects inmutables
-- Preferir tipo explícito sobre `var`; usar `var` solo cuando el tipo es evidente por el lado derecho
-- Siempre `async/await` para I/O — nunca `.Result`, `.Wait()` ni `.GetAwaiter().GetResult()`
-- Usar `CancellationToken` en todos los métodos async que hagan I/O o llamen a servicios externos
-- Preferir `IReadOnlyList<T>` / `IEnumerable<T>` sobre `List<T>` en firmas públicas
-- Expresiones `switch` sobre `if/else if` encadenados para múltiples casos
-- Usar `is null` / `is not null` en lugar de `== null` / `!= null`
-- Habilitar `<Nullable>enable</Nullable>` en todos los proyectos
-- No suprimir nullable warnings con `!` sin un comentario que explique por qué es seguro
-- Nunca retornar `null` desde un servicio para indicar "no encontrado" — usar `Result<T>` o lanzar excepción
-- Para colecciones: retornar siempre colección vacía, nunca `null`
+- `Async` suffix: every async method (`GetUserAsync`)
+- Records for immutable DTOs and value objects
+- Prefer explicit type over `var`; use `var` only when the type is obvious from the right-hand side
+- Always `async/await` for I/O — never `.Result`, `.Wait()`, or `.GetAwaiter().GetResult()`
+- Use `CancellationToken` in all async methods that do I/O or call external services
+- Prefer `IReadOnlyList<T>` / `IEnumerable<T>` over `List<T>` in public signatures
+- `switch` expressions over chained `if/else if` for multiple cases
+- Use `is null` / `is not null` instead of `== null` / `!= null`
+- Enable `<Nullable>enable</Nullable>` in all projects
+- Do not suppress nullable warnings with `!` without a comment explaining why it is safe
+- Never return `null` from a service to indicate "not found" — use `Result<T>` or throw an exception
+- For collections: always return empty collection, never `null`
 
 ---
 
-## Mapeo de objetos (Mapster)
+## Object mapping (Mapster)
 
-- Usar Mapster para todo mapeo entre capas — nunca mapeo manual salvo casos muy simples
-- Configuraciones de mapeo en clases `XMappingConfig` que implementan `IRegister`, ubicadas en `Application/`
-- Registrar todos los `IRegister` automáticamente al iniciar: `TypeAdapterConfig.GlobalSettings.Scan(assembly)`
-- Inyectar `IMapper` via DI — no usar `TypeAdapter.Adapt<T>()` estático en servicios
-- Mapeos permitidos: `Entity → XResponse`, `XRequest → Entity`, `XRequest → Command/Query`
-- Nunca mapear directamente `Entity → Entity` para actualizaciones — asignar propiedades explícitamente para que la intención sea clara
-- Si un mapeo requiere lógica (calcular campos, resolvers), documentarlo en el `IRegister` con un comentario técnico
+- Use Mapster for all cross-layer mapping — never manual mapping except for very simple cases
+- Mapping configs in `XMappingConfig` classes implementing `IRegister`, located in `Application/`
+- Register all `IRegister` automatically at startup: `TypeAdapterConfig.GlobalSettings.Scan(assembly)`
+- Inject `IMapper` via DI — do not use static `TypeAdapter.Adapt<T>()` in services
+- Allowed mappings: `Entity → XResponse`, `XRequest → Entity`, `XRequest → Command/Query`
+- Never map `Entity → Entity` directly for updates — assign properties explicitly so intent is clear
+- If a mapping requires logic (computed fields, resolvers), document it in the `IRegister` with a technical comment
 
 ---
 
-## DTOs y Validaciones
+## DTOs and validation
 
-- DTOs se nombran `XRequest` (entrada) y `XResponse` (salida) — sin sufijo genérico "Dto"
-- Validaciones con DataAnnotations directamente en los `XRequest`
-- Activar validación automática del modelo con el filtro de validación de ASP.NET Core — no validar manualmente en controllers ni services
-- No duplicar validaciones: si EF tiene una constraint, no replicarla en DataAnnotations a menos que el error de DB sea inaceptable como respuesta al cliente
+- DTOs named `XRequest` (input) and `XResponse` (output) — no generic "Dto" suffix
+- Validation with DataAnnotations directly on `XRequest` classes
+- Enable automatic model validation with the ASP.NET Core validation filter — do not validate manually in controllers or services
+- Do not duplicate validations: if EF has a constraint, do not replicate it in DataAnnotations unless the DB error is unacceptable as a client response
 
 ---
 
 ## Entity Framework Core
 
-- Configuración de entidades con `IEntityTypeConfiguration<T>` en `Infrastructure/` — nunca data annotations en Domain
-- Queries de lectura: siempre `.AsNoTracking()` salvo que se vaya a modificar
-- Proyectar con `.Select()` en queries de lectura — nunca cargar entidad completa para leer 2 campos
-- Evitar N+1: usar `.Include()` solo cuando sea necesario y con criterio; preferir joins explícitos en queries complejas
-- Paginación obligatoria en endpoints que devuelven colecciones — no exponer endpoints sin límite
-- Nunca exponer `DbContext` fuera de `Infrastructure/`
-- Migrations con nombre descriptivo: `AddOrderAuditFields`, no `Migration20240101`
-- No modificar migrations ya aplicadas en producción — siempre crear una nueva
+- Entity configuration with `IEntityTypeConfiguration<T>` in `Infrastructure/` — never data annotations in Domain
+- Read queries: always `.AsNoTracking()` unless the entity will be modified
+- Project with `.Select()` on read queries — never load full entity to read 2 fields
+- Avoid N+1: use `.Include()` only when necessary and with judgment; prefer explicit joins for complex queries
+- Pagination mandatory on endpoints returning collections — never expose unlimited endpoints
+- Never expose `DbContext` outside `Infrastructure/`
+- Descriptive migration names: `AddOrderAuditFields`, not `Migration20240101`
+- Never modify migrations already applied in production — always create a new one
 
 ---
 
 ## Logging
 
-- Usar `ILogger<T>` en todos los servicios — nunca `Console.WriteLine`
-- Logging estructurado con Serilog; siempre incluir propiedades relevantes como contexto
-- Niveles:
-  - `Debug`: flujo interno, valores intermedios (solo desarrollo)
-  - `Information`: eventos de negocio relevantes (request recibido, proceso completado)
-  - `Warning`: situación inesperada pero recuperable
-  - `Error`: fallo que impacta al usuario, siempre con excepción si aplica
-- Nunca loguear: passwords, tokens, tarjetas, PII, connection strings
-- Incluir `correlationId` en todos los logs para trazabilidad
-- Enriquecer con: environment, version, userId (cuando aplique)
+- Use `ILogger<T>` in all services — never `Console.WriteLine`
+- Structured logging with Serilog; always include relevant properties as context
+- Levels:
+  - `Debug`: internal flow, intermediate values (development only)
+  - `Information`: relevant business events (request received, process completed)
+  - `Warning`: unexpected but recoverable situation
+  - `Error`: failure that impacts the user; always include exception if applicable
+- Never log: passwords, tokens, cards, PII, connection strings
+- Include `correlationId` in all logs for traceability
+- Enrich with: environment, version, userId (when applicable)
 
 ---
 
-## Configuración (Options pattern)
+## Configuration (Options pattern)
 
-- Leer configuración en servicios con `IOptions<T>`, `IOptionsSnapshot<T>` o `IOptionsMonitor<T>` — nunca `IConfiguration` fuera de `Host/`
-- Una clase de opciones por sección (`SmtpOptions`, `JwtOptions`, etc.) con `.ValidateDataAnnotations().ValidateOnStart()`
+- Read configuration in services exclusively with `IOptions<T>`, `IOptionsSnapshot<T>`, or `IOptionsMonitor<T>` — never inject `IConfiguration` outside `Host/`
+- One options class per configuration section (`SmtpOptions`, `JwtOptions`, etc.) with `.ValidateDataAnnotations().ValidateOnStart()`
 
 ---
 
-## Ciclo de vida de dependencias
+## Dependency lifetimes
 
-Registrar cada servicio con el lifetime correcto — los bugs por lifetime incorrecto son silenciosos y difíciles de detectar:
+Register each service with the correct lifetime — bugs from incorrect lifetimes are silent and hard to detect:
 
-| Lifetime | Cuándo usarlo |
+| Lifetime | When to use |
 |---|---|
-| `Singleton` | Sin estado mutable, thread-safe, costoso de crear (`IHttpClientFactory`, caches, configuración) |
-| `Scoped` | Una instancia por request HTTP (`DbContext`, repositorios, servicios de negocio) |
-| `Transient` | Liviano, sin estado, barato de crear |
+| `Singleton` | No mutable state, thread-safe, expensive to create (`IHttpClientFactory`, caches, configuration) |
+| `Scoped` | One instance per HTTP request (`DbContext`, repositories, business services) |
+| `Transient` | Lightweight, stateless, cheap to create |
 
-**Reglas críticas:**
-- Nunca inyectar un servicio `Scoped` en un `Singleton` — captive dependency, causa bugs en concurrencia
-- Nunca inyectar un `DbContext` directamente en un `Singleton` — usar `IServiceScopeFactory` para crear un scope explícito
-- Los `IDisposable` registrados como `Transient` en un `Singleton` nunca se liberan — evitarlo
-- Si un `Singleton` necesita un servicio `Scoped`, inyectar `IServiceScopeFactory` y crear el scope manualmente
-
----
-
-## Seguridad
-
-- Connection strings exclusivamente desde `IConfiguration` (User Secrets en dev, env vars / secrets manager en prod)
-- Nunca hardcodear credenciales, tokens ni URLs de servicios internos
-- Autorización con políticas (`[Authorize(Policy = "...")]`) — nunca lógica de roles en controllers
-- Validar y sanitizar toda entrada en el borde del sistema (controllers/endpoints)
-- No exponer IDs internos de base de datos en APIs públicas — usar GUIDs o IDs ofuscados
-- HTTPS obligatorio; no aceptar HTTP en producción
+**Critical rules:**
+- Never inject a `Scoped` service into a `Singleton` — captive dependency, causes concurrency bugs
+- Never inject `DbContext` directly into a `Singleton` — use `IServiceScopeFactory` to create an explicit scope
+- `IDisposable` registered as `Transient` inside a `Singleton` are never released — avoid this
+- If a `Singleton` needs a `Scoped` service, inject `IServiceScopeFactory` and create the scope manually
 
 ---
 
-## Performance y gestión de recursos
+## Security
 
-- Nunca `new HttpClient()` — siempre `IHttpClientFactory` para evitar socket exhaustion
-- `IDisposable` / `IAsyncDisposable` en clases con recursos no administrados; siempre con `using` / `await using`
-- `async void` solo en event handlers — en cualquier otro caso `async Task`
-- No capturar `this` en closures de larga vida sin desuscribirse — memory leak clásico
-- `StringBuilder` en loops — nunca `string +=` dentro de iteraciones
-- `IAsyncEnumerable<T>` para streaming de grandes volúmenes — nunca `.ToList()` de miles de registros
-- Operaciones bulk con `ExecuteUpdateAsync` / `ExecuteDeleteAsync` — nunca cargar entidades solo para modificarlas masivamente
+- Connection strings exclusively from `IConfiguration` (User Secrets in dev, env vars / secrets manager in prod)
+- Never hardcode credentials, tokens, or internal service URLs
+- Authorization with policies (`[Authorize(Policy = "...")]`) — never role logic in controllers
+- Validate and sanitize all input at the system boundary (controllers/endpoints)
+- Do not expose internal database IDs in public APIs — use GUIDs or obfuscated IDs
+- HTTPS mandatory; do not accept HTTP in production
 
 ---
 
-## Resiliencia
+## Performance and resource management
 
-Toda llamada a servicio externo (HTTP, colas, terceros) necesita timeout + retry con backoff + circuit breaker, configurados via `IHttpClientFactory` con `AddResilienceHandler` — nunca inline en cada llamada. No reintentar 4xx.
+- Never `new HttpClient()` — always `IHttpClientFactory` to avoid socket exhaustion
+- `IDisposable` / `IAsyncDisposable` on classes managing unmanaged resources; always with `using` / `await using`
+- `async void` only in event handlers — in any other case use `async Task`
+- Do not capture `this` in long-lived closures without unsubscribing — classic memory leak
+- `StringBuilder` in loops — never `string +=` inside iterations
+- `IAsyncEnumerable<T>` for streaming large volumes — never `.ToList()` on thousands of records
+- Bulk operations with `ExecuteUpdateAsync` / `ExecuteDeleteAsync` — never load entities just to modify them in bulk
+
+---
+
+## Resilience
+
+Every call to an external service (HTTP, queues, third parties) needs timeout + retry with backoff + circuit breaker, configured via `IHttpClientFactory` with `AddResilienceHandler` — never inline per call. Do not retry 4xx.
 
 ---
 
 ## Testing
 
-- Librerías: xUnit + FluentAssertions + NSubstitute
-- Proyectos: `[Nombre].Tests.Unit` y `[Nombre].Tests.Integration`
+- Libraries: xUnit + FluentAssertions + NSubstitute
+- Projects: `[Name].Tests.Unit` and `[Name].Tests.Integration`
 - Naming: `MethodName_Scenario_ExpectedResult`
-- Patrón AAA obligatorio con secciones `// Arrange`, `// Act`, `// Assert` explícitas
-- Testear comportamiento observable, no implementación interna
-- Cada test independiente: sin estado compartido, sin dependencia de orden
-- Integration tests: `WebApplicationFactory` para endpoints, Testcontainers o SQLite in-memory para repositorios
+- AAA pattern mandatory with explicit `// Arrange`, `// Act`, `// Assert` sections
+- Test observable behavior, not internal implementation
+- Each test independent: no shared state, no order dependency
+- Integration tests: `WebApplicationFactory` for endpoints, Testcontainers or SQLite in-memory for repositories
 
-Usa `/user:test-dotnet` para generar tests de cambios pendientes o de un commit específico.
+Use `/user:test-dotnet` to generate tests for pending changes or a specific commit.
 
 ---
 
-## Calidad de código y patrones
+## Code quality and patterns
 
 ### Guard clauses
 
-- Retornar o lanzar temprano para casos inválidos — nunca anidar la lógica principal dentro de `if`
-- El happy path debe ser el flujo principal, sin indentación excesiva
+- Return or throw early for invalid cases — never nest the main logic inside `if`
+- The happy path must be the main flow, without excessive indentation
 
 ```csharp
-// MAL
+// BAD
 if (user != null) {
     if (user.IsActive) {
-        // lógica principal...
+        // main logic...
     }
 }
 
-// BIEN
+// GOOD
 if (user is null) throw new NotFoundException();
 if (!user.IsActive) throw new BusinessException("User is inactive");
-// lógica principal...
+// main logic...
 ```
 
-### Modelo de dominio rico
+### Rich domain model
 
-- Las entidades tienen comportamiento, no son solo bolsas de propiedades
-- La lógica que pertenece a una entidad va como método en esa entidad, no en un service
-- Usar Value Objects para conceptos del dominio con identidad por valor (`Email`, `Money`, `Address`)
-- Evitar primitive obsession: un `string email` suelto es peor que un `Email` value object con su propia validación
-- Domain events para efectos secundarios desacoplados — no llamar servicios directamente desde la entidad
+- Entities have behavior — they are not just property bags
+- Logic that belongs to an entity goes as a method on that entity, not in a service
+- Use Value Objects for domain concepts with value identity (`Email`, `Money`, `Address`)
+- Avoid primitive obsession: a loose `string email` is worse than an `Email` value object with its own validation
+- Domain events for decoupled side effects — do not call services directly from the entity
 
-### Composición sobre herencia
+### Composition over inheritance
 
-- Preferir interfaces + composición sobre jerarquías de herencia profundas
-- Máximo 2 niveles de herencia; si necesitas más, replantear el diseño
-- Decorators para comportamiento transversal (logging, caching, retry) — no heredar para agregar comportamiento
+- Prefer interfaces + composition over deep inheritance hierarchies
+- Maximum 2 inheritance levels; if you need more, rethink the design
+- Decorators for cross-cutting behavior (logging, caching, retry) — do not inherit to add behavior
 
-### Detección de code smells
+### Code smell detection
 
-Al revisar o escribir código, identificar y proponer solución para:
-- **Método largo** (> 20 líneas): extraer métodos privados con nombre descriptivo
-- **Lista larga de parámetros** (> 3): agrupar en un objeto de parámetros o usar Builder
-- **Clase grande** (> 300 líneas): evaluar si tiene más de una responsabilidad (SRP)
-- **Feature envy**: método que usa más datos de otra clase que de la propia → mover el método
-- **Números mágicos**: cualquier número literal que no sea 0 o 1 → constante nombrada
-
----
-
-## Lo que NO hacer
-
-- No strings literales hardcodeados en el código — usar constantes; excepción: mensajes de log
-- No `dynamic`, no `object` como tipo de retorno o parámetro
-- No `.Result` / `.Wait()` / `.GetAwaiter().GetResult()` en código async
-- No `catch (Exception)` genérico sin re-throw o logging estructurado
-- No lógica de negocio en controllers, middlewares ni infrastructure
-- No exponer `DbContext` fuera de `Infrastructure/`
-- No retornar entidades de EF directamente desde la API — siempre DTOs/records
-- No servicios estáticos con estado mutable
-- No agregar paquetes NuGet sin discutir primero y evaluar mantenimiento y licencia
-- No omitir `CancellationToken` en métodos async que hagan I/O
-- No agregar un nuevo `case` a un `switch` existente sin evaluar si corresponde extraer un patrón
+When reviewing or writing code, identify and propose solutions for:
+- **Long method** (> 20 lines): extract private methods with descriptive names
+- **Long parameter list** (> 3): group into a parameter object or use Builder
+- **Large class** (> 300 lines): evaluate whether it has more than one responsibility (SRP)
+- **Feature envy**: method using more data from another class than its own → move the method
+- **Magic numbers**: any numeric literal that is not 0 or 1 → named constant
 
 ---
 
-## Documentación técnica
+## What NOT to do
+
+- No hardcoded string literals in code — use constants; exception: log messages
+- No `dynamic`, no `object` as return type or parameter
+- No `.Result` / `.Wait()` / `.GetAwaiter().GetResult()` in async code
+- No generic `catch (Exception)` without re-throw or structured logging
+- No business logic in controllers, middlewares, or infrastructure
+- Never expose `DbContext` outside `Infrastructure/`
+- Never return EF entities directly from the API — always DTOs/records
+- No static services with mutable state
+- Never add NuGet packages without discussion and evaluation of maintenance and license
+- Never omit `CancellationToken` in async methods doing I/O
+- Never add a new `case` to an existing `switch` without evaluating whether a pattern should be extracted
+
+---
+
+## Technical documentation
 
 ### README.md
-El README es la puerta de entrada al proyecto — debe estar siempre actualizado. Estructura mínima obligatoria:
+The README is the entry point to the project — it must always be up to date. Minimum required structure:
 
 ```
-# Nombre del proyecto
-Descripción breve de qué hace y para qué existe.
+# Project name
+Brief description of what it does and why it exists.
 
-## Arquitectura
-Diagrama o descripción de los componentes principales y cómo se relacionan.
+## Architecture
+Diagram or description of the main components and how they relate.
 
-## Requisitos
-Versiones de .NET, herramientas, servicios externos necesarios.
+## Requirements
+.NET versions, tools, and external services needed.
 
-## Configuración
-Tabla de todas las variables de entorno / secciones de appsettings con:
-- Nombre de la variable
-- Descripción
-- Valor de ejemplo
-- Si es obligatoria u opcional
+## Configuration
+Table of all environment variables / appsettings sections with:
+- Variable name
+- Description
+- Example value
+- Whether required or optional
 
-## Cómo correr el proyecto
-Pasos para levantar localmente (con y sin Docker si aplica).
+## How to run the project
+Steps to run locally (with and without Docker if applicable).
 
-## Cómo correr los tests
-Comandos exactos para unit e integration tests.
+## How to run the tests
+Exact commands for unit and integration tests.
 
-## Despliegue
-Proceso de despliegue por ambiente (dev / staging / prod).
+## Deployment
+Deployment process per environment (dev / staging / prod).
 ```
 
-**Regla**: si haces un cambio que afecta configuración, variables de entorno, endpoints o proceso de despliegue → actualizar el README en el mismo PR, no después.
+**Rule**: if you make a change that affects configuration, environment variables, endpoints, or deployment process → update the README in the same PR, not later.
 
 ### ADRs
-- Ubicación: `/docs/adr/`
-- Formato de nombre: `NNNN-titulo-en-kebab-case.md`
-- Contenido: contexto, opciones consideradas, decisión tomada, consecuencias
+- Location: `/docs/adr/`
+- Name format: `NNNN-title-in-kebab-case.md`
+- Content: context, options considered, decision taken, consequences
 
-### Código
-- `/// <summary>` en métodos públicos no obvios, interfaces y value objects
+### Code
+- `/// <summary>` on non-obvious public methods, interfaces, and value objects
 
 ---
 
-## Comandos disponibles
-- `/user:init-dotnet`    — configuración inicial del proyecto (ejecutar una sola vez)
-- `/user:plan-dotnet`    — planea un requerimiento con trade-offs antes de implementar
-- `/user:review-dotnet`  — revisión completa de todos los cambios del branch
-- `/user:commit-dotnet`  — genera mensaje de commit en Conventional Commits
-- `/user:test-dotnet`    — genera unit tests de cambios pendientes o de un commit
-- `/user:docker-dotnet`  — revisa o genera configuración Docker/Compose
+## Available commands
+- `/user:init-dotnet`   — initial project setup (run once)
+- `/user:plan-dotnet`   — plan a requirement with trade-offs before implementing
+- `/user:review-dotnet` — full review of all branch changes
+- `/user:commit-dotnet` — generate commit message in Conventional Commits
+- `/user:test-dotnet`   — generate unit tests for pending changes or a commit
+- `/user:docker-dotnet` — review or generate Docker/Compose configuration

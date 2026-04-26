@@ -1,125 +1,125 @@
-# Inicializar y adaptar estándares al proyecto
+# Initialize and adapt standards to the project
 
-Ejecuta este análisis completo UNA SOLA VEZ. El objetivo es generar un CLAUDE.md que sea fiel tanto a los estándares base de la empresa como a la realidad de este proyecto específico.
-
----
-
-## Fase 1 — Análisis de la solución
-
-Explora el proyecto con profundidad antes de escribir nada.
-
-### Estructura general
-- Lee el `.sln` y todos los `.csproj` para entender los proyectos y sus dependencias
-- Mapea la estructura de carpetas completa (ignora bin/, obj/, .git/, .vs/, node_modules/)
-- Identifica cuántos proyectos hay y cuál es el rol de cada uno
-
-### Stack y dependencias
-- Extrae todos los `PackageReference` de cada `.csproj`
-- Identifica las librerías clave: ORM, mensajería, logging, autenticación, mapeo, etc.
-- Detecta la versión de .NET y C# de cada proyecto
-
-### Arquitectura real
-- Lee `Program.cs` / `Startup.cs` para entender el setup de DI y middlewares
-- Analiza los namespaces para entender las capas reales del proyecto
-- Lee 2-3 archivos representativos de cada capa (controllers, services, repositories, entities)
-- Detecta los patrones usados: ¿hay CQRS? ¿Repository pattern? ¿Clean Architecture? ¿Capas simples?
-- Identifica si hay `ApiResponse<T>` u otra clase base de respuesta
-- Detecta cómo se manejan los errores: ¿middleware global? ¿try/catch por controller?
-
-### Convenciones reales del código
-- Analiza el naming real de archivos y clases (¿usan Request/Response? ¿Dto? ¿ViewModel?)
-- Detecta cómo se nombran los métodos async (¿tienen sufijo Async?)
-- Identifica si usan `var` o tipo explícito
-- Detecta el estilo de inyección: ¿constructor? ¿`inject()`?
-- Revisa si hay constantes organizadas en clases estáticas o strings literales sueltos
-
-### Deuda técnica y desviaciones
-- Identifica qué partes del proyecto NO siguen la arquitectura ideal
-- Detecta antipatrones comunes: lógica de negocio en controllers, DBContext expuesto, etc.
-- Nota qué está bien implementado y qué necesita refactoring eventual
+Run this analysis ONCE. The goal is to generate a CLAUDE.md that reflects both the company base standards and the reality of this specific project.
 
 ---
 
-## Fase 2 — Descargar el template base y adaptarlo
+## Phase 1 — Analyze the solution
 
-**Primero descarga el template completo — nunca generes el CLAUDE.md desde cero.**
+Explore the project thoroughly before writing anything.
+
+### General structure
+- Read the `.sln` and all `.csproj` files to understand projects and their dependencies
+- Map the full folder structure (ignore bin/, obj/, .git/, .vs/, node_modules/)
+- Identify how many projects exist and the role of each
+
+### Stack and dependencies
+- Extract all `PackageReference` entries from each `.csproj`
+- Identify key libraries: ORM, messaging, logging, auth, mapping, etc.
+- Detect the .NET and C# version of each project
+
+### Real architecture
+- Read `Program.cs` / `Startup.cs` to understand DI setup and middlewares
+- Analyze namespaces to understand the real project layers
+- Read 2–3 representative files per layer (controllers, services, repositories, entities)
+- Detect patterns in use: CQRS? Repository pattern? Clean Architecture? Simple layers?
+- Identify if there is an `ApiResponse<T>` or similar base response class
+- Detect error handling approach: global middleware? try/catch per controller?
+
+### Real code conventions
+- Analyze actual naming of files and classes (Request/Response? Dto? ViewModel?)
+- Detect how async methods are named (do they have the `Async` suffix?)
+- Identify whether they use `var` or explicit types
+- Detect injection style: constructor? `inject()`?
+- Check if constants are organized in static classes or scattered as string literals
+
+### Technical debt and deviations
+- Identify parts of the project that do NOT follow the ideal architecture
+- Detect common anti-patterns: business logic in controllers, exposed DbContext, etc.
+- Note what is well implemented and what needs eventual refactoring
+
+---
+
+## Phase 2 — Download the base template and adapt it
+
+**Download the full template first — never generate CLAUDE.md from scratch.**
 
 ```bash
 curl -fsSL "https://raw.githubusercontent.com/Brayanhenaor/ai-standards/master/templates/dotnet/CLAUDE.md" -o CLAUDE.md
 ```
 
-El proyecto solo tendrá este archivo. Las reglas detalladas (`docker.md`, `resilience.md`, `ef-advanced.md`, `testing.md`, `security.md`) ya están instaladas globalmente en `~/.claude/rules/` por el `npx` setup — no se necesitan en el proyecto.
+The project will only have this file. Detailed rules (`docker.md`, `resilience.md`, `ef-advanced.md`, `testing.md`, `security.md`) are already installed globally in `~/.claude/rules/` by the `npx` setup — they are not needed in the project.
 
-Luego lee el archivo descargado y aplica las siguientes adaptaciones sobre él:
+Then read the downloaded file and apply the following adaptations:
 
-### Secciones que DEBES modificar
-- **Título** (`# [NombreProyecto]`) → nombre real del proyecto
-- **Stack** → versiones y paquetes reales detectados en los `.csproj`
-- **Arquitectura** → describe LO QUE HAY realmente: capas reales, carpetas reales, patrones reales
-- **Convenciones C#** → ajusta solo lo que el proyecto ya hace distinto (naming, var vs tipo explícito, etc.)
+### Sections you MUST modify
+- **Title** (`# [ProjectName]`) → real project name
+- **Stack** → real versions and packages detected in the `.csproj` files
+- **Architecture** → describe WHAT IS THERE: real layers, real folders, real patterns
+- **C# conventions** → adjust only what the project already does differently (naming, var vs explicit type, etc.)
 
-### Secciones que NO debes tocar
-Todo lo demás se mantiene exactamente como está en el template:
-- Manejo de errores, logging, seguridad, performance, resiliencia
-- EF Core, Mapster, DTOs, testing, calidad de código
-- Docker, documentación, lo que NO hacer
+### Sections you must NOT touch
+Everything else stays exactly as in the template:
+- Error handling, logging, security, performance, resilience
+- EF Core, Mapster, DTOs, testing, code quality
+- Documentation, what NOT to do
 
-### Balance reglas base vs adaptación
+### Balance: base rules vs adaptation
 
-| Sección | Qué hacer |
+| Section | What to do |
 |---|---|
-| Calidad, seguridad, performance | Mantener sin cambios — son no negociables |
-| Arquitectura ideal | Adaptar: describir la arquitectura real + indicar hacia dónde evolucionar |
-| Naming y convenciones | Adaptar al estilo real del proyecto para no generar inconsistencias |
-| Patrones (CQRS, Repository, etc.) | Solo incluir los que el proyecto ya usa o tiene intención clara de adoptar |
-| Deuda técnica detectada | Agregar sección `## Estado actual del proyecto` con hallazgos reales |
+| Quality, security, performance | Keep unchanged — non-negotiable |
+| Ideal architecture | Adapt: describe the real architecture + indicate evolution direction |
+| Naming and conventions | Adapt to the project's real style to avoid inconsistencies |
+| Patterns (CQRS, Repository, etc.) | Include only those already in use or with clear adoption intent |
+| Detected technical debt | Add `## Current project state` section with real findings |
 
-### Sección adicional obligatoria si hay deuda
+### Mandatory additional section if there is debt
 
-Si detectas desviaciones significativas de los estándares, agrega esta sección al CLAUDE.md:
+If you detect significant deviations from standards, add this section to CLAUDE.md:
 
 ```markdown
-## Estado actual del proyecto
+## Current project state
 
-### Lo que está bien
-- [lista de buenas prácticas ya implementadas]
+### What is working well
+- [list of good practices already in place]
 
-### Deuda técnica detectada
-- [CRÍTICO] descripción — afecta correctitud o seguridad
-- [MEJORA] descripción — violación de estándares, prioridad media
-- [TÉCNICO] descripción — limpieza menor
+### Technical debt detected
+- [CRITICAL] description — affects correctness or security
+- [IMPROVEMENT] description — standards violation, medium priority
+- [TECHNICAL] minor debt — for a future refactor sprint
 
-### Dirección de evolución
-- [qué refactors graduales se recomiendan y en qué orden]
+### Evolution direction
+- [recommended gradual refactors and suggested order]
 ```
 
 ---
 
-## Fase 3 — Escribir y confirmar
+## Phase 3 — Write and confirm
 
-1. Escribe el CLAUDE.md adaptado sobre el archivo descargado
-2. Si hay deuda técnica significativa, agrega la sección `## Estado actual del proyecto` antes de `## Comandos disponibles`
-3. Presenta al dev el siguiente resumen:
+1. Write the adapted CLAUDE.md over the downloaded file
+2. If there is significant technical debt, add the `## Current project state` section before `## Available commands`
+3. Present the following summary to the dev:
 
 ```
-✅ Proyecto inicializado: [NombreProyecto]
+✅ Project initialized: [ProjectName]
 
-Stack detectado:
+Stack detected:
   • .NET X / C# X
-  • [tipo de proyecto]
-  • [DB y ORM]
-  • [paquetes clave]
+  • [project type]
+  • [DB and ORM]
+  • [key packages]
 
-Arquitectura detectada:
-  • [descripción en 1-2 líneas de lo que encontraste]
+Architecture detected:
+  • [1–2 line description of what you found]
 
-[Si hay deuda]: ⚠️ Se detectaron N items de deuda técnica — ver sección "Estado actual" en CLAUDE.md
+[If debt exists]: ⚠️ N technical debt items detected — see "Current project state" in CLAUDE.md
 
-Comandos disponibles:
-  /user:init-dotnet   — este comando (ya ejecutado)
-  /user:plan-dotnet   — planea un requerimiento antes de implementar
-  /user:review-dotnet — revisión completa de cambios antes de PR
-  /user:commit-dotnet — genera mensaje de commit en Conventional Commits
-  /user:test-dotnet   — genera unit tests de cambios pendientes o de un commit
-  /user:docker-dotnet — revisa o genera configuración Docker/Compose
+Available commands:
+  /user:init-dotnet   — this command (already executed)
+  /user:plan-dotnet   — plan a requirement before implementing
+  /user:review-dotnet — full review of branch changes before PR
+  /user:commit-dotnet — generate commit message in Conventional Commits
+  /user:test-dotnet   — generate unit tests for pending changes or a commit
+  /user:docker-dotnet — review or generate Docker/Compose configuration
 ```
