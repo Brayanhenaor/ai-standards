@@ -1,0 +1,16 @@
+{
+  "name": "ai-standards",
+  "version": "1.0.0",
+  "description": "Claude Code standards for development teams",
+  "bin": {
+    "ai-standards": "./bin/cli.js"
+  },
+  "files": [
+    "bin/",
+    "global/",
+    "templates/"
+  ],
+  "engines": {
+    "node": ">=18"
+  }
+}

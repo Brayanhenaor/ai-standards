@@ -112,11 +112,8 @@ Arquitectura detectada:
 [Si hay deuda]: ⚠️ Se detectaron N items de deuda técnica — ver sección "Estado actual" en CLAUDE.md
 
 Comandos disponibles:
-  /project:init-btw           — este comando (ya ejecutado)
-  /project:plan-implementation — planea un requerimiento antes de implementar
-  /project:review             — revisión completa de cambios antes de PR
-  /project:commit-message     — genera mensaje de commit en Conventional Commits
-  /project:pr                 — genera descripción de PR
-  /project:task               — desglosa una tarea en pasos técnicos
-  /project:fix                — debugging sistemático
+  /user:init-btw             — este comando (ya ejecutado)
+  /user:plan-implementation  — planea un requerimiento antes de implementar
+  /user:review               — revisión completa de cambios antes de PR
+  /user:commit-message       — genera mensaje de commit en Conventional Commits
 ```

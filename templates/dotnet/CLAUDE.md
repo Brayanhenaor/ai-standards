@@ -455,10 +455,7 @@ depends_on:
 ---
 
 ## Comandos disponibles
-- `/project:init-btw`          — configuración inicial del proyecto (ejecutar una sola vez)
-- `/project:plan-implementation` — planea un requerimiento con trade-offs antes de implementar
-- `/project:review`            — revisión completa de todos los cambios del branch
-- `/project:commit-message`    — genera mensaje de commit en Conventional Commits
-- `/project:pr`                — genera descripción de PR
-- `/project:task`              — desglosa una tarea en pasos técnicos
-- `/project:fix`               — debugging sistemático
+- `/user:init-btw`             — configuración inicial del proyecto (ejecutar una sola vez)
+- `/user:plan-implementation`  — planea un requerimiento con trade-offs antes de implementar
+- `/user:review`               — revisión completa de todos los cambios del branch
+- `/user:commit-message`       — genera mensaje de commit en Conventional Commits
