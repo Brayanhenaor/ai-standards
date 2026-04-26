@@ -2,14 +2,14 @@
 # setup-project.sh — Configura Claude Code en el proyecto actual
 #
 # Uso (desde la raiz del proyecto):
-#   curl -fsSL https://raw.githubusercontent.com/[tu-empresa]/ai-standards/main/scripts/setup-project.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/Brayanhenaor/ai-standards/master/scripts/setup-project.sh | bash
 #
 # O desde el repo clonado:
 #   bash path/to/ai-standards/scripts/setup-project.sh
 
 set -e
 
-BASE_URL="https://raw.githubusercontent.com/[tu-empresa]/ai-standards/main"
+BASE_URL="https://raw.githubusercontent.com/Brayanhenaor/ai-standards/master"
 CLAUDE_DIR="$(pwd)/.claude"
 COMMANDS_DIR="$CLAUDE_DIR/commands"
 FORCE=false

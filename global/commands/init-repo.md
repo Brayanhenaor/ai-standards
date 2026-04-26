@@ -23,7 +23,7 @@ Busca estos archivos para identificar el stack:
 ## Paso 3 — Crear archivos
 
 Descarga la plantilla:
-- .NET: `https://raw.githubusercontent.com/[tu-empresa]/ai-standards/main/templates/dotnet/CLAUDE.md`
+- .NET: `https://raw.githubusercontent.com/Brayanhenaor/ai-standards/master/templates/dotnet/CLAUDE.md`
 
 Personaliza la plantilla reemplazando todos los placeholders con lo detectado en el paso 2.
 Si algo no puedes detectarlo con certeza, deja `[COMPLETAR: descripción de qué falta]`.

@@ -2,14 +2,14 @@
 # setup.sh — Instala estándares de Claude Code para [Empresa]
 #
 # Uso remoto (recomendado):
-#   curl -fsSL https://raw.githubusercontent.com/[tu-empresa]/ai-standards/main/scripts/setup.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/Brayanhenaor/ai-standards/master/scripts/setup.sh | bash
 #
 # Uso local (desde el repo clonado):
 #   bash scripts/setup.sh
 
 set -e
 
-BASE_URL="https://raw.githubusercontent.com/[tu-empresa]/ai-standards/main"
+BASE_URL="https://raw.githubusercontent.com/Brayanhenaor/ai-standards/master"
 CLAUDE_DIR="$HOME/.claude"
 COMMANDS_DIR="$CLAUDE_DIR/commands"
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")

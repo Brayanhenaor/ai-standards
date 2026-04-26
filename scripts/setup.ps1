@@ -2,13 +2,13 @@
 # setup.ps1 — Instala estándares de Claude Code para [Empresa]
 #
 # Uso remoto (recomendado):
-#   iwr https://raw.githubusercontent.com/[tu-empresa]/ai-standards/main/scripts/setup.ps1 | iex
+#   iwr https://raw.githubusercontent.com/Brayanhenaor/ai-standards/master/scripts/setup.ps1 | iex
 #
 # Uso local (desde el repo clonado):
 #   pwsh scripts/setup.ps1
 
 param(
-    [string]$BaseUrl = "https://raw.githubusercontent.com/[tu-empresa]/ai-standards/main",
+    [string]$BaseUrl = "https://raw.githubusercontent.com/Brayanhenaor/ai-standards/master",
     [switch]$Force
 )
 

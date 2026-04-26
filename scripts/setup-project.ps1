@@ -2,13 +2,13 @@
 # setup-project.ps1 — Configura Claude Code en el proyecto actual
 #
 # Uso (desde la raiz del proyecto):
-#   iwr https://raw.githubusercontent.com/[tu-empresa]/ai-standards/main/scripts/setup-project.ps1 | iex
+#   iwr https://raw.githubusercontent.com/Brayanhenaor/ai-standards/master/scripts/setup-project.ps1 | iex
 #
 # O desde el repo clonado:
 #   pwsh path/to/ai-standards/scripts/setup-project.ps1
 
 param(
-    [string]$BaseUrl = "https://raw.githubusercontent.com/[tu-empresa]/ai-standards/main",
+    [string]$BaseUrl = "https://raw.githubusercontent.com/Brayanhenaor/ai-standards/master",
     [switch]$Force
 )
 

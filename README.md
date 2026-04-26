@@ -8,12 +8,12 @@ Desde la **raíz del proyecto**, ejecutar:
 
 **Windows (PowerShell):**
 ```powershell
-iwr https://raw.githubusercontent.com/[tu-empresa]/ai-standards/main/scripts/setup-project.ps1 | iex
+iwr https://raw.githubusercontent.com/Brayanhenaor/ai-standards/master/scripts/setup-project.ps1 | iex
 ```
 
 **Mac / Linux:**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/[tu-empresa]/ai-standards/main/scripts/setup-project.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Brayanhenaor/ai-standards/master/scripts/setup-project.sh | bash
 ```
 
 El script detecta la tecnología automáticamente y genera:
@@ -35,12 +35,12 @@ Instala comandos globales disponibles en **todos los proyectos** de la máquina:
 
 **Windows (PowerShell):**
 ```powershell
-iwr https://raw.githubusercontent.com/[tu-empresa]/ai-standards/main/scripts/setup.ps1 | iex
+iwr https://raw.githubusercontent.com/Brayanhenaor/ai-standards/master/scripts/setup.ps1 | iex
 ```
 
 **Mac / Linux:**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/[tu-empresa]/ai-standards/main/scripts/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Brayanhenaor/ai-standards/master/scripts/setup.sh | bash
 ```
 
 Instala en `~/.claude/`:
