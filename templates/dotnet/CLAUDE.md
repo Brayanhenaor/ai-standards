@@ -1,24 +1,6 @@
 # [NombreProyecto]
 
-<!--INIT
-Este proyecto acaba de ser configurado con ai-standards.
-Ejecuta este bloque de inicialización UNA SOLA VEZ y luego elimínalo del archivo.
-
-PASOS:
-1. Lee todos los archivos .csproj del proyecto
-2. Analiza la estructura de carpetas (ignora bin/, obj/, .git/)
-3. Lee Program.cs y appsettings.json si existen
-4. Reemplaza TODOS los placeholders [entre corchetes] con los valores reales detectados
-5. Si no puedes determinar un valor, deja la mejor opción por defecto según el tipo de proyecto
-6. Elimina este bloque <!--INIT ... ENDINIT--> del archivo al terminar
-7. Muestra al dev un resumen de lo que configuraste y los comandos disponibles:
-   - /project:plan-implementation — planea un requerimiento antes de implementar
-   - /project:review            — revisión completa de cambios antes de PR
-   - /project:commit-message    — genera mensaje de commit en Conventional Commits
-   - /project:pr                — genera descripción de PR
-   - /project:task              — desglosa una tarea en pasos técnicos
-   - /project:fix               — debugging sistemático
-ENDINIT-->
+> Ejecuta `/project:init-btw` para adaptar este archivo al proyecto actual.
 
 ## Stack
 - [.NET Version] / [C# Version]
