@@ -271,14 +271,12 @@ Toda llamada a un servicio externo (HTTP, colas, servicios de terceros) debe ten
 - Librerías: xUnit + FluentAssertions + NSubstitute
 - Proyectos: `[Nombre].Tests.Unit` y `[Nombre].Tests.Integration`
 - Naming: `MethodName_Scenario_ExpectedResult`
-- **Unit tests**:
-  - Patrón AAA obligatorio: secciones `// Arrange`, `// Act`, `// Assert` explícitas
-  - Usar mocks (NSubstitute) para todas las dependencias externas del SUT
-  - Cubrir todos los caminos críticos: happy path, errores esperados, edge cases
-  - No testear implementación interna — testear comportamiento observable
-- **Integration tests**: repositorios con SQLite in-memory, endpoints con `WebApplicationFactory`
-- Nunca mockear EF Core en tests de integración — usar base de datos in-memory o Testcontainers
-- Cada test independiente: sin estado compartido entre tests, sin dependencia de orden de ejecución
+- Patrón AAA obligatorio con secciones `// Arrange`, `// Act`, `// Assert` explícitas
+- Testear comportamiento observable, no implementación interna
+- Cada test independiente: sin estado compartido, sin dependencia de orden
+- Integration tests: `WebApplicationFactory` para endpoints, Testcontainers o SQLite in-memory para repositorios
+
+Usa `/user:test-dotnet` para generar tests de cambios pendientes o de un commit específico.
 
 ---
 
@@ -455,7 +453,8 @@ depends_on:
 ---
 
 ## Comandos disponibles
-- `/user:init-btw`             — configuración inicial del proyecto (ejecutar una sola vez)
-- `/user:plan-implementation`  — planea un requerimiento con trade-offs antes de implementar
-- `/user:review`               — revisión completa de todos los cambios del branch
-- `/user:commit-message`       — genera mensaje de commit en Conventional Commits
+- `/user:init-dotnet`   — configuración inicial del proyecto (ejecutar una sola vez)
+- `/user:plan-dotnet`   — planea un requerimiento con trade-offs antes de implementar
+- `/user:review-dotnet` — revisión completa de todos los cambios del branch
+- `/user:commit-dotnet` — genera mensaje de commit en Conventional Commits
+- `/user:test-dotnet`   — genera unit tests de cambios pendientes o de un commit

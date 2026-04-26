@@ -114,8 +114,9 @@ Arquitectura detectada:
 [Si hay deuda]: ⚠️ Se detectaron N items de deuda técnica — ver sección "Estado actual" en CLAUDE.md
 
 Comandos disponibles:
-  /user:init-btw             — este comando (ya ejecutado)
-  /user:plan-implementation  — planea un requerimiento antes de implementar
-  /user:review               — revisión completa de cambios antes de PR
-  /user:commit-message       — genera mensaje de commit en Conventional Commits
+  /user:init-dotnet   — este comando (ya ejecutado)
+  /user:plan-dotnet   — planea un requerimiento antes de implementar
+  /user:review-dotnet — revisión completa de cambios antes de PR
+  /user:commit-dotnet — genera mensaje de commit en Conventional Commits
+  /user:test-dotnet   — genera unit tests de cambios pendientes o de un commit
 ```
