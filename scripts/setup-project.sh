@@ -146,12 +146,17 @@ fi
 info "Tecnología detectada: $TECH"
 
 if [ -f "CLAUDE.md" ] && [ "$FORCE" != "true" ]; then
-    warn "Ya existe CLAUDE.md."
-    printf "  ¿Sobreescribir? (s/N): "
-    read -r confirm < /dev/tty
-    if [ "$confirm" != "s" ] && [ "$confirm" != "S" ]; then
-        echo "  Cancelado."
-        exit 0
+    # Si stdin es terminal (ejecución directa), preguntar. Si es pipe (curl|bash), sobreescribir.
+    if [ -t 0 ]; then
+        warn "Ya existe CLAUDE.md."
+        printf "  ¿Sobreescribir? (s/N): "
+        read -r confirm
+        if [ "$confirm" != "s" ] && [ "$confirm" != "S" ]; then
+            echo "  Cancelado."
+            exit 0
+        fi
+    else
+        warn "Ya existe CLAUDE.md — sobreescribiendo."
     fi
 fi
 
