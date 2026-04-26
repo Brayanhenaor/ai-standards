@@ -5,6 +5,7 @@
 #   curl -fsSL https://raw.githubusercontent.com/Brayanhenaor/ai-standards/master/scripts/setup-project.sh | bash
 
 BASE_URL="https://raw.githubusercontent.com/Brayanhenaor/ai-standards/master"
+BUST="?t=$(date +%s)"
 CLAUDE_DIR="$(pwd)/.claude"
 COMMANDS_DIR="$CLAUDE_DIR/commands"
 
@@ -15,7 +16,7 @@ fail() { echo "  ✗  $1"; exit 1; }
 
 download() {
     mkdir -p "$(dirname "$2")"
-    curl -fsSL "$1" -o "$2"
+    curl -fsSL "${1}${BUST}" -o "$2"
 }
 
 detect_tech() {
