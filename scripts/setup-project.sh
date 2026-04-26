@@ -46,7 +46,7 @@ ok "CLAUDE.md"
 # Comandos
 info "Descargando comandos..."
 CMD_COUNT=0
-for cmd in init review pr task fix commit-message plan-implementation; do
+for cmd in init-btw review pr task fix commit-message plan-implementation; do
     if download "$BASE_URL/templates/$TECH/.claude/commands/$cmd.md" "$COMMANDS_DIR/$cmd.md" 2>/dev/null; then
         ok "/project:$cmd"
         CMD_COUNT=$((CMD_COUNT + 1))
@@ -67,7 +67,7 @@ echo ""
 echo "  Siguiente paso:"
 echo ""
 echo "  1. Abre el proyecto en Claude Code"
-echo "  2. Escribe:  /project:init"
+echo "  2. Escribe:  /project:init-btw"
 echo ""
 echo "  Claude analizará el proyecto y completará"
 echo "  la configuración automáticamente."

@@ -473,7 +473,7 @@ depends_on:
 ---
 
 ## Comandos disponibles
-- `/project:init`              — configuración inicial del proyecto (ejecutar una sola vez)
+- `/project:init-btw`          — configuración inicial del proyecto (ejecutar una sola vez)
 - `/project:plan-implementation` — planea un requerimiento con trade-offs antes de implementar
 - `/project:review`            — revisión completa de todos los cambios del branch
 - `/project:commit-message`    — genera mensaje de commit en Conventional Commits
