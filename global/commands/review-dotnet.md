@@ -110,34 +110,34 @@ Evaluate every changed file across all dimensions below. Not every dimension app
 Group findings by severity. Only include sections that have findings.
 
 ```
-## Code Review
+## Revisión de código
 
-### 🔴 Blockers
-Issues that must be resolved before merging (security, correctness, memory leaks, captive dependencies).
-- [file:line] Description of the problem and why it matters
+### 🔴 Bloqueantes
+Problemas que deben resolverse antes de hacer merge (seguridad, correctitud, memory leaks, captive dependencies).
+- [archivo:línea] Descripción del problema y por qué importa
 
-### 🟡 Improvements
-Violations of standards or patterns that should be addressed soon.
-- [file:line] Description and suggested fix
+### 🟡 Mejoras
+Violaciones de estándares o patrones que deberían corregirse pronto.
+- [archivo:línea] Descripción y corrección sugerida
 
-### 🔵 Suggestions
-Non-urgent observations, style, or opportunities to improve quality.
-- [file:line] Description
+### 🔵 Sugerencias
+Observaciones no urgentes, estilo u oportunidades de mejora.
+- [archivo:línea] Descripción
 
-### ⚠️ Refactor opportunities (out of scope)
-Problems detected in existing code not touched by this PR — for the backlog.
-- [file] [CRITICAL / IMPROVEMENT / TECHNICAL] Description
+### ⚠️ Oportunidades de refactor (fuera del alcance)
+Problemas detectados en código existente no tocado por este PR — para el backlog.
+- [archivo] [CRITICAL / IMPROVEMENT / TECHNICAL] Descripción
 
-### ℹ️ Notices
-- New environment variables added: [list them]
-- New appsettings keys added: [list them]
-- README updated: yes / no / not required
-- ADR created: yes / no / not required
-- Tests added: yes / no / not required
-- PROJECT_STATUS.md updated: yes / no / not required
+### ℹ️ Avisos
+- Variables de entorno nuevas: [listarlas]
+- Claves nuevas en appsettings: [listarlas]
+- README actualizado: sí / no / no aplica
+- ADR creado: sí / no / no aplica
+- Tests agregados: sí / no / no aplica
+- PROJECT_STATUS.md actualizado: sí / no / no aplica
 ```
 
-Close with one of:
-- ✅ **Ready to merge** — no blockers found
-- ⚠️ **Merge with caution** — improvements recommended but no blockers
-- 🚫 **Do not merge** — blockers must be resolved first
+Cerrar con una de estas:
+- ✅ **Listo para merge** — no se encontraron bloqueantes
+- ⚠️ **Merge con precaución** — mejoras recomendadas pero sin bloqueantes
+- 🚫 **No hacer merge** — bloqueantes deben resolverse primero

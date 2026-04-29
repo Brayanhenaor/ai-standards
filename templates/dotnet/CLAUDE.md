@@ -87,8 +87,9 @@ Clean Architecture. Solution projects:
 - Always use DI — never instantiate services with `new`
 - Apply design patterns when they add real value (Factory, Builder, Specification, etc.) — never by convention
 - Clearly separated responsibilities; if a method does more than one thing, split it
-- All code in English
+- All code, comments, and identifiers in English
 - No obvious comments; use `/// <summary>` only when behavior is not inferrable from the name
+- All responses, documentation, plans, and reports directed at the developer in Spanish
 
 **Before implementing anything:**
 - Evaluate the real state of the project — if it does not follow Clean Architecture, adapt to what exists

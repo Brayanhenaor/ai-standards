@@ -85,42 +85,42 @@ If the project has architectural debt that affects the solution, mention it as a
 For the recommended option, produce a step-by-step plan:
 
 ```
-## Implementation Plan — [Option name]
+## Plan de implementación — [Nombre de la opción]
 
-### Steps
+### Pasos
 
-1. [Step name]
-   - Files to create or modify: `path/to/file.cs`
-   - What to implement: specific description
-   - Depends on: step N (if applicable)
+1. [Nombre del paso]
+   - Archivos a crear o modificar: `ruta/al/archivo.cs`
+   - Qué implementar: descripción específica
+   - Depende de: paso N (si aplica)
 
 2. ...
 
-### Files summary
-| Action | File | Description |
+### Resumen de archivos
+| Acción | Archivo | Descripción |
 |---|---|---|
-| Create | `Domain/Entities/X.cs` | ... |
-| Modify | `Application/Services/XService.cs` | ... |
+| Crear | `Domain/Entities/X.cs` | ... |
+| Modificar | `Application/Services/XService.cs` | ... |
 
-### Testing strategy
-- Unit tests needed for: [list handlers, services, domain logic]
-- Integration tests needed for: [list endpoints or repositories]
-- Critical paths to cover: [happy path, error cases, edge cases]
+### Estrategia de testing
+- Unit tests necesarios para: [lista de handlers, servicios, lógica de dominio]
+- Integration tests necesarios para: [lista de endpoints o repositorios]
+- Caminos críticos a cubrir: [happy path, casos de error, edge cases]
 
-### ADR required
-[Yes — decision about X / No]
+### ADR requerido
+[Sí — decisión sobre X / No]
 
-### README update required
-[Yes — new env vars: X, Y / new endpoint: Z / No]
+### Actualización de README requerida
+[Sí — nuevas env vars: X, Y / nuevo endpoint: Z / No]
 
-### Estimated complexity
-[Small < 2h / Medium ~half day / Large > 1 day — should be split]
+### Complejidad estimada
+[Pequeño < 2h / Medio ~medio día / Grande > 1 día — debería dividirse]
 
-### Risks and open questions
-- [Any remaining uncertainty or risk that could affect the plan]
+### Riesgos y preguntas abiertas
+- [Cualquier incertidumbre o riesgo restante que pueda afectar el plan]
 ```
 
 ---
 
-**Do not write any code until the dev confirms the plan.**
-If the dev selects a different option, rebuild the implementation plan for that option before coding.
+**No escribir ningún código hasta que el dev confirme el plan.**
+Si el dev elige una opción diferente, reconstruir el plan de implementación para esa opción antes de codificar.

@@ -91,15 +91,15 @@ Cover ALL of the following that apply:
 
 For each test class, output the complete file ready to copy.
 
-After all tests, show a summary:
+After all tests, show a summary in Spanish:
 ```
-## Tests generated
+## Tests generados
 
-| Method | Scenarios covered |
+| Método | Escenarios cubiertos |
 |---|---|
-| CreateUserAsync | happy path, duplicate email, invalid input |
-| ...             | ...                                         |
+| CreateUserAsync | happy path, email duplicado, input inválido |
+| ...             | ...                                          |
 
-⚠️ Not covered (out of scope or integration test territory):
-- [list anything skipped and why]
+⚠️ No cubierto (fuera de alcance o requiere test de integración):
+- [listar lo que se omitió y por qué]
 ```

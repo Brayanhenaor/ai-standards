@@ -106,58 +106,58 @@ If you detect significant deviations from standards, add this section to CLAUDE.
 Create `docs/PROJECT_STATUS.md` as a living snapshot of the project's health. This file is for the team — not for Claude rules. Use the findings from Phase 1.
 
 ```markdown
-# Project Status — [ProjectName]
+# Estado del proyecto — [NombreProyecto]
 
-> Analysis date: [current date]
-> Analyzed by: `/user:init-dotnet`
+> Fecha de análisis: [fecha actual]
+> Analizado por: `/user:init-dotnet`
 
-## Overview
-[What the project does, its purpose, and type of system — inferred from the code]
+## Descripción general
+[Qué hace el proyecto, su propósito y tipo de sistema — inferido del código]
 
-## Architecture
-[Description of the actual architecture found: layers, patterns, dependency direction]
+## Arquitectura
+[Descripción de la arquitectura real encontrada: capas, patrones, dirección de dependencias]
 
 ## Stack
-| Component | Version / Package |
+| Componente | Versión / Paquete |
 |---|---|
 | .NET | X.X |
-| [Key package] | X.X.X |
+| [Paquete clave] | X.X.X |
 | ... | ... |
 
-## Technical debt
+## Deuda técnica
 
-### 🔴 Critical
-Items that affect security, correctness, or cause silent bugs.
-- [description] — [affected files or areas]
+### 🔴 Crítico
+Elementos que afectan seguridad, correctitud o generan bugs silenciosos.
+- [descripción] — [archivos o áreas afectadas]
 
-### 🟡 Improvements
-Standards violations or design issues that should be addressed in upcoming sprints.
-- [description] — [affected files or areas]
+### 🟡 Mejoras
+Violaciones de estándares o problemas de diseño a resolver en próximos sprints.
+- [descripción] — [archivos o áreas afectadas]
 
-### 🔵 Technical
-Minor cleanup, naming, or structural issues.
-- [description]
+### 🔵 Técnico
+Cleanup menor, naming o problemas estructurales.
+- [descripción]
 
-## Security observations
-[Any auth gaps, hardcoded secrets, missing input validation, exposed IDs, etc. — or "None detected"]
+## Observaciones de seguridad
+[Gaps de auth, secrets hardcodeados, falta de validación de input, IDs expuestos, etc. — o "Ninguno detectado"]
 
-## Performance observations
-[N+1 risks, missing pagination, unbounded queries, socket issues, etc. — or "None detected"]
+## Observaciones de performance
+[Riesgos de N+1, paginación faltante, queries sin límite, problemas de sockets, etc. — o "Ninguno detectado"]
 
-## Test coverage
-[What is tested, what is missing, whether critical paths are covered]
+## Cobertura de tests
+[Qué está testeado, qué falta, si los caminos críticos están cubiertos]
 
-## Missing documentation
-[Missing README sections, ADRs that should exist, undocumented config, etc. — or "None detected"]
+## Documentación faltante
+[Secciones del README ausentes, ADRs que deberían existir, configuración sin documentar, etc. — o "Ninguno detectado"]
 
-## Recommended evolution roadmap
-Ordered by priority:
-1. [First thing to fix — why]
-2. [Second thing — why]
+## Roadmap de evolución recomendado
+Ordenado por prioridad:
+1. [Primera cosa a resolver — por qué]
+2. [Segunda cosa — por qué]
 3. ...
 ```
 
-If a section has nothing to report, write `None detected` rather than omitting the section — this confirms the area was checked.
+Si una sección no tiene nada que reportar, escribir `Ninguno detectado` en lugar de omitir la sección — esto confirma que el área fue revisada.
 
 ---
 

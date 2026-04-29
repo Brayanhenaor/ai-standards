@@ -54,102 +54,105 @@ Before writing the document, identify:
 
 ## Step 3 — Generate the document
 
-Produce the document in the following exact structure. Write it in the same language the project uses (check commit messages and existing docs to determine language).
+Produce the document in Spanish using the following exact structure.
 
 ---
 
 ```
-CHANGE CONTROL DOCUMENT
-=======================
-Project:    [project name from folder or solution file]
-Date:       [current date, format: DD/MM/YYYY]
-Version:    [infer from latest tag or write "N/A"]
-Commits:    [SHA list, or "Pending changes" if no commits provided]
-Author:     [from git config user.name]
+DOCUMENTO DE CONTROL DE CAMBIOS
+================================
+Proyecto:  [nombre del proyecto desde la carpeta o archivo .sln]
+Fecha:     [fecha actual, formato: DD/MM/YYYY]
+Versión:   [inferir del último tag o escribir "N/A"]
+Commits:   [lista de SHAs, o "Cambios pendientes" si no se indicaron commits]
+Autor:     [del git config user.name]
 
 
-1. CHANGE DESCRIPTION
----------------------
-[2–4 sentences describing what was changed at a functional level.
-Written for a non-technical reader. Explain what the system does
-differently after this change.]
+1. DESCRIPCIÓN DEL CAMBIO
+--------------------------
+[2–4 oraciones describiendo qué se modificó a nivel funcional.
+Escrito para un lector no técnico. Explicar qué hace diferente
+el sistema después de este cambio.]
 
 
-2. JUSTIFICATION
+2. JUSTIFICACIÓN
 ----------------
-[2–3 sentences explaining why this change was necessary.
-Infer from commit messages, issue references, or the nature of the change.
-Focus on the business or technical motivation.]
+[2–3 oraciones explicando por qué fue necesario este cambio.
+Inferir de los mensajes de commit, referencias a issues o la
+naturaleza de los cambios. Enfocarse en la motivación de negocio
+o técnica.]
 
 
-3. TECHNICAL CHANGES
---------------------
-[Detailed description of what was done technically. Organized by area
-if the change spans multiple layers. Explain decisions made and why.
-This section is for technical reviewers.]
+3. CAMBIOS TÉCNICOS REALIZADOS
+-------------------------------
+[Descripción detallada de lo que se hizo técnicamente. Organizado
+por área si el cambio abarca múltiples capas. Explicar las decisiones
+tomadas y por qué. Esta sección es para revisores técnicos.]
 
 
-4. MODIFIED FILES
------------------
-[List every modified file with a brief description of what changed in it.
-Format:
+4. ARCHIVOS MODIFICADOS
+-----------------------
+[Listar cada archivo modificado con descripción de qué cambió.
+Formato:
 
   Path/To/File.cs
-    - [what was changed and why]
+    - [qué cambió y por qué]
 
   Path/To/Another.cs
-    - [what was changed and why]
+    - [qué cambió y por qué]
 ]
 
 
-5. NEW FILES CREATED
---------------------
-[List every new file with a description of its purpose.
-Write "None" if no files were created.
+5. ARCHIVOS NUEVOS CREADOS
+--------------------------
+[Listar cada archivo nuevo con descripción de su propósito.
+Escribir "Ninguno" si no se crearon archivos.
 
   Path/To/NewFile.cs
-    - [purpose and responsibility of this file]
+    - [propósito y responsabilidad de este archivo]
 ]
 
 
-6. PRESERVED FUNCTIONALITY
---------------------------
-[List the key behaviors and flows that remain unchanged.
-Reassure the reviewer that existing functionality was not broken.
-Be specific — mention endpoint names, features, or integration points.]
+6. FUNCIONALIDAD PRESERVADA
+---------------------------
+[Listar los comportamientos y flujos principales que permanecen
+sin cambios. Confirmar que la funcionalidad existente no se rompió.
+Ser específico — mencionar nombres de endpoints, features o puntos
+de integración.]
 
 
-7. IMPACT AND RISKS
--------------------
-[Describe potential risks introduced by this change.
-Consider: breaking changes, performance impact, dependency changes,
-database schema changes, configuration changes, security implications.
-Rate each risk as LOW / MEDIUM / HIGH and explain the mitigation.]
+7. IMPACTO Y RIESGOS
+---------------------
+[Describir los riesgos potenciales introducidos por este cambio.
+Considerar: breaking changes, impacto en performance, cambios de
+dependencias, cambios en esquema de base de datos, cambios de
+configuración, implicaciones de seguridad.
+Calificar cada riesgo como BAJO / MEDIO / ALTO y explicar la mitigación.]
 
 
-8. VALIDATION
+8. VALIDACIÓN
 -------------
-[Step-by-step instructions to verify the change works correctly.
-Include: unit tests to run, endpoints to call, scenarios to test,
-expected results. Make it actionable for a QA or another developer.]
+[Instrucciones paso a paso para verificar que el cambio funciona.
+Incluir: unit tests a ejecutar, endpoints a llamar, escenarios a probar,
+resultados esperados. Debe ser accionable para QA u otro desarrollador.]
 
 
-9. CHANGE STATISTICS
---------------------
-  Files modified:   [N]
-  Files created:    [N]
-  Files deleted:    [N]
-  Lines added:      [N]
-  Lines removed:    [N]
-  Commits included: [N]
+9. ESTADÍSTICAS DEL CAMBIO
+---------------------------
+  Archivos modificados:  [N]
+  Archivos creados:      [N]
+  Archivos eliminados:   [N]
+  Líneas agregadas:      [N]
+  Líneas eliminadas:     [N]
+  Commits incluidos:     [N]
 
 
-10. TECHNICAL OBSERVATIONS
+10. OBSERVACIONES TÉCNICAS
 --------------------------
-[Any additional technical notes relevant for future maintainers.
-Include: known limitations, follow-up work needed, dependencies on
-other changes, configuration required in each environment, etc.
-Write "None" if there is nothing to add.]
+[Notas técnicas adicionales relevantes para futuros mantenedores.
+Incluir: limitaciones conocidas, trabajo pendiente, dependencias con
+otros cambios, configuración requerida por ambiente, etc.
+Escribir "Ninguna" si no hay nada que agregar.]
 ```
 
 ---
