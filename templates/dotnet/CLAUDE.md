@@ -398,6 +398,7 @@ Deployment process per environment (dev / staging / prod).
 
 ### Code generation
 - `/user:scaffold-dotnet`  — generate complete feature scaffold (all layers + unit tests)
+- `/user:debug-dotnet`     — structured debugging: collect → hypothesize → one change → verify
 
 ### Quality and delivery
 - `/user:review-dotnet`    — full review of all branch changes before PR

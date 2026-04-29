@@ -25,6 +25,16 @@ Each repo has its own CLAUDE.md with project-specific rules.
 - Prefer editing existing files over creating new ones
 - Flag deviations from standards without blocking the task
 
+## Debugging discipline
+
+When the developer reports a compilation or runtime error, apply this protocol automatically — do not wait to be asked:
+
+1. **Collect before acting** — read the full error output, every referenced file and line, and `git diff HEAD`. Never propose a fix without reading the exact location the error points to.
+2. **One hypothesis, stated explicitly** — before touching any code, state what you believe the cause is and why. If uncertain, list 2–3 ranked hypotheses.
+3. **One change per iteration** — make the minimum change to test hypothesis 1. Do not fix multiple things simultaneously. Do not refactor while debugging.
+4. **Verify before moving on** — after each change, confirm the error is resolved. If not, state what the attempt revealed, revert, and move to the next hypothesis.
+5. **Never guess in a loop** — if two hypotheses fail, stop and ask for more information rather than trying random changes.
+
 ## .NET security baselines
 - Connection strings always from `IConfiguration` / User Secrets / env vars — never hardcoded
 - Never log tokens, passwords, PII, or any sensitive data
