@@ -209,11 +209,46 @@ Skip this section entirely if CLAUDE.md describes a simple CRUD service with no 
 
 ---
 
+### Observability — metrics (only if the project uses Prometheus / OpenTelemetry Metrics)
+
+**How to detect:** look for any of these in `.csproj` files or DI registration:
+`prometheus-net`, `prometheus-net.AspNetCore`, `OpenTelemetry.Metrics`, `OpenTelemetry.Extensions.Hosting`, `Meter`, `Counter<T>`, `Histogram<T>`, `MeterProvider`.
+
+If none are found, skip this section entirely.
+
+If metrics are present, evaluate:
+
+**Coverage gaps — new code that should emit metrics but doesn't:**
+- New endpoint or operation added without a request counter or duration histogram
+- New background job or consumer added without execution counter, error counter, and processing duration
+- New integration with an external service (HTTP call, queue, DB operation in a new path) without a latency histogram and error counter
+- Business-critical operation (payment, order, authentication) added without a business metric (not just infrastructure)
+
+**Correctness of existing metrics in changed code:**
+- Counter incremented inside a `catch` block but not on the success path — or vice versa
+- Histogram recording wall-clock time instead of operation duration (forgetting to stop the stopwatch before recording)
+- Labels/tags with unbounded cardinality: user ID, email, or any value with high unique count used as a label — this will destroy Prometheus memory
+- Metric recorded before the operation completes — timing includes serialization or other overhead unrelated to the measured work
+- Exception paths that exit without recording the metric — metric only emits on success
+
+**Naming and conventions:**
+- Metric names not following `snake_case` with `_total` suffix for counters, `_seconds` for durations, `_bytes` for sizes
+- Missing `_bucket` / `_count` / `_sum` — histogram not configured correctly
+- Inconsistent label names across related metrics in the same service (`status` vs `http_status` vs `response_code`)
+- New metric not registered with a description — `prometheus-net` allows description strings; always provide one
+
+**Alertability:**
+- Error counter added but no clear way to derive an error rate from it (needs a corresponding total counter)
+- Duration histogram without appropriate bucket boundaries for the expected latency range of this operation
+
+---
+
 ### Documentation and traceability
 
 - Change affects architecture or a significant design decision → ADR created in `/docs/adr/`?
 - Change adds/modifies configuration, endpoints, or deployment → `README.md` updated?
 - New technical debt introduced → `docs/PROJECT_STATUS.md` updated?
+- New metrics added → are they documented (name, labels, meaning, alert thresholds if applicable)?
 
 ---
 
@@ -257,6 +292,8 @@ Problemas encontrados en código existente NO modificado por este PR. Para el ba
 - ADR creado: [sí / no / no aplica]
 - Tests agregados: [sí / no]
 - PROJECT_STATUS.md actualizado: [sí / no / no aplica]
+- Métricas nuevas: [listar nombre + labels / ninguna / no aplica — proyecto sin métricas]
+- Gaps de métricas detectados: [sí — ver hallazgos / no / no aplica]
 ```
 
 Cerrar con una de estas tres:
