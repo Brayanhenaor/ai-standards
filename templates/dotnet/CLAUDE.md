@@ -371,4 +371,5 @@ Deployment process per environment (dev / staging / prod).
 - `/user:review-dotnet` — full review of all branch changes
 - `/user:commit-dotnet` — generate commit message in Conventional Commits
 - `/user:test-dotnet`   — generate unit tests for pending changes or a commit
-- `/user:docker-dotnet` — review or generate Docker/Compose configuration
+- `/user:docker-dotnet`    — review or generate Docker/Compose configuration
+- `/user:changelog-dotnet` — generate change control document for commits or pending changes
