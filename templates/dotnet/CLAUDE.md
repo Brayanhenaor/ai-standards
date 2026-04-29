@@ -367,10 +367,11 @@ Deployment process per environment (dev / staging / prod).
 ---
 
 ## Available commands
-- `/user:init-dotnet`   — initial project setup (run once)
-- `/user:plan-dotnet`   — plan a requirement with trade-offs before implementing
-- `/user:review-dotnet` — full review of all branch changes
-- `/user:commit-dotnet` — generate commit message in Conventional Commits
-- `/user:test-dotnet`   — generate unit tests for pending changes or a commit
+- `/user:init-dotnet`      — initial project setup (run once)
+- `/user:plan-dotnet`      — 3 architectural options with risk analysis before implementing
+- `/user:adr-dotnet`       — generate ADR from the chosen option after plan-dotnet
+- `/user:review-dotnet`    — full review of all branch changes
+- `/user:commit-dotnet`    — generate commit message in Conventional Commits
+- `/user:test-dotnet`      — generate unit tests for pending changes or a commit
 - `/user:docker-dotnet`    — review or generate Docker/Compose configuration
 - `/user:changelog-dotnet` — generate change control document for commits or pending changes

@@ -184,11 +184,12 @@ Files generated:
 [If debt exists]: ⚠️ N technical debt items detected — see docs/PROJECT_STATUS.md
 
 Available commands:
-  /user:init-dotnet   — this command (already executed)
-  /user:plan-dotnet   — plan a requirement before implementing
-  /user:review-dotnet — full review of branch changes before PR
-  /user:commit-dotnet — generate commit message in Conventional Commits
-  /user:test-dotnet   — generate unit tests for pending changes or a commit
-  /user:docker-dotnet    — review or generate Docker/Compose configuration
-  /user:changelog-dotnet — generate change control document
+  /user:init-dotnet      — este comando (ya ejecutado)
+  /user:plan-dotnet      — 3 opciones arquitectónicas con análisis de riesgos antes de implementar
+  /user:adr-dotnet       — genera ADR a partir de la opción elegida en plan-dotnet
+  /user:review-dotnet    — revisión completa de los cambios del branch antes del PR
+  /user:commit-dotnet    — genera mensaje de commit en Conventional Commits
+  /user:test-dotnet      — genera unit tests para cambios pendientes o un commit
+  /user:docker-dotnet    — revisa o genera configuración Docker/Compose
+  /user:changelog-dotnet — genera documento de control de cambios
 ```

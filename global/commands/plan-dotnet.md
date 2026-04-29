@@ -1,6 +1,6 @@
-# Plan implementation
+# Plan implementation — architectural consultant
 
-Receive a requirement and produce a professional implementation plan before writing any code.
+Receive a requirement and act as an architectural consultant: inform, surface risks, and propose options before any code is written. The developer decides — Claude informs.
 
 ## Requirement
 $ARGUMENTS
@@ -9,60 +9,66 @@ $ARGUMENTS
 
 ## Phase 1 — Understand before planning
 
-Before proposing anything, ask all necessary questions to avoid building on wrong assumptions.
-
-Identify what is unclear or ambiguous:
+Before proposing anything, identify what is unclear or ambiguous:
 - Business rules and edge cases not specified
 - Expected behavior under error conditions
-- Volume / scale expectations (affects design decisions)
+- Volume / scale expectations (affects design decisions significantly)
+- Concurrency requirements — simultaneous users, parallel operations, shared state
 - Integration with existing components
-- Non-functional requirements (latency, consistency, availability)
+- Non-functional requirements (latency, consistency, availability, idempotency)
 - Whether this is greenfield or modifying existing code
 
-**Ask all questions in a single message** — do not ask one at a time. Wait for answers before proceeding to Phase 2.
+**Ask all questions in a single message** — do not ask one at a time. Wait for answers before proceeding.
 
-If the requirement is clear enough to proceed without questions, state your assumptions explicitly instead.
+If the requirement is clear enough to proceed, state your assumptions explicitly instead.
 
 ---
 
 ## Phase 2 — Explore the codebase
 
-Read relevant existing code before designing the solution:
-- Find the affected domain area, existing entities, services and repositories
+Read relevant existing code before designing:
+- Find the affected domain area, existing entities, services, and repositories
 - Understand the current architecture state of this part of the project
 - Identify reusable components vs what needs to be created
 - Note any existing technical debt that affects the solution
 
 ---
 
-## Phase 3 — Propose options
+## Phase 3 — Propose exactly 3 options
 
-Present **at least two solution options**. For complex requirements, three.
+Always present **exactly 3 options** — from most conservative to most sophisticated. Each must be genuinely different in approach, not just variations of the same idea.
 
-For each option:
+For each option use this structure:
 
 ```
-### Option N — Name
+### Opción N — [Nombre]
 
-**Summary:** One sentence describing the approach.
+**Resumen:** Una oración describiendo el enfoque.
 
-**How it works:** Brief description of the design.
+**Cómo funciona:** Descripción breve del diseño.
 
-**Pros:**
+**Ventajas:**
 - ...
 
-**Cons:**
+**Desventajas:**
 - ...
 
-**Best for:** When this option is the right choice.
-**Complexity:** Low / Medium / High
-**Reversibility:** Easy to change later / Hard to undo
+**Riesgos técnicos:**
+- Concurrencia: [¿condiciones de carrera posibles? ¿estado compartido?]
+- Memory leaks: [¿recursos sin liberar, closures, suscripciones?]
+- Rendimiento bajo carga: [¿cuellos de botella, N+1, queries sin límite?]
+- Idempotencia: [¿es seguro reintentar la operación?]
+- Escalabilidad: [¿qué se rompe primero al escalar?]
+
+**Mejor para:** Cuándo esta opción es la elección correcta.
+**Complejidad:** Baja / Media / Alta
+**Reversibilidad:** Fácil de cambiar / Difícil de deshacer — explicar por qué
 ```
 
-Evaluate options across:
+Evaluate all options across:
 - Correctness and completeness
 - Alignment with the project's current architecture
-- Performance and resource usage
+- Performance and resource usage under real load
 - Testability
 - Maintainability and readability
 - Implementation effort
@@ -75,8 +81,9 @@ State which option you recommend and why, considering:
 - The current state of the codebase (not the ideal state)
 - The team's apparent conventions from the existing code
 - Long-term maintainability vs implementation speed
+- Which risks are acceptable given the context
 
-If the project has architectural debt that affects the solution, mention it as a `⚠️ Refactor opportunity` without making it a blocker.
+If the project has architectural debt that affects the solution, mention it as `⚠️ Oportunidad de refactor` without making it a blocker.
 
 ---
 
@@ -105,10 +112,10 @@ For the recommended option, produce a step-by-step plan:
 ### Estrategia de testing
 - Unit tests necesarios para: [lista de handlers, servicios, lógica de dominio]
 - Integration tests necesarios para: [lista de endpoints o repositorios]
-- Caminos críticos a cubrir: [happy path, casos de error, edge cases]
+- Caminos críticos a cubrir: [happy path, casos de error, edge cases, concurrencia]
 
 ### ADR requerido
-[Sí — decisión sobre X / No]
+[Sí — usar /user:adr-dotnet con la opción elegida / No]
 
 ### Actualización de README requerida
 [Sí — nuevas env vars: X, Y / nuevo endpoint: Z / No]
@@ -123,4 +130,5 @@ For the recommended option, produce a step-by-step plan:
 ---
 
 **No escribir ningún código hasta que el dev confirme el plan.**
-Si el dev elige una opción diferente, reconstruir el plan de implementación para esa opción antes de codificar.
+Si el dev elige una opción diferente o la modifica, reconstruir el plan de implementación para esa opción antes de codificar.
+Cuando se tome una decisión de arquitectura relevante, sugerir `/user:adr-dotnet` para documentarla.
