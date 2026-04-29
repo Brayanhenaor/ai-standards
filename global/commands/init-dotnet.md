@@ -184,12 +184,27 @@ Files generated:
 [If debt exists]: ⚠️ N technical debt items detected — see docs/PROJECT_STATUS.md
 
 Available commands:
-  /user:init-dotnet      — este comando (ya ejecutado)
-  /user:plan-dotnet      — 3 opciones arquitectónicas con análisis de riesgos antes de implementar
-  /user:adr-dotnet       — genera ADR a partir de la opción elegida en plan-dotnet
-  /user:review-dotnet    — revisión completa de los cambios del branch antes del PR
-  /user:commit-dotnet    — genera mensaje de commit en Conventional Commits
-  /user:test-dotnet      — genera unit tests para cambios pendientes o un commit
-  /user:docker-dotnet    — revisa o genera configuración Docker/Compose
-  /user:changelog-dotnet — genera documento de control de cambios
+
+  Planificación y diseño:
+  /user:plan-dotnet        — 3 opciones arquitectónicas con análisis de riesgos
+  /user:adr-dotnet         — genera ADR a partir de la opción elegida en plan-dotnet
+
+  Análisis experto (activados automáticamente al codificar, o invocables explícitamente):
+  /user:architect-dotnet   — arquitecto senior: escalabilidad, HA, tolerancia a fallos
+  /user:concurrency-dotnet — experto concurrencia: race conditions, deadlocks, async
+  /user:performance-dotnet — ingeniero de performance: GC, allocations, N+1, caching
+  /user:domain-dotnet      — experto DDD: aggregates, value objects, invariantes
+
+  Generación de código:
+  /user:scaffold-dotnet    — genera scaffold completo de un feature (todas las capas + tests)
+
+  Calidad y entrega:
+  /user:review-dotnet      — revisión completa del branch antes del PR
+  /user:test-dotnet        — genera unit tests para cambios pendientes o un commit
+  /user:commit-dotnet      — genera mensaje de commit en Conventional Commits
+  /user:changelog-dotnet   — genera documento de control de cambios
+
+  Setup e infraestructura:
+  /user:init-dotnet        — este comando (ya ejecutado)
+  /user:docker-dotnet      — revisa o genera configuración Docker/Compose
 ```

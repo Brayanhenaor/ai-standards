@@ -4,13 +4,31 @@
 
 ## Context rules
 
-**Before writing code, evaluate whether any of these rules apply and read it first.**
+**Before writing or reviewing code, evaluate which of these apply and load the corresponding context first.**
 
-- **Docker** — you are writing or modifying a `Dockerfile`, `docker-compose.yml`, healthchecks, or container configuration → read `~/.claude/rules/docker.md`
-- **Resilience** — you are registering an `HttpClient`, consuming an external API, integrating a third-party service, or configuring retry/timeout/circuit breaker → read `~/.claude/rules/resilience.md`
-- **EF advanced** — you are writing bulk operations (`ExecuteUpdateAsync`/`ExecuteDeleteAsync`), queries with multiple joins/includes, creating migrations, or designing indexes → read `~/.claude/rules/ef-advanced.md`
-- **Testing** — you are writing unit tests or integration tests → read `~/.claude/rules/testing.md`
-- **Security** — you are implementing authentication, authorization, JWT, sensitive data handling, CORS, or rate limiting → read `~/.claude/rules/security.md`
+### Technical rules (load before writing code in these areas)
+- **Docker** — writing or modifying a `Dockerfile`, `docker-compose.yml`, healthchecks, or container configuration → read `~/.claude/rules/docker.md`
+- **Resilience** — registering an `HttpClient`, consuming an external API, integrating a third-party service, or configuring retry/timeout/circuit breaker → read `~/.claude/rules/resilience.md`
+- **EF advanced** — writing bulk operations (`ExecuteUpdateAsync`/`ExecuteDeleteAsync`), queries with multiple joins/includes, creating migrations, or designing indexes → read `~/.claude/rules/ef-advanced.md`
+- **Testing** — writing unit tests or integration tests → read `~/.claude/rules/testing.md`
+- **Security** — implementing authentication, authorization, JWT, sensitive data handling, CORS, or rate limiting → read `~/.claude/rules/security.md`
+
+### Expert modes (apply automatically — do not wait to be asked)
+
+These are not optional reviews to run at the end. Apply the corresponding expert lens **while designing or writing code**, flagging issues inline before they are committed.
+
+- **Architect mode** — apply when: designing a new feature that crosses multiple services or layers; choosing between architectural approaches; adding an integration with an external system; any decision that affects scalability or availability. Use the lens from `/user:architect-dotnet`: scalability, HA, fault tolerance, distributed consistency, operational complexity.
+
+- **Concurrency mode** — apply when: writing or modifying any `async` method; adding `Singleton` DI registrations; implementing `IHostedService` or `BackgroundService`; using `static` fields, shared dictionaries, or any mutable state accessible from multiple requests; using `Channel<T>`, `SemaphoreSlim`, or any synchronization primitive. Use the lens from `/user:concurrency-dotnet`: race conditions, deadlocks, captive dependencies, async correctness.
+
+- **Performance mode** — apply when: writing LINQ queries or EF Core queries; implementing endpoints that return collections; adding caching logic; writing serialization/deserialization code; any loop that allocates objects or processes large data sets. Use the lens from `/user:performance-dotnet`: GC pressure, N+1, unnecessary allocations, I/O efficiency.
+
+- **Domain mode** — apply when: adding or modifying entities, aggregates, or value objects; implementing business rules or invariants; designing repository interfaces; naming domain concepts. Use the lens from `/user:domain-dotnet`: aggregate boundaries, invariant enforcement, primitive obsession, ubiquitous language.
+
+**If you detect an issue from any of these lenses, report it inline as:**
+```
+⚠️ [Concurrency / Performance / Architecture / Domain] — [descripción del problema y corrección sugerida]
+```
 
 ---
 
@@ -367,11 +385,26 @@ Deployment process per environment (dev / staging / prod).
 ---
 
 ## Available commands
-- `/user:init-dotnet`      — initial project setup (run once)
+
+### Planning and design
 - `/user:plan-dotnet`      — 3 architectural options with risk analysis before implementing
 - `/user:adr-dotnet`       — generate ADR from the chosen option after plan-dotnet
-- `/user:review-dotnet`    — full review of all branch changes
-- `/user:commit-dotnet`    — generate commit message in Conventional Commits
+
+### Expert analysis (on-demand deep dives)
+- `/user:architect-dotnet` — senior architect review: scalability, HA, fault tolerance, distributed systems
+- `/user:concurrency-dotnet` — concurrency expert: race conditions, deadlocks, async correctness, DI lifetimes
+- `/user:performance-dotnet` — performance engineer: GC pressure, allocations, N+1, caching, I/O efficiency
+- `/user:domain-dotnet`    — DDD expert: aggregate boundaries, value objects, invariants, ubiquitous language
+
+### Code generation
+- `/user:scaffold-dotnet`  — generate complete feature scaffold (all layers + unit tests)
+
+### Quality and delivery
+- `/user:review-dotnet`    — full review of all branch changes before PR
 - `/user:test-dotnet`      — generate unit tests for pending changes or a commit
-- `/user:docker-dotnet`    — review or generate Docker/Compose configuration
+- `/user:commit-dotnet`    — generate commit message in Conventional Commits
 - `/user:changelog-dotnet` — generate change control document for commits or pending changes
+
+### Setup and infrastructure
+- `/user:init-dotnet`      — initial project setup (run once)
+- `/user:docker-dotnet`    — review or generate Docker/Compose configuration
