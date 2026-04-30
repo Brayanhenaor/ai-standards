@@ -35,6 +35,18 @@ When the developer reports a compilation or runtime error, apply this protocol a
 4. **Verify before moving on** — after each change, confirm the error is resolved. If not, state what the attempt revealed, revert, and move to the next hypothesis.
 5. **Never guess in a loop** — if two hypotheses fail, stop and ask for more information rather than trying random changes.
 
+## C# formatting
+- Never align assignments, switch arms, or object mappings with extra spaces for visual column alignment — single space only
+  ```csharp
+  // BAD
+  AppReason.Blacklisted    => DecisionReason.Blacklisted,
+  AppReason.NotFound       => DecisionReason.NotFound,
+
+  // GOOD
+  AppReason.Blacklisted => DecisionReason.Blacklisted,
+  AppReason.NotFound => DecisionReason.NotFound,
+  ```
+
 ## .NET security baselines
 - Connection strings always from `IConfiguration` / User Secrets / env vars — never hardcoded
 - Never log tokens, passwords, PII, or any sensitive data

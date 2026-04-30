@@ -26,13 +26,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer           = true,
-            ValidateAudience         = true,
-            ValidateLifetime         = true,
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer              = config["Jwt:Issuer"],
-            ValidAudience            = config["Jwt:Audience"],
-            IssuerSigningKey         = new SymmetricSecurityKey(
+            ValidIssuer = config["Jwt:Issuer"],
+            ValidAudience = config["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(config["Jwt:Secret"]!))
         };
     });
@@ -47,7 +47,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 // Constants
 public static class Policies
 {
-    public const string AdminOnly    = "AdminOnly";
+    public const string AdminOnly = "AdminOnly";
     public const string OwnerOrAdmin = "OwnerOrAdmin";
 }
 
@@ -119,9 +119,9 @@ builder.Services.AddRateLimiter(options =>
 {
     options.AddFixedWindowLimiter("auth", o =>
     {
-        o.Window          = TimeSpan.FromMinutes(1);
-        o.PermitLimit     = 10;
-        o.QueueLimit      = 0;
+        o.Window = TimeSpan.FromMinutes(1);
+        o.PermitLimit = 10;
+        o.QueueLimit = 0;
         o.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
     });
 });

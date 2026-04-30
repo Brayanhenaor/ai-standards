@@ -26,7 +26,7 @@ public class UserServiceTests
     public UserServiceTests()
     {
         _userRepository = Substitute.For<IUserRepository>();
-        _emailService   = Substitute.For<IEmailService>();
+        _emailService = Substitute.For<IEmailService>();
         _sut = new UserService(_userRepository, _emailService);
     }
 

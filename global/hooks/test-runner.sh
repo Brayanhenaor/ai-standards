@@ -29,8 +29,12 @@ if [[ -z "$PROJ" ]]; then
     exit 0
 fi
 
-echo "--- tests: $(basename "$PROJ") ---"
-dotnet test "$PROJ" --no-build -v quiet 2>&1 \
+RESULTS=$(dotnet test "$PROJ" --no-build -v quiet 2>&1 \
   | grep -E "(Passed|Failed|Skipped|Error|FAILED|passed|failed)" \
-  | tail -20
-echo "---"
+  | tail -20)
+
+if echo "$RESULTS" | grep -qiE "(failed|error)"; then
+    echo "--- tests: $(basename "$PROJ") ---"
+    echo "$RESULTS"
+    echo "---"
+fi

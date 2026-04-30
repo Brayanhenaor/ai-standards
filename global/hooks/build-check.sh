@@ -21,7 +21,6 @@ BUILD_OUTPUT=$(dotnet build --no-restore -v quiet 2>&1)
 ERRORS=$(echo "$BUILD_OUTPUT" | grep -E "(: error |: warning CS)" | head -20)
 
 if [[ -z "$ERRORS" ]]; then
-    echo "$BUILD_OUTPUT" | grep -E "(Build succeeded|Build FAILED)" | head -1
     exit 0
 fi
 
