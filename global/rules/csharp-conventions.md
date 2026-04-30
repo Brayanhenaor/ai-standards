@@ -8,7 +8,7 @@ paths:
 ## Naming
 - `PascalCase`: classes, methods, properties, events, constants
 - Constants in static classes grouped by domain (`ErrorCodes`, `PolicyNames`) — never scattered string literals; exception: log messages
-- `camelCase`: parameters, local variables, private fields
+- `camelCase`: parameters, local variables, private fields — **no underscore prefix** (`field`, not `_field`)
 - `I` prefix: interfaces (`IUserRepository`)
 - `Async` suffix: every async method (`GetUserAsync`)
 
@@ -70,6 +70,25 @@ if (user != null) {
 if (user is null) throw new NotFoundException();
 if (!user.IsActive) throw new BusinessException("User is inactive");
 // logic...
+```
+
+## Single Responsibility — methods
+- Every method does exactly one thing — name describes it completely, no "and"
+- If the body needs a comment to explain a section, extract that section as a private method
+- Max ~20 lines; longer = likely doing too much, extract
+- No side effects hidden inside a query method (CQS: commands change state, queries return values)
+
+```csharp
+// BAD — validates AND saves AND sends email
+public async Task RegisterUser(UserRequest request) { ... }
+
+// GOOD — each method one responsibility
+public async Task RegisterUser(UserRequest request)
+{
+    ValidateRequest(request);
+    var user = await SaveUser(request);
+    await SendWelcomeEmail(user);
+}
 ```
 
 ## Code smells (flag and report, do not fix outside task scope)

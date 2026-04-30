@@ -8,6 +8,23 @@ paths:
   - "**/*DependencyInjection*.cs"
 ---
 
+# Dependency injection — Dependency Inversion Principle
+
+- **Always inject abstractions (interfaces), never concrete implementations**
+- Constructor parameters must be interface types, not classes
+- Register concrete classes against their interface: `services.AddScoped<IMyService, MyService>()`
+
+```csharp
+// BAD
+public class OrderService(PaymentProcessor processor) { }
+
+// GOOD
+public class OrderService(IPaymentProcessor processor) { }
+```
+
+- Exception: framework types with no interface (e.g. `ILogger<T>`, `IOptions<T>`) are acceptable
+- If no interface exists, create one before injecting — do not bypass the rule
+
 # Dependency injection lifetimes
 
 | Lifetime | When to use |

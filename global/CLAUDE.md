@@ -47,6 +47,12 @@ When the developer reports a compilation or runtime error, apply this protocol a
   AppReason.NotFound => DecisionReason.NotFound,
   ```
 
+## Dependency Inversion (SOLID)
+- Always inject abstractions — constructor parameters must be interface types, never concrete classes
+- `services.AddScoped<IMyService, MyService>()` — always register against the interface
+- If no interface exists, create one before injecting — do not bypass the rule
+- Exception: framework types with no interface (`ILogger<T>`, `IOptions<T>`)
+
 ## .NET security baselines
 - Connection strings always from `IConfiguration` / User Secrets / env vars — never hardcoded
 - Never log tokens, passwords, PII, or any sensitive data
