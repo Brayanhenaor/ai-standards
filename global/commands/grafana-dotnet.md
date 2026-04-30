@@ -221,7 +221,7 @@ Output a complete Grafana dashboard JSON with:
 ## Step 5 — Output
 
 1. Print the complete dashboard JSON ready to import via Grafana UI (Dashboards → Import → paste JSON)
-2. Save it to `grafana/dashboard-{project-name}.json` in the project root
+2. Save it to `docs/dashboard-{project-name}.json`
 3. List every metric found and the panel(s) generated for it
 4. Flag any metric that could not be mapped (name or type unclear) — ask for clarification rather than guessing
 

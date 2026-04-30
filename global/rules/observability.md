@@ -124,6 +124,21 @@ await metrics.MeasureAsync("process", async () => { ... });
 - Histogram buckets: always explicit and domain-appropriate — never default for latency
 - Gauge = current state; Counter = cumulative events (never decrement a Counter, use Gauge)
 
+## Project folder structure
+
+```
+/prometheus/
+  prometheus.yml                 # local dev (static_configs)
+  prometheus.swarm.uat.yml       # UAT (dns_sd_configs)
+  prometheus.swarm.prd.yml       # PRD (dns_sd_configs)
+/docs/
+  dashboard-{project}.json       # Grafana dashboard (import-ready JSON)
+  *.md                           # architecture docs, runbooks, ADRs
+```
+
+- Never place prometheus configs in the project root
+- Never place Grafana dashboards outside `/docs`
+
 ## Prometheus — Swarm vs local discovery
 
 **Local (static_configs):**
