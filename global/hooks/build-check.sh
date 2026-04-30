@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 # Runs at end of Claude turn (Stop hook). Finds nearest .sln or .csproj and builds.
+# Only runs when cs-dirty-flag.sh set the dirty flag (i.e. a .cs file was written this turn).
 # Silent on success — only emits output when there are errors.
+
+FLAG="${TMPDIR:-/tmp}/claude-build-dirty"
+[[ ! -f "$FLAG" ]] && exit 0
+rm -f "$FLAG"
 
 # Find nearest solution or project file walking up from CWD
 DIR="$PWD"

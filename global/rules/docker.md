@@ -4,6 +4,8 @@ paths:
   - "**/*.dockerfile"
   - "**/docker-compose*.yml"
   - "**/.dockerignore"
+  - "**/deploy.sh"
+  - "**/deploy.ps1"
 ---
 
 # Docker standards
@@ -66,6 +68,67 @@ depends_on:
 - Set `mem_limit` and `cpus` on services that could consume unbounded resources
 - Use named volumes for persistent data — never relative host paths in production
 - Expose only ports strictly needed on the host
+
+## Multi-environment compose structure (Swarm)
+
+Use layered composition — one base file, one override per environment:
+
+```
+docker-compose.yml           # base: images, networks (overlay), deploy config, healthchecks
+docker-compose.override.yml  # local dev: bridge network, host ports, local build context
+docker-compose.uat.yml       # UAT overrides only: env vars, ports, replicas
+docker-compose.prd.yml       # PRD overrides only: replicas, resource limits
+```
+
+**Rules:**
+- Base file must be Swarm-compatible (use `deploy:` block, `overlay` network)
+- `docker-compose.override.yml` is auto-loaded by `docker compose up` — use for local dev only
+- Never define replicas in base — define in `uat.yml` / `prd.yml`
+- Network names include environment suffix: `projectname-network-uat`, `projectname-network-prd`
+- Stack name pattern: `{project}-{env}` (e.g. `integrationar-uat`)
+
+**Swarm deploy block (base):**
+```yaml
+deploy:
+  replicas: 1
+  restart_policy:
+    condition: any
+    delay: 5s
+    window: 120s
+  update_config:
+    parallelism: 1
+    delay: 10s
+    failure_action: rollback
+    order: start-first
+  rollback_config:
+    parallelism: 1
+    delay: 5s
+    order: start-first
+  resources:
+    limits:
+      memory: 512M
+      cpus: '1'
+    reservations:
+      memory: 256M   # 50% of limit
+      cpus: '0.25'
+```
+
+- `order: start-first` for stateless services (zero-downtime)
+- `order: stop-first` for Prometheus, stateful services
+- Memory reservation = 50% of limit
+- `restart_policy.condition: any` in base; never override to `none`
+
+**Deploy script pattern:**
+```bash
+#!/usr/bin/env bash
+set -e
+ENV="${1:?Usage: $0 <uat|prd>}"
+STACK_NAME="{project}-$ENV"
+docker stack deploy \
+  --compose-file docker-compose.yml \
+  --compose-file "docker-compose.$ENV.yml" \
+  --with-registry-auth --prune "$STACK_NAME"
+```
 
 ## Health checks in the API
 
