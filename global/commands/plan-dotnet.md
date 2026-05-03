@@ -9,18 +9,24 @@ $ARGUMENTS
 
 ## Phase 1 — Understand before planning
 
-Before proposing anything, identify what is unclear or ambiguous:
-- Business rules and edge cases not specified
-- Expected behavior under error conditions
-- Volume / scale expectations (affects design decisions significantly)
-- Concurrency requirements — simultaneous users, parallel operations, shared state
-- Integration with existing components
-- Non-functional requirements (latency, consistency, availability, idempotency)
-- Whether this is greenfield or modifying existing code
+Before proposing anything, analyze the requirement and explicitly state:
 
-**Ask all questions in a single message** — do not ask one at a time. Wait for answers before proceeding.
+- The **real technical problem** (root cause, not the symptom)
+- **Constraints** — technical and business — that condition the solution
+- **System components** involved (services, databases, queues, external integrations)
+- **Expected load scenarios** (volume, concurrency, frequency)
+- **Data consistency level** required (eventual, strong, transactional)
+- **Non-functional constraints** (latency, availability, fault tolerance, idempotency)
+- Whether this is **greenfield or modifying existing code**
 
-If the requirement is clear enough to proceed, state your assumptions explicitly instead.
+**Rule for asking questions:**
+Only ask when **both** conditions are true:
+1. The answer would materially change which options are viable or how they are evaluated.
+2. The answer cannot be reasonably inferred from the requirement, the codebase, or context.
+
+If the answer can be inferred, state it as an explicit assumption instead.
+Do not ask questions whose answers would produce the same analysis regardless.
+**If you must ask, ask everything in a single message — never one at a time.**
 
 ---
 
