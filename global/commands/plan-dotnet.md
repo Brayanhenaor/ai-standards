@@ -42,46 +42,100 @@ Read relevant existing code before designing:
 
 ## Phase 3 — Propose exactly 3 options
 
-Always present **exactly 3 options** — from most conservative to most sophisticated. Each must be genuinely different in approach, not just variations of the same idea.
+Always present **exactly 3 options** — not superficial variations of the same idea.
+Each must represent a genuinely different architectural approach with different implications.
 
-For each option use this structure:
+For each option cover **every section below without exception**:
 
 ```
-### Opción N — [Nombre]
+### Opción N — [Nombre — máximo 5 palabras descriptivas]
 
-**Resumen:** Una oración describiendo el enfoque.
+**Descripción técnica**
+Cómo funciona a nivel de arquitectura: componentes, flujo de información, tecnologías y patrones.
 
-**Cómo funciona:** Descripción breve del diseño.
+**Ventajas**
+Mínimo 4 ventajas técnicas concretas y específicas para este problema — no ventajas genéricas
+del patrón, sino por qué son ventajas en este contexto.
 
-**Ventajas:**
-- ...
+**Desventajas y limitaciones**
+Mínimo 4 desventajas reales. Honesto sobre los costos técnicos, operacionales y de mantenimiento.
 
-**Desventajas:**
-- ...
+**Comportamiento bajo carga y concurrencia**
+¿Cómo se comporta con múltiples operaciones simultáneas?
+¿Riesgo de condiciones de carrera, deadlocks o degradación?
+¿Escala horizontalmente o tiene cuellos de botella inherentes?
 
-**Riesgos técnicos:**
-- Concurrencia: [¿condiciones de carrera posibles? ¿estado compartido?]
-- Memory leaks: [¿recursos sin liberar, closures, suscripciones?]
-- Rendimiento bajo carga: [¿cuellos de botella, N+1, queries sin límite?]
-- Idempotencia: [¿es seguro reintentar la operación?]
-- Escalabilidad: [¿qué se rompe primero al escalar?]
+**Comportamiento ante fallos**
+¿Qué pasa si falla a mitad de operación? ¿El sistema queda consistente?
+¿Es idempotente? ¿Soporta reintentos seguros?
+¿Qué pasa si cae la BD, una cola, un servicio externo o la red?
 
-**Mejor para:** Cuándo esta opción es la elección correcta.
-**Complejidad:** Baja / Media / Alta
-**Reversibilidad:** Fácil de cambiar / Difícil de deshacer — explicar por qué
+**Impacto en persistencia y datos**
+¿Qué cambios implica en el modelo de datos?
+¿Requiere migraciones? ¿Afecta índices, transacciones o esquemas existentes?
+¿Riesgo de pérdida o corrupción de datos?
+
+**Impacto en otros servicios e integraciones**
+¿Qué servicios dependientes se ven afectados?
+¿Requiere cambios en contratos de API, eventos o mensajes?
+¿Genera acoplamiento nuevo entre componentes?
+
+**Complejidad de implementación**
+Nivel: Baja / Media / Alta — justificación técnica y esfuerzo relativo vs las otras opciones.
+
+**Complejidad operacional**
+¿Qué implica operar esto en producción? ¿Monitoreo especial, configuración adicional?
+¿Qué tan difícil es diagnosticar problemas en producción?
+
+**Deuda técnica generada**
+¿Qué compromisos técnicos conscientes implica? ¿Qué trabajo futuro genera?
+
+**Reversibilidad**
+¿Qué tan fácil es deshacer esta decisión?
+¿Qué condición futura haría necesario revertirla?
+¿Cuál sería el costo aproximado de revertirla una vez implementada?
+
+**Cuándo es la opción correcta / cuándo NO lo es**
+Contextos donde esta opción brilla y donde sería un error elegirla.
 ```
-
-Evaluate all options across:
-- Correctness and completeness
-- Alignment with the project's current architecture
-- Performance and resource usage under real load
-- Testability
-- Maintainability and readability
-- Implementation effort
 
 ---
 
-## Phase 4 — Recommendation
+## Phase 4 — Comparative table
+
+Compare the 3 options on a 1–5 scale (5 = best). Include a one-line justification per cell.
+
+| Dimensión | Opción 1 | Opción 2 | Opción 3 |
+|-----------|----------|----------|----------|
+| Rendimiento bajo carga normal | | | |
+| Rendimiento bajo carga alta | | | |
+| Tolerancia a fallos | | | |
+| Consistencia de datos | | | |
+| Complejidad de implementación | | | |
+| Complejidad operacional | | | |
+| Escalabilidad horizontal | | | |
+| Reversibilidad | | | |
+| Costo de mantenimiento a largo plazo | | | |
+| Velocidad de implementación | | | |
+
+---
+
+## Phase 5 — Pre-decision questions
+
+Identify what is genuinely unresolved after the analysis and surface only those gaps.
+
+**A question earns its place only if:**
+- Its answer would change which option is viable or shift the recommendation — it is a real decision gate.
+- It surfaces a risk or tradeoff the developer may not have weighed, so that whichever option
+  they pick, they own the consequences consciously.
+
+Do not include questions already answerable from the codebase, the requirement, or the analysis.
+**If nothing is genuinely unresolved**, say so explicitly and proceed to the recommendation.
+When questions are warranted, derive them from the specific options and risks surfaced — not from a template.
+
+---
+
+## Phase 6 — Recommendation
 
 State which option you recommend and why, considering:
 - The current state of the codebase (not the ideal state)
@@ -91,9 +145,12 @@ State which option you recommend and why, considering:
 
 If the project has architectural debt that affects the solution, mention it as `⚠️ Oportunidad de refactor` without making it a blocker.
 
+**Do not recommend until the pre-decision questions from Phase 5 are answered,
+unless the answers are clearly inferable from the codebase or context.**
+
 ---
 
-## Phase 5 — Implementation plan
+## Phase 7 — Implementation plan
 
 For the recommended option, produce a step-by-step plan:
 
