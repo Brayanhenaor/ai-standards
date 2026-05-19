@@ -223,7 +223,7 @@ async function main() {
       message: 'Claude Code — componentes:',
       options: [
         { value: 'standards', label: 'Estándares globales', hint: 'CLAUDE.md → ~/.claude/' },
-        { value: 'commands',  label: 'Comandos',            hint: '16 comandos /user: → ~/.claude/commands/' },
+        { value: 'commands',  label: 'Comandos',            hint: '18 comandos /user: → ~/.claude/commands/' },
         { value: 'rules',     label: 'Rules',               hint: 'csharp, security, testing, docker… → ~/.claude/rules/' },
         { value: 'hooks',     label: 'Hooks',               hint: 'build-check · migration-guard · test-runner' },
       ],
@@ -242,7 +242,7 @@ async function main() {
       message: 'Cursor — componentes:',
       options: [
         { value: 'rules',    label: 'Rules',    hint: '9 archivos .mdc con frontmatter → .cursor/rules/' },
-        { value: 'commands', label: 'Comandos', hint: '16 slash commands → .cursor/commands/ (úsalos con /)' },
+        { value: 'commands', label: 'Comandos', hint: '18 slash commands → .cursor/commands/ (úsalos con /)' },
       ],
       initialValues: ['rules', 'commands'],
       required: true,
@@ -282,9 +282,10 @@ async function main() {
         '  /user:init-dotnet',
         '',
         'Hooks activos:',
-        '  build-check     — compila tras editar .cs',
-        '  migration-guard — bloquea ef database update',
-        '  test-runner     — ejecuta tests tras *Tests.cs',
+        '  cs-dirty-flag   — marca turno cuando se edita .cs',
+        '  build-check     — compila al finalizar turno si hubo cambios .cs',
+        '  test-runner     — ejecuta tests al guardar *Tests.cs',
+        '  migration-guard — bloquea ef database update/drop',
       ].join('\n'),
       'Próximos pasos — Claude Code'
     );

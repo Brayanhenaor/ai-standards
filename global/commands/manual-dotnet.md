@@ -3,7 +3,7 @@
 Analyze the project completely and extract all real technical information to populate a professional technical manual. Do not invent anything. If something is not in the source code, write exactly: "No determinado desde el código fuente".
 
 **Usage:**
-- `/user:tech-manual` — analyze the current project
+- `/user:manual-dotnet` — analyze the current project
 
 ---
 
