@@ -6,6 +6,10 @@
           {
             "type": "command",
             "command": "bash \"$HOME/.claude/hooks/build-check.sh\""
+          },
+          {
+            "type": "command",
+            "command": "bash \"$HOME/.claude/hooks/format-check.sh\""
           }
         ]
       }
@@ -41,6 +45,10 @@
           {
             "type": "command",
             "command": "bash \"$HOME/.claude/hooks/migration-guard.sh\""
+          },
+          {
+            "type": "command",
+            "command": "bash \"$HOME/.claude/hooks/secret-scan.sh\""
           }
         ]
       }

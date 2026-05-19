@@ -10,8 +10,10 @@ Cuatro hooks automatizan validaciones durante el ciclo de Claude. Se instalan en
 |------|--------|---------|-----------|
 | `cs-dirty-flag.sh` | `PostToolUse` | `Write`, `Edit` | Marca turno como "modificó .cs" |
 | `build-check.sh` | `Stop` | — | Compila si hubo cambios .cs este turno |
+| `format-check.sh` | `Stop` | — | Verifica dotnet format si hubo cambios .cs |
 | `test-runner.sh` | `PostToolUse` | `Write` | Ejecuta tests al guardar archivo de test |
 | `migration-guard.sh` | `PreToolUse` | `Bash` | Bloquea operaciones EF destructivas |
+| `secret-scan.sh` | `PreToolUse` | `Bash` | Bloquea git commit con secretos detectados |
 
 ---
 
@@ -107,6 +109,59 @@ Ejecuta el comando manualmente si es tu intención.
 
 ---
 
+---
+
+### `format-check.sh`
+
+**Evento:** `Stop`
+
+Usa el mismo flag de `cs-dirty-flag.sh`. Si hubo cambios en `.cs` este turno, ejecuta `dotnet format --verify-no-changes`. **No modifica archivos** — solo reporta cuáles tienen problemas de formato.
+
+**Silent on success.**
+
+```
+--- dotnet format: archivos con problemas de formato ---
+
+  Formatted: src/Api/Controllers/UsersController.cs
+
+Corregir con: dotnet format MyProject.sln
+---
+```
+
+---
+
+### `secret-scan.sh`
+
+**Evento:** `PreToolUse` → `Bash`
+
+Intercepta `git commit` y `git add`. Escanea los archivos staged buscando patrones de secretos:
+
+- JWTs (`eyJ...`)
+- AWS access/secret keys (`AKIA...`)
+- RSA/EC private key headers
+- Connection strings con password embebida
+- Variables con nombres de secreto asignadas a string literals
+- Slack webhooks, GitHub tokens
+
+Bloquea el commit con exit code 2 si encuentra coincidencias.
+
+```
+🔴  Posibles secretos detectados en archivos staged
+
+Patrones encontrados:
+  • Password in connection string
+    → Password=Admin123...
+  • JWT token
+    → eyJhbGciOiJI...
+
+Acciones recomendadas:
+  1. Elimina el secreto del archivo
+  2. Agrega a User Secrets o variable de entorno
+  3. Si es falso positivo: git commit --no-verify (bajo tu responsabilidad)
+```
+
+---
+
 ## Configuración en settings.json
 
 ```json
@@ -115,7 +170,8 @@ Ejecuta el comando manualmente si es tu intención.
     "Stop": [
       {
         "hooks": [
-          { "type": "command", "command": "bash \"$HOME/.claude/hooks/build-check.sh\"" }
+          { "type": "command", "command": "bash \"$HOME/.claude/hooks/build-check.sh\"" },
+          { "type": "command", "command": "bash \"$HOME/.claude/hooks/format-check.sh\"" }
         ]
       }
     ],
@@ -138,7 +194,8 @@ Ejecuta el comando manualmente si es tu intención.
       {
         "matcher": "Bash",
         "hooks": [
-          { "type": "command", "command": "bash \"$HOME/.claude/hooks/migration-guard.sh\"" }
+          { "type": "command", "command": "bash \"$HOME/.claude/hooks/migration-guard.sh\"" },
+          { "type": "command", "command": "bash \"$HOME/.claude/hooks/secret-scan.sh\"" }
         ]
       }
     ]
