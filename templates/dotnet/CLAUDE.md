@@ -166,26 +166,44 @@ Deployment process per environment (dev / staging / prod).
 
 ## Available commands
 
-### Planning and design
+### Discover & Plan
+- `/user:init-dotnet`        — initial project setup: analyze solution + generate CLAUDE.md (run once)
 - `/user:plan-dotnet`        — 3 architectural options with risk analysis before implementing
 - `/user:adr-dotnet`         — generate ADR from the chosen option after plan-dotnet
+- `/user:manual-dotnet`      — extract full technical info for professional manual (JSON output)
 
-### Expert analysis (on-demand deep dives)
+### Design
 - `/user:architect-dotnet`   — senior architect review: scalability, HA, fault tolerance, distributed systems
-- `/user:concurrency-dotnet` — concurrency expert: race conditions, deadlocks, async correctness, DI lifetimes
-- `/user:performance-dotnet` — performance engineer: GC pressure, allocations, N+1, caching, I/O efficiency
 - `/user:domain-dotnet`      — DDD expert: aggregate boundaries, value objects, invariants, ubiquitous language
+- `/user:api-dotnet`         — REST API contract design: HTTP semantics, versioning, pagination, ProblemDetails
 
-### Code generation
+### Build
 - `/user:scaffold-dotnet`    — generate complete feature scaffold (all layers + unit tests)
+- `/user:migrate-dotnet`     — EF Core migration safety analysis: locks, zero-downtime patterns, rollback
+- `/user:messaging-dotnet`   — MassTransit/RabbitMQ/Service Bus expert: idempotency, outbox, sagas
+- `/user:cache-dotnet`       — caching expert: IMemoryCache, Redis, HybridCache, stampede protection
 - `/user:debug-dotnet`       — structured debugging: collect → hypothesize → one change → verify
 
-### Quality and delivery
-- `/user:review-dotnet`      — full review of all branch changes before PR
+### Validate
+- `/user:review-dotnet`      — full review of all branch changes (10+ dimensions)
+- `/user:security-dotnet`    — standalone security audit: OWASP Top 10, JWT, injection, CVEs
 - `/user:test-dotnet`        — generate unit tests for pending changes or a commit
+- `/user:concurrency-dotnet` — concurrency expert: race conditions, deadlocks, async correctness, DI lifetimes
+- `/user:performance-dotnet` — performance engineer: GC pressure, allocations, N+1, caching, I/O efficiency
+
+### Ship
+- `/user:gate-dotnet`        — pre-PR gate: full checklist (build, tests, security, migrations, commit)
 - `/user:commit-dotnet`      — generate commit message in Conventional Commits
 - `/user:changelog-dotnet`   — generate change control document for commits or pending changes
 
-### Setup and infrastructure
-- `/user:init-dotnet`        — initial project setup (run once)
+### Operate & Maintain
 - `/user:docker-dotnet`      — review or generate Docker/Compose configuration
+- `/user:grafana-dotnet`     — generate Grafana dashboard JSON from Prometheus metrics in codebase
+- `/user:infisical-dotnet`   — configure Infisical secrets provider
+- `/user:refactor-dotnet`    — guided tech debt refactoring: smell detection, characterization tests, atomic steps
+- `/user:standup`            — generate daily standup summary from git commits
+
+### Workflow
+- `/user:start-dotnet`       — feature kickoff: requirements → architecture options → scaffold
+- `/user:grill-me`           — challenge your plan with relentless one-at-a-time questions
+- `/user:zoom-out`           — map all modules and callers when unfamiliar with an area

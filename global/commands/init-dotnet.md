@@ -15,8 +15,11 @@ Explore the project thoroughly before writing anything.
 
 ### Stack and dependencies
 - Extract all `PackageReference` entries from each `.csproj`
-- Identify key libraries: ORM, messaging, logging, auth, mapping, etc.
+- Identify key libraries: ORM, messaging, logging, auth, mapping, cache, etc.
 - Detect the .NET and C# version of each project
+- **Detect event-driven stack:** MassTransit, RabbitMQ, Azure.Messaging.ServiceBus → mark project as event-driven
+- **Detect cache stack:** StackExchange.Redis, Microsoft.Extensions.Caching.StackExchangeRedis, IDistributedCache usage → mark project as using distributed cache
+- **Detect EF Core migrations:** if `Migrations/` folder exists → migration patterns apply
 
 ### Real architecture
 - Read `Program.cs` / `Startup.cs` to understand DI setup and middlewares
@@ -195,16 +198,37 @@ Available commands:
   /user:performance-dotnet — ingeniero de performance: GC, allocations, N+1, caching
   /user:domain-dotnet      — experto DDD: aggregates, value objects, invariantes
 
-  Generación de código:
+  Diseño:
+  /user:api-dotnet         — diseño de contratos REST/OpenAPI, versioning, pagination
+
+  Build:
   /user:scaffold-dotnet    — genera scaffold completo de un feature (todas las capas + tests)
+  /user:migrate-dotnet     — análisis de seguridad de migrations EF Core (zero-downtime)[if:ef-migrations]
+  /user:messaging-dotnet   — patrones MassTransit/RabbitMQ/Service Bus[if:event-driven]
+  /user:cache-dotnet       — estrategias Redis, HybridCache, stampede protection[if:cache]
 
   Calidad y entrega:
   /user:review-dotnet      — revisión completa del branch antes del PR
+  /user:security-dotnet    — auditoría standalone de seguridad (OWASP, JWT, injection)
   /user:test-dotnet        — genera unit tests para cambios pendientes o un commit
+  /user:refactor-dotnet    — plan guiado de refactoring de deuda técnica
   /user:commit-dotnet      — genera mensaje de commit en Conventional Commits
   /user:changelog-dotnet   — genera documento de control de cambios
+  /user:gate-dotnet        — pre-PR gate: checklist completo antes de abrir PR
+
+  Workflow:
+  /user:start-dotnet       — kickoff guiado de feature nuevo (requisitos → scaffold)
 
   Setup e infraestructura:
   /user:init-dotnet        — este comando (ya ejecutado)
   /user:docker-dotnet      — revisa o genera configuración Docker/Compose
+  /user:manual-dotnet      — extrae información técnica completa del proyecto (JSON)
+
+  Productividad:
+  /user:grill-me           — desafía tu plan con preguntas incisivas una a una
+  /user:zoom-out           — mapa de módulos y callers cuando no conoces el área
+
+  [if:event-driven] = solo si se detectó MassTransit/RabbitMQ/Service Bus
+  [if:cache] = solo si se detectó Redis/IDistributedCache
+  [if:ef-migrations] = solo si existen migrations en el proyecto
 ```

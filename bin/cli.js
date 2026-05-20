@@ -47,6 +47,22 @@ const CURSOR_RULE_META = {
     description: 'Observability: Prometheus metrics with IMetrics, Serilog structured logging',
     globs: '**/*.cs',
   },
+  'error-handling.md': {
+    description: 'Error handling: Result<T>, ProblemDetails RFC 7807, exception hierarchy, logging levels',
+    globs: '**/*.cs',
+  },
+  'messaging.md': {
+    description: 'Async messaging: naming conventions, idempotency, outbox pattern, schema evolution',
+    globs: '**/*Consumer*.cs,**/*Event*.cs,**/*Saga*.cs,**/*Publisher*.cs',
+  },
+  'caching.md': {
+    description: 'Caching: when to cache, key naming, TTL guidelines, stampede protection, PII rules',
+    globs: '**/*Cache*.cs,**/*Repository*.cs',
+  },
+  'api-design.md': {
+    description: 'REST API design: HTTP semantics, status codes, versioning, pagination, ProblemDetails',
+    globs: '**/*Controller*.cs,**/*Endpoint*.cs',
+  },
 };
 
 // ── Utilities ──────────────────────────────────────────────────────────────
@@ -223,7 +239,7 @@ async function main() {
       message: 'Claude Code — componentes:',
       options: [
         { value: 'standards', label: 'Estándares globales', hint: 'CLAUDE.md → ~/.claude/' },
-        { value: 'commands',  label: 'Comandos',            hint: '18 comandos /user: → ~/.claude/commands/' },
+        { value: 'commands',  label: 'Comandos',            hint: '25 comandos /user: → ~/.claude/commands/' },
         { value: 'rules',     label: 'Rules',               hint: 'csharp, security, testing, docker… → ~/.claude/rules/' },
         { value: 'hooks',     label: 'Hooks',               hint: 'build-check · migration-guard · test-runner' },
       ],
@@ -242,7 +258,7 @@ async function main() {
       message: 'Cursor — componentes:',
       options: [
         { value: 'rules',    label: 'Rules',    hint: '9 archivos .mdc con frontmatter → .cursor/rules/' },
-        { value: 'commands', label: 'Comandos', hint: '18 slash commands → .cursor/commands/ (úsalos con /)' },
+        { value: 'commands', label: 'Comandos', hint: '25 slash commands → .cursor/commands/ (úsalos con /)' },
       ],
       initialValues: ['rules', 'commands'],
       required: true,
