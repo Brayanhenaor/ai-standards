@@ -59,6 +59,8 @@ del patrón, sino por qué son ventajas en este contexto.
 
 **Desventajas y limitaciones**
 Mínimo 4 desventajas reales. Honesto sobre los costos técnicos, operacionales y de mantenimiento.
+Marcar con `⚠️ Crítico` las 1–2 desventajas que representan el mayor riesgo real de fracaso
+o reversión en producción — las que el dev debe conocer antes de elegir esta opción.
 
 **Comportamiento bajo carga y concurrencia**
 ¿Cómo se comporta con múltiples operaciones simultáneas?
@@ -148,11 +150,27 @@ If the project has architectural debt that affects the solution, mention it as `
 **Do not recommend until the pre-decision questions from Phase 5 are answered,
 unless the answers are clearly inferable from the codebase or context.**
 
+After stating the recommendation, close Phase 6 with this explicit invitation:
+
+> "Antes de pasar al plan: ¿tienes alguna variación, combinación o ajuste sobre estas opciones
+> que quieras explorar? Por ejemplo: [sugerir combinación concreta y relevante si aplica].
+> Si no, confirma con qué opción vas a proceder y el factor técnico principal que te llevó ahí."
+
+**Si el dev propone una variación o combinación:**
+- Evaluarla con el mismo rigor que las opciones de Phase 3 antes de aceptarla
+- Identificar trade-offs nuevos, comportamiento ante fallos, y reversibilidad
+- Confirmar que no introduce riesgos no analizados en las opciones originales
+
+**Si el dev elige una opción diferente a la recomendada sin justificación técnica:**
+Señalarlo antes de reconstruir el plan: "Elegiste [opción N] en lugar de [recomendada].
+¿Qué factor técnico cambió la decisión?" — no como bloqueo, sino para que quede registrado.
+
 ---
 
 ## Phase 7 — Implementation plan
 
-For the recommended option, produce a step-by-step plan:
+For the confirmed option — or the recommended option if the developer has not yet responded —
+produce a step-by-step plan:
 
 ```
 ## Plan de implementación — [Nombre de la opción]
@@ -194,4 +212,5 @@ For the recommended option, produce a step-by-step plan:
 
 **No escribir ningún código hasta que el dev confirme el plan.**
 Si el dev elige una opción diferente o la modifica, reconstruir el plan de implementación para esa opción antes de codificar.
-Cuando se tome una decisión de arquitectura relevante, sugerir `/user:adr-dotnet` para documentarla.
+Cuando se tome una decisión de arquitectura relevante, sugerir `/user:adr-dotnet <opción elegida>` para documentarla.
+⚠️ Al invocar `/user:adr-dotnet`, incluir la opción elegida **y la razón técnica principal** — el comando verificará que la elección está fundamentada en los trade-offs del análisis, no solo en preferencia.

@@ -51,14 +51,49 @@ The developer modified an option, combined two, or chose something not in the or
 Is there a new risk introduced by the modification that wasn't in the original analysis?
 
 **Condition D — Signs the developer chose without solid foundations**
-The justification is vague ("it seemed simpler", "I think it'll work"), a risk or consequence
-was not mentioned that the prior analysis flagged as critical, or the choice contradicts
-the constraints the developer themselves stated.
-*Ask targeted questions about the specific gap:*
-- "The analysis flagged [X] as a critical risk for this option. How are you handling it from the design?"
-- "If this fails mid-operation, what state are the data left in and how does the system recover?"
-- "If volume doubles, where does this solution break first?"
-- "Are you aware that this option [specific critical consequence]? How does the design account for that?"
+
+This condition fires when **ANY** of the following signals are present:
+
+**D1 — Bare selection, no rationale**
+$ARGUMENTS is just an option number or name ("opción 2", "la segunda", "option 3") with no
+"because" or technical reasoning.
+*Always triggers if the prior plan had high complexity: schema changes, multiple services
+affected, reversibility rated "No" or "Con esfuerzo", or critical risks flagged.*
+*Ask:* "Tu elección no conecta con los trade-offs del análisis. ¿Qué característica técnica
+de esta opción la hace la correcta para este contexto específico — dado [constraint principal
+del problema]? No en general, sino aquí."
+
+**D2 — Indecision signals**
+The developer uses hedging language: "maybe", "I think", "probably", "not sure but",
+"either option", "entre la 1 y la 2", "cualquiera de las dos". No ADR should be generated
+while the developer is still deciding.
+*Ask:* "Antes de documentar necesito que elijas una sola opción. ¿Cuál es y qué factor
+técnico concreto del análisis la hace mejor para este caso?"
+
+**D3 — Surface-level reasoning**
+The justification references only implementation ease, familiarity, or convention
+("menos código", "más simple", "ya lo conozco", "es lo que siempre hacemos", "es más rápido")
+without connecting to the plan's actual trade-offs.
+*Ask:* "Esa razón describe conveniencia de implementación, no adecuación técnica.
+¿Qué trade-off concreto del análisis respalda esta elección? Conecta la decisión con
+al menos un constraint técnico o de negocio del problema."
+
+**D4 — Critical risk not acknowledged**
+The prior analysis flagged a specific risk as critical or high for the chosen option,
+and the developer's arguments don't acknowledge it at all.
+*Ask:* "El análisis identificó [riesgo crítico específico] como el mayor riesgo de esta
+opción y no lo mencionaste. ¿Cómo lo estás manejando desde el diseño?
+¿O lo estás aceptando sabiendo exactamente qué implica?"
+
+**D5 — Self-contradiction**
+The developer chose an option that the plan explicitly marked as "NOT correct when
+[condition X]" and that condition appears to apply to the current context.
+*Ask:* "El análisis señaló que esta opción no es correcta cuando [condición X].
+Esa condición parece aplicar aquí porque [razón concreta]. ¿Qué cambió en tu análisis
+que hace que esta opción sea válida de todas formas?"
+
+*Ask only about the specific signal detected — never all at once unless multiple signals
+are present simultaneously.*
 
 **Condition E — Options don't cover the problem well**
 After reviewing the choice, it is apparent that none of the analyzed options fit cleanly,
@@ -75,7 +110,34 @@ consistent with the prior analysis — proceed directly to Step 3.
 
 ---
 
-## Step 3 — Determine the ADR number and path
+## Step 3 — Reversibility gate
+
+Before determining the ADR number, assess the reversibility of the chosen option — from the
+prior plan, the description, or the codebase analysis.
+
+**If reversibility is "No":**
+Pause and present explicitly before generating anything:
+
+> "Esta decisión tiene reversibilidad **No** — una vez implementada en producción, revertirla
+> implicaría [describir el costo real: migraciones, cambios de contrato de API, downtime,
+> pérdida de datos, o refactor de múltiples servicios].
+>
+> ¿Confirmas que el equipo entiende y acepta esta condición de forma explícita?
+> Responde 'confirmo' para continuar, o describe cómo ajustarías el diseño para mejorar la reversibilidad."
+
+**Do not proceed to Step 4 until the developer explicitly confirms.**
+
+**If reversibility is "Con esfuerzo":**
+Surface una advertencia visible pero no bloqueante:
+
+> "⚠️ Esta decisión tiene reversibilidad media — revertirla requeriría [costo estimado concreto].
+> Continúa si lo tienes en cuenta."
+
+**If reversibility is "Fácil":** proceed without interruption.
+
+---
+
+## Step 4 — Determine the ADR number and path
 
 ```bash
 ls docs/adr/ 2>/dev/null | sort | tail -1
@@ -87,7 +149,7 @@ ls docs/adr/ 2>/dev/null | sort | tail -1
 
 ---
 
-## Step 4 — Generate the ADR
+## Step 5 — Generate the ADR
 
 Write the file to `docs/adr/NNNN-title.md`. The tone must be technical, direct, and honest —
 including known limitations and uncertainties, not only the benefits of the chosen path.
@@ -204,7 +266,7 @@ Si el dev modificó la opción base, describir exactamente qué se cambió y por
 
 ---
 
-## Step 5 — Update PROJECT_STATUS.md (if it exists)
+## Step 6 — Update PROJECT_STATUS.md (if it exists)
 
 If `docs/PROJECT_STATUS.md` exists, add a line under the relevant section:
 
@@ -214,7 +276,7 @@ If `docs/PROJECT_STATUS.md` exists, add a line under the relevant section:
 
 ---
 
-## Step 6 — Confirm
+## Step 7 — Confirm
 
 Present this summary:
 
