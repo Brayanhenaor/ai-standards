@@ -63,6 +63,15 @@ affected, reversibility rated "No" or "Con esfuerzo", or critical risks flagged.
 de esta opción la hace la correcta para este contexto específico — dado [constraint principal
 del problema]? No en general, sino aquí."
 
+**D1 special case — delegation to Claude's recommendation**
+If the developer says "usa tu recomendación", "genera con lo que dijiste", "la que recomiendas",
+"acepto tu sugerencia", or any equivalent — **this always triggers D1, no exceptions.**
+The reasoning in the prior analysis is Claude's, not the developer's. The ADR must record
+the developer's own understanding, not a repetition of Claude's analysis.
+*Ask the same as D1, and additionally:* "¿Los riesgos críticos que el análisis identificó
+para esta opción — [listar los marcados ⚠️ Crítico] — los entendiste y los aceptas
+conscientemente? ¿O necesitas revisar alguno antes de cerrar la decisión?"
+
 **D2 — Indecision signals**
 The developer uses hedging language: "maybe", "I think", "probably", "not sure but",
 "either option", "entre la 1 y la 2", "cualquiera de las dos". No ADR should be generated
