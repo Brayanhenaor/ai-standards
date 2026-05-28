@@ -16,22 +16,23 @@ a step-by-step implementation sequence.
 ## Model check — run before anything else
 
 Check the model ID from the system context (visible in the environment information).
+Determine the model tier by looking for the family name in the model ID:
 
-**If the model is `claude-opus-4-7` or any `claude-opus-4-x`:** proceed silently.
-
-**If the model is `claude-sonnet-4-x` or `claude-haiku-4-x`:**
-Surface a recommendation before continuing. Use `AskUserQuestion` with these options:
+- Model ID contains **"opus"** → highest reasoning tier. Proceed silently.
+- Model ID contains **"sonnet"** or **"haiku"** → not the top reasoning tier. Surface a
+  recommendation before continuing. Use `AskUserQuestion` with these options:
 
 > "Este comando genera un blueprint de implementación completo: modelos de datos, esquemas
 > de BD, diagramas, scaffolding de código, y secuencias de implementación detalladas.
+> Estás usando **[nombre del modelo actual]**, que es un modelo de tier medio/ligero.
 > Para producir artefactos precisos y coherentes con la arquitectura del proyecto,
-> **Opus 4.7** razona con más profundidad que [modelo actual].
+> un modelo **Opus** (el tier más potente de la familia Claude) razona con más profundidad.
 >
 > ¿Cómo querés continuar?"
 
 Options:
-- **"Cambiar a Opus 4.7 primero"** — recommended. The developer can switch with `/model` and
-  re-run the command. Do not proceed — wait for them to act.
+- **"Cambiar a un modelo Opus primero"** — recommended. The developer can switch with `/model`
+  and re-run the command. Do not proceed — wait for them to act.
 - **"Continuar con [modelo actual]"** — proceed with the current model. No further warnings.
 
 Do not block indefinitely — if the developer chooses to continue, respect that decision
