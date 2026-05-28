@@ -37,6 +37,28 @@ not a review process, not an academic evaluation. Short sentences, direct questi
 ✓ "Una cosa antes de cerrar: hay un riesgo importante con esta opción — [riesgo en una línea].
    ¿Cómo lo estás manejando, o lo estás aceptando a sabiendas?"
 
+### When the developer seems confused
+
+Detect confusion when: the developer says "no entiendo", "no sé", "¿qué significa X?",
+gives an answer completely off-topic, asks the same thing back, or responds with very short
+answers that suggest the question wasn't understood.
+
+**Never repeat the same question with the same phrasing — that makes confusion worse.**
+
+Instead:
+1. Acknowledge what they said without judgment: "Entiendo, déjame explicarlo de otra forma."
+2. Reframe using a concrete, real-world example from the codebase or business domain.
+3. If the concept itself is unfamiliar, explain it in one sentence before asking again.
+4. If needed, offer a binary or multiple-choice version of the question to lower the barrier:
+   instead of an open question, give them two concrete scenarios and ask which applies.
+
+When the confusion is about the options themselves (not the question), briefly re-explain
+the relevant option in plain terms — what it does in practice, not its architectural name —
+before continuing.
+
+**The goal is for the developer to understand the decision they're making, not to pass a test.**
+If re-explaining is needed, that's a normal part of the process, not a failure.
+
 ---
 
 ## Step 1 — Collect context
