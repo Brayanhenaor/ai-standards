@@ -87,7 +87,8 @@ Only ask when **both** conditions are true:
 1. The answer would materially change which options are viable or how they are evaluated.
 2. The answer cannot be reasonably inferred from the requirement, the codebase, or context.
 
-If the answer can be inferred, state it as an explicit assumption instead.
+If the answer can be inferred, state it as an explicit assumption instead, marked as:
+`📌 Asumido: [X]` — so they're scannable and traceable to the ADR's "Qué se asume" section.
 Do not ask questions whose answers would produce the same analysis regardless.
 **If you must ask, ask everything in a single message — never one at a time.**
 
@@ -103,7 +104,7 @@ Read relevant existing code before designing:
 
 ---
 
-## Phase 3 — Propose exactly 3 options
+## Phase 3 — Propose options
 
 Present as many options as the problem genuinely warrants — not a fixed number.
 Each must represent a genuinely different architectural approach with different implications.
@@ -185,10 +186,11 @@ Contextos donde esta opción brilla y donde sería un error elegirla.
 
 ## Phase 4 — Comparative table
 
-Compare the 3 options on a 1–5 scale (5 = best). Include a one-line justification per cell.
+Compare all proposed options on a 1–5 scale (5 = best). Include a one-line justification
+per cell. Add or remove columns to match the actual number of options — not always 3.
 
-| Dimensión | Opción 1 | Opción 2 | Opción 3 |
-|-----------|----------|----------|----------|
+| Dimensión | Opción 1 | Opción 2 | … |
+|-----------|----------|----------|---|
 | Rendimiento bajo carga normal | | | |
 | Rendimiento bajo carga alta | | | |
 | Tolerancia a fallos | | | |
@@ -276,7 +278,10 @@ produce a step-by-step plan:
 - Caminos críticos a cubrir: [happy path, casos de error, edge cases, concurrencia]
 
 ### ADR requerido
-[Sí — usar /user:adr-dotnet con la opción elegida / No]
+**Obligatorio cuando:** complejidad Alta, reversibilidad No o Con esfuerzo, cambios en
+esquema de BD, o cambios en contratos de API públicos o entre servicios.
+**Opcional cuando:** decisión de alcance local, baja complejidad, y fácilmente reversible.
+[Sí — /user:adr-dotnet <opción elegida> / No — justificar brevemente]
 
 ### Blueprint detallado requerido
 [Sí — usar /user:plan-detail para generar modelos, esquemas, diagramas y scaffolding completo /

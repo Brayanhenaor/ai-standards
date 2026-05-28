@@ -123,47 +123,41 @@ $ARGUMENTS is just an option number or name ("opción 2", "la segunda", "option 
 "because" or technical reasoning.
 *Always triggers if the prior plan had high complexity: schema changes, multiple services
 affected, reversibility rated "No" or "Con esfuerzo", or critical risks flagged.*
-*Ask:* "Tu elección no conecta con los trade-offs del análisis. ¿Qué característica técnica
-de esta opción la hace la correcta para este contexto específico — dado [constraint principal
-del problema]? No en general, sino aquí."
+*Ask:* "¿Qué te hizo elegir esta sobre las otras? Contame el factor técnico concreto."
 
 **D1 special case — delegation to Claude's recommendation**
 If the developer says "usa tu recomendación", "genera con lo que dijiste", "la que recomiendas",
 "acepto tu sugerencia", or any equivalent — **this always triggers D1, no exceptions.**
 The reasoning in the prior analysis is Claude's, not the developer's. The ADR must record
 the developer's own understanding, not a repetition of Claude's analysis.
-*Ask the same as D1, and additionally:* "¿Los riesgos críticos que el análisis identificó
-para esta opción — [listar los marcados ⚠️ Crítico] — los entendiste y los aceptas
-conscientemente? ¿O necesitas revisar alguno antes de cerrar la decisión?"
+*Ask the same as D1, and additionally:* "Una cosa más: el análisis marcó [listar los ⚠️ Crítico]
+como riesgos importantes de esta opción. ¿Los tenés claros y los aceptás, o querés revisar
+alguno antes de cerrar?"
 
 **D2 — Indecision signals**
 The developer uses hedging language: "maybe", "I think", "probably", "not sure but",
 "either option", "entre la 1 y la 2", "cualquiera de las dos". No ADR should be generated
 while the developer is still deciding.
-*Ask:* "Antes de documentar necesito que elijas una sola opción. ¿Cuál es y qué factor
-técnico concreto del análisis la hace mejor para este caso?"
+*Ask:* "¿Con cuál opción vas? Elegí una sola y contame qué te convenció de ella."
 
 **D3 — Surface-level reasoning**
 The justification references only implementation ease, familiarity, or convention
 ("menos código", "más simple", "ya lo conozco", "es lo que siempre hacemos", "es más rápido")
 without connecting to the plan's actual trade-offs.
-*Ask:* "Esa razón describe conveniencia de implementación, no adecuación técnica.
-¿Qué trade-off concreto del análisis respalda esta elección? Conecta la decisión con
-al menos un constraint técnico o de negocio del problema."
+*Ask:* "Eso me dice que es más cómodo de implementar — lo entiendo. Pero necesito saber por
+qué encaja mejor con lo que el sistema necesita. ¿Qué te convenció técnicamente?"
 
 **D4 — Critical risk not acknowledged**
 The prior analysis flagged a specific risk as critical or high for the chosen option,
 and the developer's arguments don't acknowledge it at all.
-*Ask:* "El análisis identificó [riesgo crítico específico] como el mayor riesgo de esta
-opción y no lo mencionaste. ¿Cómo lo estás manejando desde el diseño?
-¿O lo estás aceptando sabiendo exactamente qué implica?"
+*Ask:* "Antes de cerrar: hay un riesgo importante con esta opción — [riesgo en una línea].
+¿Cómo lo estás manejando, o lo estás aceptando a sabiendas?"
 
 **D5 — Self-contradiction**
 The developer chose an option that the plan explicitly marked as "NOT correct when
 [condition X]" and that condition appears to apply to the current context.
-*Ask:* "El análisis señaló que esta opción no es correcta cuando [condición X].
-Esa condición parece aplicar aquí porque [razón concreta]. ¿Qué cambió en tu análisis
-que hace que esta opción sea válida de todas formas?"
+*Ask:* "Una duda: el análisis decía que esta opción no es la mejor cuando [condición X], y
+parece que acá aplica porque [razón concreta]. ¿Qué cambió que la hace válida igual?"
 
 *Ask only about the specific signal detected — never all at once unless multiple signals
 are present simultaneously.*
@@ -176,9 +170,10 @@ adecuación técnica."
 **Condition E — Options don't cover the problem well**
 After reviewing the choice, it is apparent that none of the analyzed options fit cleanly,
 or a better combination exists.
-*Before closing the decision:*
-"Is there a variation or combination of the analyzed options worth considering before committing?
-For example, [specific combination relevant to this case]. If so, describe it briefly."
+*Antes de cerrar la decisión:*
+"¿Hay alguna variación o combinación de las opciones analizadas que valga la pena explorar
+antes de comprometerse? Por ejemplo, [combinación concreta relevante para este caso].
+Si hay algo, describilo brevemente."
 
 **If the developer proposes a new alternative or a valid combination, analyze it with the
 same rigor as the original options before proceeding.**
@@ -238,6 +233,8 @@ including known limitations and uncertainties, not only the benefits of the chos
 **Date:** DD/MM/YYYY
 **Status:** Accepted / Under Review / Proposed
 **Author:** [git config user.name]
+**Supersedes:** ADR-NNNN — [título] / —
+**Related:** ADR-NNNN — [título] / —
 
 ---
 
@@ -253,26 +250,17 @@ ningún contexto previo. 3–5 oraciones.
 
 ## 2. Opciones evaluadas
 
-### Opción 1 — [Nombre]
-**Descripción:** [2–3 líneas de descripción técnica.]
-**Trade-offs principales:**
-- Ventajas relevantes para este caso: [lista]
-- Desventajas relevantes para este caso: [lista]
-**Por qué se descartó:** [razón específica para este contexto]
+Documentar todas las opciones que fueron evaluadas — no necesariamente 3.
+Marcar la elegida con *(elegida)*. Para cada una:
 
-### Opción 2 — [Nombre]
+### Opción N — [Nombre] *(elegida / descartada)*
 **Descripción:** [2–3 líneas de descripción técnica.]
 **Trade-offs principales:**
 - Ventajas relevantes para este caso: [lista]
 - Desventajas relevantes para este caso: [lista]
-**Por qué se descartó:** [razón específica para este contexto]
+**Por qué se descartó / eligió:** [razón específica para este contexto, este equipo, este momento]
 
-### Opción 3 — [Nombre] *(elegida)*
-**Descripción:** [2–3 líneas de descripción técnica.]
-**Trade-offs principales:**
-- Ventajas relevantes para este caso: [lista]
-- Desventajas relevantes para este caso: [lista]
-**Por qué se eligió:** [razón específica para este sistema, este equipo, este momento]
+_Repetir este bloque para cada opción evaluada._
 
 ---
 
@@ -370,5 +358,5 @@ Deuda técnica registrada: [Sí / No]
 Próximos pasos:
   • Commitear junto con el código que implementa esta decisión
   • Actualizar README si hay nuevas env vars o endpoints
-  • Ejecutar /user:plan-dotnet o /user:plan-implementation si aún no tienes el plan
+  • Usar /user:plan-detail si necesitás un blueprint de implementación detallado
 ```

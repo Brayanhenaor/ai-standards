@@ -127,6 +127,8 @@ Ordered steps with explicit dependencies. Each step specifies:
 - Files to create or modify (exact paths)
 - What it enables for the next step
 - Whether it can be done independently or depends on a previous step
+- **Listo cuando:** condition that confirms the step is complete — a test passes, an endpoint
+  returns the expected shape, a migration runs cleanly, a build compiles without errors, etc.
 
 Number the steps. Mark blocking dependencies explicitly.
 
