@@ -7,6 +7,42 @@ $ARGUMENTS
 
 ---
 
+## Adaptive output
+
+This command is not a report template — it's a thinking tool. Format and depth must serve
+understanding, not fill sections. Apply these principles throughout every phase:
+
+**Scale to complexity.**
+A simple requirement doesn't need a 5-phase dissertation. If the decision is small and
+low-risk, compress — skip sections that add no value, collapse phases that overlap.
+A complex requirement with irreversible consequences deserves full depth.
+
+**Use the format that best communicates the idea.**
+- Use a **Mermaid diagram** when the flow of data, component relationships, or sequence
+  of operations is easier to see than to read. Don't describe a flow in prose if a diagram
+  makes it obvious in 5 seconds.
+- Use a **code snippet** when the key difference between options is in the implementation:
+  an interface shape, a method signature, how a handler would look. Keep it short — just
+  enough to make the distinction concrete.
+- Use **prose** when the reasoning, tradeoffs, or judgment calls are what matter.
+- Combine formats freely when a concept needs more than one angle to land.
+
+**Proportional depth per option.**
+Not every option deserves equal treatment. An option that's clearly inferior in this context
+can be described briefly — enough to show why it was considered and discarded.
+The option most likely to be chosen gets the deepest treatment.
+
+**Mid-analysis check-ins.**
+If during Phase 1 or Phase 2 a critical constraint is genuinely ambiguous — one whose answer
+would change which options are even viable — ask immediately rather than assuming and continuing.
+Keep it to one focused question. Don't accumulate questions and dump them at the end.
+
+**After the comparative table**, if the table alone doesn't communicate the most important
+tradeoff clearly, add a brief plain-language summary:
+"La diferencia que más importa aquí es [X] — y se reduce a [una oración directa]."
+
+---
+
 ## Phase 1 — Understand before planning
 
 Before proposing anything, analyze the requirement and explicitly state:
@@ -45,7 +81,13 @@ Read relevant existing code before designing:
 Always present **exactly 3 options** — not superficial variations of the same idea.
 Each must represent a genuinely different architectural approach with different implications.
 
-For each option cover **every section below without exception**:
+**Format each option with the depth and format it actually needs.**
+The sections below are a checklist of what must be covered — not a fixed order or a mandatory
+prose format. If a diagram communicates the flow better than a paragraph, use it. If a code
+snippet makes the implementation difference concrete, include it. If an option is clearly
+inferior in this context, cover it proportionally — don't pad it to match the others.
+
+For each option, make sure the following is communicated — in whatever format works best:
 
 ```
 ### Opción N — [Nombre — máximo 5 palabras descriptivas]
