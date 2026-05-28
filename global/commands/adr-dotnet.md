@@ -104,6 +104,11 @@ que hace que esta opción sea válida de todas formas?"
 *Ask only about the specific signal detected — never all at once unless multiple signals
 are present simultaneously.*
 
+**These condition codes (D1–D5, A, B, C, E) are internal detection labels — never mention
+them in responses to the developer.** Describe the problem in plain language, not by code.
+Instead of "Esto activa D3", say "Esa razón describe conveniencia de implementación, no
+adecuación técnica."
+
 **Condition E — Options don't cover the problem well**
 After reviewing the choice, it is apparent that none of the analyzed options fit cleanly,
 or a better combination exists.
