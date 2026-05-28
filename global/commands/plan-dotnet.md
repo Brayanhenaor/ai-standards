@@ -78,8 +78,19 @@ Read relevant existing code before designing:
 
 ## Phase 3 — Propose exactly 3 options
 
-Always present **exactly 3 options** — not superficial variations of the same idea.
+Present as many options as the problem genuinely warrants — not a fixed number.
 Each must represent a genuinely different architectural approach with different implications.
+Never include superficial variations of the same idea just to reach a count.
+
+- **2 options** when the problem reduces to a real binary: two fundamentally different approaches
+  with no meaningful third path worth considering.
+- **3–4 options** for most architectural decisions where multiple valid approaches exist.
+- **4+ options** when the problem has distinct dimensions that produce genuinely different
+  tradeoff profiles — e.g., consistency models, deployment strategies, or integration patterns
+  that don't overlap.
+
+If you're tempted to add an option just to have more, don't. If you're tempted to cut one
+to simplify, only do it if it truly adds no distinct perspective.
 
 **Format each option with the depth and format it actually needs.**
 The sections below are a checklist of what must be covered — not a fixed order or a mandatory
