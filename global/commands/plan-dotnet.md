@@ -7,6 +7,31 @@ $ARGUMENTS
 
 ---
 
+## Model check — run before anything else
+
+Check the model ID from the system context (visible in the environment information).
+
+**If the model is `claude-opus-4-7` or any `claude-opus-4-x`:** proceed silently.
+
+**If the model is `claude-sonnet-4-x` or `claude-haiku-4-x`:**
+Surface a recommendation before continuing. Use `AskUserQuestion` with these options:
+
+> "Este comando hace análisis arquitectónico profundo: evalúa trade-offs, identifica riesgos
+> no obvios, y razona sobre consecuencias a largo plazo en el codebase. Para ese tipo de
+> razonamiento, **Opus 4.7** produce análisis significativamente más sólidos que [modelo actual].
+>
+> ¿Cómo querés continuar?"
+
+Options:
+- **"Cambiar a Opus 4.7 primero"** — recommended. The developer can switch with `/model` and
+  re-run the command. Do not proceed — wait for them to act.
+- **"Continuar con [modelo actual]"** — proceed with the current model. No further warnings.
+
+Do not block indefinitely — if the developer chooses to continue, respect that decision
+and run the full command without repeating the warning.
+
+---
+
 ## Adaptive output
 
 This command is not a report template — it's a thinking tool. Format and depth must serve

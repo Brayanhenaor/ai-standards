@@ -13,6 +13,32 @@ a step-by-step implementation sequence.
 
 ---
 
+## Model check — run before anything else
+
+Check the model ID from the system context (visible in the environment information).
+
+**If the model is `claude-opus-4-7` or any `claude-opus-4-x`:** proceed silently.
+
+**If the model is `claude-sonnet-4-x` or `claude-haiku-4-x`:**
+Surface a recommendation before continuing. Use `AskUserQuestion` with these options:
+
+> "Este comando genera un blueprint de implementación completo: modelos de datos, esquemas
+> de BD, diagramas, scaffolding de código, y secuencias de implementación detalladas.
+> Para producir artefactos precisos y coherentes con la arquitectura del proyecto,
+> **Opus 4.7** razona con más profundidad que [modelo actual].
+>
+> ¿Cómo querés continuar?"
+
+Options:
+- **"Cambiar a Opus 4.7 primero"** — recommended. The developer can switch with `/model` and
+  re-run the command. Do not proceed — wait for them to act.
+- **"Continuar con [modelo actual]"** — proceed with the current model. No further warnings.
+
+Do not block indefinitely — if the developer chooses to continue, respect that decision
+and run the full command without repeating the warning.
+
+---
+
 ## Tone
 
 Natural and conversational — like a senior dev walking a teammate through a whiteboard
