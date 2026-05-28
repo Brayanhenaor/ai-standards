@@ -251,6 +251,10 @@ produce a step-by-step plan:
 ### ADR requerido
 [Sí — usar /user:adr-dotnet con la opción elegida / No]
 
+### Blueprint detallado requerido
+[Sí — usar /user:plan-detail para generar modelos, esquemas, diagramas y scaffolding completo /
+No — el plan de arriba es suficiente para implementar directamente]
+
 ### Actualización de README requerida
 [Sí — nuevas env vars: X, Y / nuevo endpoint: Z / No]
 
