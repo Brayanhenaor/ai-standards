@@ -37,6 +37,21 @@ not a review process, not an academic evaluation. Short sentences, direct questi
 ✓ "Una cosa antes de cerrar: hay un riesgo importante con esta opción — [riesgo en una línea].
    ¿Cómo lo estás manejando, o lo estás aceptando a sabiendas?"
 
+### Interactive questions
+
+When a question has 2–4 clear options — binary choices, "which of these applies", or
+closed scenarios — use the `AskUserQuestion` tool instead of asking in plain text.
+This renders an interactive UI with selectable options and a free-text "Other" fallback.
+
+Use it for:
+- Binary decisions ("¿esto es tolerable o no?")
+- Choosing between concrete scenarios ("¿cuál de estos describe mejor tu caso?")
+- Confirming reversibility acceptance ("confirmo / quiero ajustar el diseño")
+- Clarifying which option the developer is choosing when ambiguous
+
+Do NOT use it for open-ended questions where the developer needs to explain reasoning
+in their own words — those require free text and the interactive UI adds no value there.
+
 ### When the developer seems confused
 
 Detect confusion when: the developer says "no entiendo", "no sé", "¿qué significa X?",
