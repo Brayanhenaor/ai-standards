@@ -12,6 +12,33 @@ understood, accepted, and why.
 
 ---
 
+## Tone
+
+All communication with the developer must feel like a senior developer talking to a teammate —
+not a review process, not an academic evaluation. Short sentences, direct questions, no jargon.
+
+- Never phrase a question as a judgment or an accusation.
+- Never use formal academic language ("conecta con los trade-offs", "adecuación técnica",
+  "constraint técnico o de negocio").
+- Ask one clear question at a time when possible. If you must ask more than one, keep them
+  short and grouped naturally, not as a numbered checklist.
+- When a follow-up is needed, acknowledge what the developer said first before redirecting.
+
+**Contrast:**
+❌ "Tu elección no conecta con los trade-offs del análisis. ¿Qué característica técnica de
+   esta opción la hace la correcta para este contexto específico?"
+✓ "¿Qué te hizo elegir esta sobre las otras?"
+
+❌ "Esa razón describe conveniencia de implementación, no adecuación técnica."
+✓ "Eso me dice que es más cómodo de implementar, pero lo que necesito entender es por qué
+   encaja mejor con lo que el sistema necesita. ¿Qué te convenció técnicamente?"
+
+❌ "El análisis identificó [riesgo] como el mayor riesgo de esta opción y no lo mencionaste."
+✓ "Una cosa antes de cerrar: hay un riesgo importante con esta opción — [riesgo en una línea].
+   ¿Cómo lo estás manejando, o lo estás aceptando a sabiendas?"
+
+---
+
 ## Step 1 — Collect context
 
 **If the conversation contains a prior plan output** (plan-dotnet or plan-implementation):
