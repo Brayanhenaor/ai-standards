@@ -1,126 +1,72 @@
-# ai-standards — .NET
+# supercode
 
-Claude Code standards for .NET development teams.
+**Universal clean-code intelligence for Claude Code.** A plugin of skills, agents, and hooks that
+push every change toward the cleanest, simplest, most maintainable form — in any language —
+questioning the developer and itself, verifying before claiming done, and refusing to over-engineer.
+
+Deep **.NET** pack today; a language-agnostic core for everything else.
 
 ---
 
-## Setup (una vez por máquina)
+## Install
 
 ```bash
-npx github:Brayanhenaor/ai-standards
+/plugin marketplace add Brayanhenaor/ai-standards
+/plugin install supercode@supercode
 ```
 
-Instala los estándares globales y los comandos en `~/.claude/`.
+Then just work. Skills auto-activate when relevant, and you can invoke any of them by hand
+(`/supercode:review`, `/supercode:plan`, …).
 
----
+## What makes it different
 
-## Por cada proyecto nuevo
+- **Clean code wins, but never over-engineering.** A strict hierarchy resolves every conflict:
+  *correctness & safety > clean code > avoid over-engineering*. It steers between the two opposite
+  failures — the god-method and the speculative framework — by one test: *does this earn its place
+  with real value today?*
+- **It questions you, not just obeys.** Surfaces trade-offs and risks, challenges shaky assumptions,
+  and asks instead of guessing.
+- **It questions itself.** Self-reviews its output before handing it over.
+- **It verifies with teeth.** Runs the real build/tests before saying something works.
+- **It adapts.** Respects your project's existing conventions instead of imposing; replies in your
+  language while keeping code in English.
 
-Abre el proyecto en Claude Code y ejecuta:
+## What's inside
 
-```
-/user:init-dotnet
-```
+**Reason & collaborate** — `plan` · `grill` · `zoom-out` · `architect` · `domain`
+**Write clean code** — `clean-code-core` · `anti-overengineering` · `refactor` · `scaffold` · `dotnet`
+**Verify & review** — `review` · `security-audit` · `verify` · `concurrency` · `performance` · `test` · `gate`
+**Ship & document** — `commit` · `changelog` · `adr` · `tech-doc` · `standup` · `migrate` · `init`
 
-Claude analiza el proyecto y genera el `CLAUDE.md` adaptado a su arquitectura real.
+**Agents** (deep, isolated, read-only) — `code-reviewer` · `security-auditor`
+**Hooks** — `secret-scan` (blocks commits containing likely secrets)
 
----
+## Architecture
 
-## Comandos instalados
+Three layers, so the same plugin serves any team:
 
-### Discover & Plan
-| Comando | Descripción |
-|---|---|
-| `/user:init-dotnet` | Analiza el proyecto y genera el `CLAUDE.md` adaptado (ejecutar una vez) |
-| `/user:plan-dotnet` | 3 opciones arquitectónicas con análisis de trade-offs antes de implementar |
-| `/user:adr-dotnet` | Genera Architecture Decision Record de la opción elegida |
+- **Universal core** — clean-code knowledge that holds for every language (`clean-code-core` and its
+  `reference/`: SOLID, naming, functions, abstraction, smells).
+- **Stack packs** — depth for a specific stack on top of the core. `dotnet` ships today (8–10, .NET 10
+  LTS): conventions, DI, errors, EF Core, APIs, resilience, observability, caching, messaging,
+  security, testing, Docker.
+- **Company profile** — optional overlay for org-specific bits (official ADR / changelog /
+  technical-doc templates, language for generated docs). Never hardcoded in the core.
 
-### Expert lenses (análisis profundo bajo demanda)
-| Comando | Descripción |
-|---|---|
-| `/user:architect-dotnet` | Revisión de arquitecto senior: escalabilidad, HA, fault tolerance, sistemas distribuidos |
-| `/user:concurrency-dotnet` | Experto en concurrencia: race conditions, deadlocks, async correctness, DI lifetimes |
-| `/user:performance-dotnet` | Ingeniero de performance: GC, allocations, N+1, EF queries, I/O efficiency |
-| `/user:domain-dotnet` | Experto DDD: aggregate boundaries, invariants, value objects, ubiquitous language |
-
-### Build
-| Comando | Descripción |
-|---|---|
-| `/user:scaffold-dotnet` | Genera scaffold completo de feature (todas las capas + unit tests) |
-| `/user:debug-dotnet` | Debugging estructurado: collect → hypothesize → one change → verify |
-
-### Validate & Ship
-| Comando | Descripción |
-|---|---|
-| `/user:review-dotnet` | Revisión completa del branch antes de PR (10+ dimensiones) |
-| `/user:test-dotnet` | Genera unit tests de cambios pendientes o un commit específico |
-| `/user:commit-dotnet` | Genera mensaje de commit en Conventional Commits |
-| `/user:changelog-dotnet` | Genera documento de control de cambios profesional |
-
-### Infrastructure & Observability
-| Comando | Descripción |
-|---|---|
-| `/user:docker-dotnet` | Revisa o genera Dockerfile multi-stage y docker-compose |
-| `/user:grafana-dotnet` | Genera dashboard JSON de Grafana desde métricas Prometheus del proyecto |
-| `/user:infisical-dotnet` | Configura provider de secretos con Infisical |
-
-### Documentation
-| Comando | Descripción |
-|---|---|
-| `/user:manual-dotnet` | Extrae información técnica completa para manual profesional (JSON) |
-| `/user:standup` | Genera resumen del trabajo del día desde commits |
-
----
-
-## Estructura del repo
+## Examples
 
 ```
-global/
-  CLAUDE.md              ← reglas globales de empresa  (~/.claude/CLAUDE.md)
-  settings.json          ← configuración de hooks       (~/.claude/settings.json)
-  commands/              ←                              ~/.claude/commands/
-    init-dotnet.md
-    plan-dotnet.md
-    adr-dotnet.md
-    architect-dotnet.md
-    concurrency-dotnet.md
-    performance-dotnet.md
-    domain-dotnet.md
-    scaffold-dotnet.md
-    debug-dotnet.md
-    review-dotnet.md
-    test-dotnet.md
-    commit-dotnet.md
-    changelog-dotnet.md
-    docker-dotnet.md
-    grafana-dotnet.md
-    infisical-dotnet.md
-    manual-dotnet.md
-    standup.md
-  rules/                 ← reglas detalladas por área   ~/.claude/rules/
-    csharp-conventions.md
-    di-lifetimes.md
-    docker.md
-    resilience.md
-    security.md
-    testing.md
-    ef-advanced.md
-    observability.md
-  hooks/                 ←                              ~/.claude/hooks/
-    cs-dirty-flag.sh
-    build-check.sh
-    test-runner.sh
-    migration-guard.sh
-    README.md
-
-templates/
-  dotnet/
-    CLAUDE.md            ← base para proyectos .NET (init-dotnet lo adapta)
-
-bin/
-  cli.js                 ← entry point del npx
-
-package.json
+/supercode:review --diff          # audit the current changes
+/supercode:review --full src/      # audit a whole area
+/supercode:plan add idempotent payment retries
+/supercode:security-audit --diff
+/supercode:gate                    # pre-PR go/no-go
 ```
 
-El proyecto solo tiene `CLAUDE.md`. Todo lo demás es global e invisible al dev.
+## Documentation
+
+The full design and principles live in [`docs/PLUGIN_VISION.md`](docs/PLUGIN_VISION.md).
+
+## License
+
+MIT — see [LICENSE](LICENSE).

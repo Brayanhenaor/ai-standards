@@ -1,8 +1,38 @@
-# Changelog — ai-standards
+# Changelog — supercode
 
-All notable changes to this framework are documented here. Format: [Semantic Versioning](https://semver.org/).
+All notable changes are documented here. Format: [Semantic Versioning](https://semver.org/).
 
 ---
+
+## [0.1.0] — Unreleased
+
+Restructured from the `ai-standards` npx installer into an installable **Claude Code plugin**
+(`/plugin`), rebuilt as a universal clean-code toolset.
+
+### Added
+- Plugin manifest + single-repo marketplace (`.claude-plugin/`).
+- **Universal core:** `clean-code-core` (with SOLID/naming/functions/abstraction/smells reference),
+  `anti-overengineering`, `verify`.
+- **Reasoning & change skills:** `plan`, `debug`, `commit`, `refactor`, `init`, `grill`, `zoom-out`,
+  `standup`, `gate`, `migrate`.
+- **Review:** `review` skill + `code-reviewer` agent; `security-audit` skill + `security-auditor`
+  agent.
+- **Analysis lenses:** `architect`, `concurrency`, `performance`, `domain`.
+- **Generation:** `scaffold`, `test`.
+- **.NET pack** (`dotnet`): conventions, DI, errors, EF Core, API, resilience, observability,
+  caching, messaging, security, testing, Docker — rebuilt at current .NET 8–10 standards.
+- **Company-profile doc skills:** `adr`, `changelog`, `tech-doc` (official templates preserved).
+- **Hook:** `secret-scan` (blocks commits containing likely secrets).
+
+### Changed
+- Rules audit applied: `IExceptionHandler` + ProblemDetails RFC 9457, OpenTelemetry/`Meter` as the
+  vendor-neutral observability path, `TimeProvider`, source-generated logging, keyed services,
+  `EnableRetryOnFailure`, free assertion libraries, chiseled Docker images.
+- Language model is now adaptive (replies in the developer's language; all artifacts in English).
+
+---
+
+## ai-standards (pre-restructure)
 
 ## [2.0.0] — 2026-05-19
 
