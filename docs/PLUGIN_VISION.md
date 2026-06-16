@@ -212,6 +212,26 @@ Tras aprobación, ejecutar sobre una rama nueva.
 
 ---
 
+## Estado de implementación
+
+Construido en `feat/supercode-plugin` (F0–F5 completas), 25 skills + 2 agentes + 1 hook, validado con
+`claude plugin validate` en cada paso.
+
+**Ajustes de implementación (vs el plan original):**
+- **Mecanismo de packs:** en vez de carpetas `packs/`/`profiles/` con rutas cableadas en el manifest,
+  todo vive bajo `skills/` (que se escanea solo) — el pack `.NET` es el skill `dotnet` con su
+  `reference/`; el perfil de empresa son los skills `adr`/`changelog`/`tech-doc`. Más simple, sin
+  configuración extra (anti-sobreingeniería aplicada al propio plugin).
+- **Dispatcher:** diferido — con descriptions claras la auto-invocación nativa alcanza.
+- **`start`:** cubierto por `plan` + `scaffold`, no se creó skill aparte.
+- **Diferidos a futuro perfil de empresa / pack frontend (vendor-specific):** `grafana`, `infisical`,
+  `ui-ux-promax`. Se añadirán cuando haya demanda real.
+- **Hooks:** solo `secret-scan` (universal). build/test/format los cubre `verify` por contexto, no un
+  hook global que correría `dotnet`/`npm` a ciegas.
+
+**Pendiente de confirmación:** baja de la estructura vieja (`global/`, `bin/`, `templates/`,
+`package.json`) que el plugin reemplaza.
+
 ## Referencias de arquitectura
 
 - Plugins: https://code.claude.com/docs/en/plugins
