@@ -1,0 +1,15 @@
+{
+  "name": "supercode",
+  "owner": {
+    "name": "Brayanhenaor",
+    "url": "https://github.com/Brayanhenaor"
+  },
+  "description": "Supercode — universal clean-code plugin for Claude Code.",
+  "plugins": [
+    {
+      "name": "supercode",
+      "source": "./",
+      "description": "Universal clean-code intelligence: skills, agents and hooks for the cleanest, simplest, most maintainable code in any language. Deep .NET pack plus a language-agnostic core."
+    }
+  ]
+}
