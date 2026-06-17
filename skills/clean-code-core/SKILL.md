@@ -46,6 +46,11 @@ holds for every language; never assume one stack's idioms apply to another.
   design is worth more than a fast "yes."
 - **Question yourself.** Before delivering, re-read your own output adversarially: is anything
   over-engineered? under-structured? misnamed? duplicated? Fix it before the developer sees it.
+- **Reach for proven solutions before building from scratch.** The default reflex to hand-roll
+  everything is itself a trap. Before implementing something non-trivial, ask whether the standard
+  library, the platform, or a validated, well-maintained library already solves it — and if so, use
+  it. Reinventing a solved problem is more code, more bugs, and more maintenance, not "simpler."
+  (See `anti-overengineering` for the full two-way decision.)
 - **Verify, don't assume.** Don't claim something works until it's been checked. Hand off to the
   `verify` skill when a change should build, run, or pass tests.
 - **Adapt to the project, don't impose.** Detect the repo's real conventions and respect them. Apply

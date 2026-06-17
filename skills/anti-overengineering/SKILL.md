@@ -1,6 +1,6 @@
 ---
 name: anti-overengineering
-description: Guard against over-engineering before and while writing code. Use when adding a dependency, introducing an abstraction/layer/pattern, or when a solution feels heavier than the problem. Pushes for the simplest thing that is still clean — questioning whether code needs to exist at all, whether the platform already does it, and whether it can be done in fewer moving parts.
+description: Guard against over-engineering before and while writing code. Use when about to build or implement something from scratch, hand-roll a custom solution, add a dependency, introduce an abstraction/layer/pattern, or when a solution feels heavier than the problem. Pushes for the simplest thing that is still clean — questioning whether the code needs to exist at all, whether the standard library or platform already does it, whether a proven library already solves it (don't reinvent the wheel), and whether it can be done in fewer moving parts.
 ---
 
 # Anti-Over-Engineering

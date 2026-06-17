@@ -1,6 +1,6 @@
 {
   "name": "supercode",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Universal clean-code intelligence for Claude Code. Skills, agents and hooks that push for the cleanest, simplest, most maintainable code in any language — questioning the developer and itself, verifying before claiming done, and refusing to over-engineer. Deep .NET pack today; language-agnostic core for everything else.",
   "author": {
     "name": "Brayanhenaor",

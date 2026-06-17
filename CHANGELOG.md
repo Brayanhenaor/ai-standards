@@ -4,6 +4,15 @@ All notable changes are documented here. Format: [Semantic Versioning](https://s
 
 ---
 
+## [0.1.2] — 2026-06-16
+
+### Changed
+- "Don't reinvent the wheel" is now **default behavior**, not only an opt-in skill: added the
+  reach-for-proven-solutions principle to `clean-code-core` (always-on), and widened the
+  `anti-overengineering` trigger to fire when about to build something from scratch / hand-roll a
+  custom solution. Targets the common reflex of implementing from zero when a validated library
+  already solves the problem.
+
 ## [0.1.1] — 2026-06-16
 
 ### Fixed
