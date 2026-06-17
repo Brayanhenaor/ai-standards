@@ -21,17 +21,34 @@ itself; this skill removes structure that doesn't.
 3. **Does the platform/framework already provide it?** A native feature beats a hand-rolled one and
    beats a new dependency.
 4. **Is it already a dependency you have?** Use what's installed before adding something new.
-5. **Can it be a few lines of obvious code?** A small, clear, owned implementation often beats taking
-   on a whole library (and its updates, CVEs, and breakage) for one function.
-6. **Otherwise:** the minimal solution that is still clean — no speculative knobs, no "framework,"
+5. **Is it small? Can it be a few lines of obvious code?** For something trivial, a clear owned
+   implementation beats taking on a whole library for one helper. This applies to *small* things only
+   — see the next point.
+6. **Is it complex and already solved by a validated library? Then don't reinvent the wheel.** For a
+   hard, well-solved problem — charts/dashboards, auth, crypto, dates/timezones, parsing, schema
+   validation, state management, PDF, i18n — a battle-tested official or community-standard package is
+   the *clean* choice. Hand-rolling it yourself is the over-engineering: more code, more bugs, more
+   maintenance than the library carries. Use it.
+7. **Otherwise:** the minimal solution that is still clean — no speculative knobs, no "framework,"
    no layers the problem didn't ask for.
 
-## Dependencies
+## Dependencies — the test cuts both ways
 
-- A new dependency is a permanent liability: supply-chain risk, updates, breaking changes, bundle
-  size. Add one only when it does real, non-trivial work you shouldn't own yourself.
-- Prefer one well-scoped library over several overlapping ones. Don't pull a large framework for a
-  single helper.
+A dependency decision fails in **both** directions, and over-engineering lives at both extremes:
+
+- **Adding one you don't need** — a new dependency is a permanent liability (supply-chain risk,
+  updates, breaking changes, bundle size). Don't pull a library for something trivial, native, or a
+  few clean lines you could own.
+- **Refusing one you do need** — reinventing a complex, already-solved problem by hand is *also*
+  over-engineering (Not-Invented-Here). You ship more code, more bugs, and more maintenance than a
+  validated package would have carried. Building your own chart engine, auth, or date math instead of
+  using the proven library is not "simpler" — it's the heavier, riskier path.
+
+The test: **does the library do real, non-trivial work you shouldn't own — and is it well-maintained
+and validated?** If yes, use it; that *is* the simple, clean choice. Prefer official or
+community-standard packages, prefer one well-scoped library over several overlapping ones, and don't
+pull a whole framework for a single helper. Then use it as intended — don't wrap it in needless
+abstraction "just in case you swap it later."
 
 ## Abstraction & structure
 
