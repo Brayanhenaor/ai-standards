@@ -31,7 +31,8 @@ Unlike `review` (which reports), this skill changes code — so it does so safel
 - Target real smells (see `clean-code-core/reference/smells.md`): duplication of *knowledge*, long
   methods, primitive obsession, feature envy, switch-on-type, low cohesion.
 - Move toward clean code **and** away from over-engineering. Removing a speculative abstraction or a
-  middle-man layer is as valid a refactor as extracting a function. Apply `anti-overengineering`.
+  middle-man layer is as valid a refactor as extracting a function. Apply `anti-overengineering` — but
+  if the abstraction is a seam others depend on, flag it first (see §4) rather than deleting it freely.
 - Stop when the code is clean enough for the change at hand. Don't gold-plate; don't refactor the
   whole module because you were in there.
 

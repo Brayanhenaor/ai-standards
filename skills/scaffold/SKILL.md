@@ -15,6 +15,9 @@ conventions — so the new code looks like it was always there.
   error-handling and validation approach, and how requests flow from entry point to data.
 - Use the project profile from `init`/CLAUDE.md if present. Don't assume Clean Architecture or any
   pattern the project doesn't use.
+- **Confirm before generating.** Present the proposed file list and layer shape and check with the
+  developer first — scaffolding writes many files and picks an architecture; don't lay down a
+  skeleton they haven't agreed to.
 
 ## 2. Generate, mirroring conventions
 
@@ -23,6 +26,10 @@ conventions — so the new code looks like it was always there.
   named and placed like the existing code.
 - Apply `clean-code-core` and the active pack: inject abstractions, thin entry points, validation at
   the boundary, DTOs not entities, the project's result/error pattern.
+- **Don't hand-roll the hard parts.** Before scaffolding a non-trivial piece (auth, validation,
+  mapping, parsing, file handling), apply `anti-overengineering`: if the platform or a validated,
+  commercially-free library already solves it, propose that (license + consent) instead of generating
+  it from scratch.
 - **Scaffold only what's needed.** Don't generate layers, interfaces, or abstractions the feature
   doesn't use just to fill a template — that's over-engineering. A simple feature gets a simple
   scaffold.

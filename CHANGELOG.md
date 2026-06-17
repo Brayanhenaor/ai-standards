@@ -4,6 +4,15 @@ All notable changes are documented here. Format: [Semantic Versioning](https://s
 
 ---
 
+## [0.1.4] — 2026-06-16
+
+### Changed
+- Balance audit across all skills. `scaffold`: confirm the file list/shape with the developer before
+  generating, and apply `anti-overengineering` (don't hand-roll auth/validation/parsing a validated
+  library solves). `test`: propose the standard fakes/assertion library (license + consent) instead
+  of hand-rolling test doubles. `refactor`: flag a seam others depend on before removing it.
+  `changelog`: state uncertainty instead of fabricating when the diff doesn't support it.
+
 ## [0.1.3] — 2026-06-16
 
 ### Added

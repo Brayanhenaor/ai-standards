@@ -14,6 +14,8 @@ implementation or chase a coverage number.
   them from the test projects, don't impose your own. Stack specifics (e.g. .NET: xUnit + free
   assertions + NSubstitute) come from the active pack's `testing.md`.
 - Follow the existing naming and structure conventions. Mirror how the project already tests.
+- If the project has no fakes/assertion library and a path genuinely needs one, propose the pack's
+  standard (license + consent) rather than hand-rolling test doubles.
 
 ## 2. Test behavior, through the public surface
 

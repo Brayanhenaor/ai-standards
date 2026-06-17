@@ -36,7 +36,8 @@ scope (layers touched), risk surface (what could break), and how to validate.
 ## Step 3 — Generate (frozen template)
 
 Output as a plain-text code block, professional tone, no emojis. If a section has nothing, write
-"Ninguno"/"None" — never omit a section. Infer missing context from the code; leave no placeholders.
+"Ninguno"/"None" — never omit a section. Infer from the code where the evidence supports it; where it
+genuinely doesn't, state the uncertainty rather than fabricating justification or risk text.
 
 ```
 DOCUMENTO DE CONTROL DE CAMBIOS
