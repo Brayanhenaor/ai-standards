@@ -4,7 +4,15 @@ All notable changes are documented here. Format: [Semantic Versioning](https://s
 
 ---
 
-## [0.1.0] — Unreleased
+## [0.1.1] — 2026-06-16
+
+### Fixed
+- `anti-overengineering`: the dependency decision now cuts both ways. Reinventing a complex,
+  already-solved problem by hand (Not-Invented-Here) is flagged as over-engineering too — a
+  validated official/community library for charts, auth, crypto, dates, parsing, etc. is the clean
+  choice. Added a "don't reinvent the wheel" branch to the decision tree.
+
+## [0.1.0] — 2026-06-16
 
 Restructured from the `ai-standards` npx installer into an installable **Claude Code plugin**
 (`/plugin`), rebuilt as a universal clean-code toolset.
