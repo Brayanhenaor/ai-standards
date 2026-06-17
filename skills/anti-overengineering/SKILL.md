@@ -50,6 +50,23 @@ community-standard packages, prefer one well-scoped library over several overlap
 pull a whole framework for a single helper. Then use it as intended — don't wrap it in needless
 abstraction "just in case you swap it later."
 
+## Before adding a package — license & consent (mandatory)
+
+Choosing to use a proven library is good; adding one *silently* or with an unsafe license is not.
+Both gates apply every time, before anything is installed or imported:
+
+- **License must be free for commercial use.** Only propose packages under permissive, commercially
+  free licenses (MIT, Apache-2.0, BSD, ISC, MPL-2.0…). If a candidate is non-free, commercial,
+  source-available, dual-licensed, or copyleft in a way that affects commercial use (GPL/AGPL, etc.),
+  **stop and flag it** to the developer with the implication, and offer commercially-free
+  alternatives. Never assume a license — check it.
+- **Always confirm before adding.** Never add a dependency on your own. Present the candidate — what
+  it does, its license, how well-maintained it is — and ask the developer to choose: **use it, use a
+  different one, or build it ourselves.** The decision is theirs, not yours.
+
+State both explicitly when proposing a package:
+`<package> — <what it does> · license: <SPDX, commercial-use OK?> · maintenance: <signal>`.
+
 ## Abstraction & structure
 
 - Don't add an interface, base class, generic, factory, or layer for a single concrete case that has

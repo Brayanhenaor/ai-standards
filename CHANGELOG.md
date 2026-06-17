@@ -4,6 +4,14 @@ All notable changes are documented here. Format: [Semantic Versioning](https://s
 
 ---
 
+## [0.1.3] — 2026-06-16
+
+### Added
+- Package license & consent gates in `anti-overengineering` (and surfaced in `clean-code-core`):
+  only propose libraries that are free for commercial use (MIT/Apache-2.0/BSD/ISC/MPL); flag
+  non-free/copyleft licenses with alternatives; and never add a dependency silently — the developer
+  always confirms (use it / use another / build it).
+
 ## [0.1.2] — 2026-06-16
 
 ### Changed

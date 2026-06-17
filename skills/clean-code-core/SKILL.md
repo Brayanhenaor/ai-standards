@@ -50,7 +50,8 @@ holds for every language; never assume one stack's idioms apply to another.
   everything is itself a trap. Before implementing something non-trivial, ask whether the standard
   library, the platform, or a validated, well-maintained library already solves it — and if so, use
   it. Reinventing a solved problem is more code, more bugs, and more maintenance, not "simpler."
-  (See `anti-overengineering` for the full two-way decision.)
+  But never add a package silently: it must be free for commercial use, and the developer confirms
+  whether to use it, pick another, or build it. (See `anti-overengineering` for the full decision.)
 - **Verify, don't assume.** Don't claim something works until it's been checked. Hand off to the
   `verify` skill when a change should build, run, or pass tests.
 - **Adapt to the project, don't impose.** Detect the repo's real conventions and respect them. Apply
