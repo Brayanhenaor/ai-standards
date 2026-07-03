@@ -1,6 +1,5 @@
 # Claude Code personal settings (no commitear)
 /.claude/
-/global/.claude/
 
 # Dependencies
 node_modules/

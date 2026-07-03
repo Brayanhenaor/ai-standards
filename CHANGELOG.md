@@ -4,6 +4,20 @@ All notable changes are documented here. Format: [Semantic Versioning](https://s
 
 ---
 
+## [0.1.5] — 2026-07-03
+
+### Added
+- **`pre-pr`** skill — the final review a Staff Engineer runs before opening a pull request. One entry
+  point that: confirms scope with the developer (which branches, or the working tree) and gathers
+  change context without assuming; reviews **only the PR diff** (merge-base `base...source`) by
+  composing the existing engines (`code-reviewer`, `security-auditor`, `performance`, `concurrency`,
+  `migrate`, `verify`) — no rule is reimplemented; adds the checks they don't cover (tests as a
+  first-class check, PR size/cohesion, new dependencies, documentation drift); reports findings on an
+  impact-based 5-level severity rubric with a **deterministic** verdict mapping (✅ / ⚠️ / ❌) and an
+  ADR recommendation; and writes the report to `pre-pr-review.md` as evidence to attach to the PR.
+  Anti-false-positive tuning baked in (no idiomatic-lambda naming nits, magic values scoped to
+  business literals, capped low-severity noise).
+
 ## [0.1.4] — 2026-06-16
 
 ### Changed

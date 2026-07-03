@@ -8,6 +8,10 @@ description: Pre-PR gate — run the full readiness check before opening a pull 
 One orchestrated pass that answers a single question: **is this change ready to open as a PR?**
 Compose the other skills; don't re-implement them. Report a clear go / no-go with the blockers.
 
+For the **full PR review report** — context-gathering, findings by severity, ADR recommendation, and
+an evidence file to attach to the PR — use `pre-pr`. `gate` is the terse go/no-go; `pre-pr` is the
+detailed reviewer.
+
 ## Run, in order
 
 1. **Build & tests** (`verify`) — it compiles and the test suite passes. A red build is an instant
