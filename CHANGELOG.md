@@ -4,6 +4,20 @@ All notable changes are documented here. Format: [Semantic Versioning](https://s
 
 ---
 
+## [0.1.7] — 2026-07-03
+
+### Changed
+- `pre-pr`: findings are now **legible evidence** — each shows the actual offending code, a
+  plain-language explanation of the concrete consequence (not just a rule name), and a concrete fix
+  (before → after when it helps). Cryptic one-liners are no longer acceptable for real issues.
+- `pre-pr`: fewer false positives from missing context. The reviewer **reads freely to judge but
+  reports only on the diff** (reading the whole changed file, referenced definitions/callers, and
+  config is in scope; only findings are diff-scoped). It leans hard on **questions to the developer
+  throughout the review** — not just at the start — whenever a finding hinges on context only the dev
+  holds, asking before deciding instead of guessing. When it still can't confirm (or in `--ci` mode),
+  the observation moves to a new **Assumptions & things to verify** report section as a question,
+  never a hard blocker.
+
 ## [0.1.6] — 2026-07-03
 
 ### Fixed

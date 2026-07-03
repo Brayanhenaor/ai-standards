@@ -27,40 +27,68 @@ Look at the **highest** severity present:
 
 State the reason in one or two lines, tied to the specific blockers.
 
-## Finding format — tiered verbosity
+## Finding format — legible, tiered by severity
 
-Spend words in proportion to severity. Don't wrap a one-line nit in a seven-field template.
+A finding is evidence someone else reads on the PR. It must stand on its own: show the actual code,
+explain the problem in **plain language** (gloss any term in one line — never assume jargon), and
+give a **concrete** fix. Spend words in proportion to severity — don't wrap a one-line nit in a
+template, but never leave a real issue cryptic.
+
+**Critical / High — the full, readable form:**
 
 ```
 [CRITICAL] · <category> · path:line
-  What:  <the problem, concretely>
-  Why it matters: <the rule it breaks + the real risk, in one idea>
-  Fix:   <the concrete change>          (Effort: quick-fix | needs-design)   ← optional
+  <One plain sentence: what is wrong and to whom it matters.>
 
-[HIGH] — same shape as Critical.
+  <lang>
+  <the actual offending lines, quoted from the diff>
 
-[MEDIUM] path:line — <problem> · <why> · <fix in one line>
-
-[LOW] path:line — <one line>
-[SUGGESTION] path:line — <one line>
+  Why it matters: <the concrete consequence — the bug it causes, the attack it enables, the cost it
+                   incurs — not just the name of the rule>
+  Fix: <the concrete change; show before → after when that makes it unambiguous>
+       (Effort: quick-fix | needs-design)                                        ← optional
+  Confidence: high | needs confirmation — <what must be checked, when not high>
 ```
 
-**Cap the noise.** Show at most **5** Low/Suggestion findings; collapse the rest into a single line:
-`+N minor items (naming/local structure) — not shown`. The report is evidence for a PR, not a lint
-dump.
+**Medium** — problem · why · one-line fix, with a short code excerpt when the line alone is unclear.
 
-There is **no separate "priority" field** — severity already implies it. The only optional extra axis
-is **Effort** (`quick-fix` / `needs-design`), and only on Critical/High where it helps planning.
+**Low / Suggestion** — one line each. Show at most **5**; collapse the rest into
+`+N minor items (naming/local structure) — not shown`. The report is PR evidence, not a lint dump.
 
-## Adversarial self-review — before anything is reported
+There is **no separate "priority" field** — severity implies it. The only optional extra axis is
+**Effort** (`quick-fix` / `needs-design`), and only on Critical/High where it helps planning.
 
-Re-read each finding and drop it unless all hold:
+## Confidence & context — how false positives are prevented
+
+The reviewer **reads freely to judge, but reports only on the diff.** Reading the whole changed file,
+the definitions and callers a changed line references, config, and the context the developer gave in
+step 1 is not "out of scope" — only *findings* are scoped to the diff. Judging a line blind is how
+false positives are born.
+
+Before any finding is reported, all must hold — otherwise drop it or demote it:
 
 1. It is **in the PR diff** (not untouched/legacy code).
 2. It is **justified against a named rule** — not a personal style preference.
-3. For **Critical/High**: its reachability/impact is **proven**, not assumed.
+3. Its judgment is **grounded in context actually read** — not inferred from a line in isolation. If
+   the verdict depends on code/config/runtime the reviewer could not see, it **reads it first**.
+4. For **Critical/High**: reachability/impact is **confirmed**, not assumed.
 
-A false alarm erodes trust in the whole report. When unsure, cut it.
+**Ask the developer — throughout, not only at the start.** Questions are the primary tool against
+false positives, and they don't stop after step 1. Whenever a potential finding hinges on context
+only the developer holds — intent, a business rule, a constraint, whether validation happens
+elsewhere — **ask before deciding** rather than guess. A short, targeted question resolves an
+ambiguity that a blind assumption would turn into a wrong blocker. Batch these questions so the
+developer answers a few at once, not a drip.
+
+When context still can't be confirmed — the developer isn't available to ask (e.g. `--ci` mode) or
+the deciding code genuinely isn't there — **do not emit a hard finding**. Move it to the report's
+*Assumptions & things to verify* section, phrased as a question ("if X isn't validated upstream, this
+is a gap — confirm"). A wrong blocker erodes trust in the whole report more than a missed nitpick.
+When still unsure, cut it.
+
+Use the developer's step-1 answers to **suppress** findings the context already explains (a value
+that looks magic but is a documented constant, validation that happens at a boundary outside the
+diff, an intentional design the ticket calls for).
 
 ## ADR recommendation — reuse the `adr` skill's criteria
 

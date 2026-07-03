@@ -38,6 +38,11 @@ Critical <n> · High <n> · Medium <n> · Low <n> · Suggestion <n>
 ## Risks
 <Risks that remain even if the PR is opened as-is.>
 
+## Assumptions & things to verify
+<Context-dependent observations the reviewer could not confirm from what it read — phrased as
+questions, not findings. E.g. "Validation of `userId` is assumed to happen in the controller, outside
+this diff — confirm." If everything was confirmable, say "None.">
+
 ## Priority recommendations
 <Ordered list of what to fix before opening the PR.>
 

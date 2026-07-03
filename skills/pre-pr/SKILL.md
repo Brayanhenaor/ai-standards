@@ -39,7 +39,8 @@ commit messages, an embedded ticket, the PR template, `CLAUDE.md`, and existing 
 dynamically, only what's still material and unknown: the goal / problem solved, the change type
 (feature / bugfix / refactor), the ticket, technical or business constraints, prior architectural
 decisions to respect. **Prefer a question over a hallucination** — if something matters and can't be
-derived, ask before continuing. In `--ci` mode, skip the questions and state the assumptions used.
+derived, ask before continuing. Questions are a primary tool and stay open through the whole review,
+not just here (see step 6). In `--ci` mode, skip the questions and state the assumptions used.
 
 ## 2. Resolve the diff — real PR scope
 
@@ -50,10 +51,11 @@ git diff --merge-base <target> <source>     # equivalently: git diff <target>...
 ```
 
 Include uncommitted work if the developer chose to. Detect the stack(s) from project markers.
-**Review only this diff** — no findings on untouched code, no legacy refactors, unless the change
-directly worsens or depends on an existing defect. If the diff is empty, say so; don't invent
-findings. For a large diff, review by module in parallel and **state coverage** — never imply
-coverage you didn't do.
+**Report only on this diff** — no findings on untouched code, no legacy refactors, unless the change
+directly worsens or depends on an existing defect — but **read freely to judge**: the full changed
+file, the definitions and callers a changed line touches, and config. Reading is not scoped; only
+findings are. If the diff is empty, say so; don't invent findings. For a large diff, review by module
+in parallel and **state coverage** — never imply coverage you didn't do.
 
 ## 3. Fan-out — run the existing engines over the diff
 
@@ -81,14 +83,18 @@ Run `verify` — build plus the test suite. A red build or failing tests is a Cr
 
 ## 6. Consolidate + adversarial self-review
 
-Merge findings, drop duplicates. Then, before reporting, re-check each one:
+Merge findings, drop duplicates, then run the **confidence & context gate** in
+`reference/severity.md`: every finding must be in the diff, justified against a rule, and **grounded
+in context actually read** — not inferred from a line in isolation. If a judgment depends on code or
+config the reviewer hasn't seen, it **reads it first**; if it still can't confirm, it does **not**
+emit a hard finding — in interactive mode it **asks the developer** to resolve the ambiguity (batch
+the questions); only if it still can't confirm does it move the observation to the report's
+*Assumptions & things to verify* section as a question. Use the developer's answers — from step 1 and
+from these follow-ups — to suppress findings the context already explains. Cap low-severity noise. A
+wrong blocker costs more than a missed nitpick.
 
-- It is **in the diff**.
-- It is **justified against a rule** — not a style preference.
-- For Critical/High: its **reachability/impact is proven**, not assumed.
-
-Drop anything that fails. Cap low-severity noise (see the rubric). A confident wrong finding costs
-more than a missed nitpick.
+Render findings in the **legible format** (`reference/severity.md`): the actual code, a plain-language
+explanation, and a concrete fix — never a cryptic one-liner for a real issue.
 
 ## 7. Verdict, ADR, evidence, report
 
