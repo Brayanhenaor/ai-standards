@@ -50,7 +50,8 @@ this diff — confirm." If everything was confirmable, say "None.">
 <An honest assessment. Not an inflated grade.>
 
 ## ADR
-<✅ No ADR needed | ⚠️ ADR recommended | ❗ ADR required before the PR> — <one-line justification>
+<✅ Covered by ADR-XXXX | ⚠️ ADR-XXXX should be updated | ⚠️ ADR recommended |
+ ❗ ADR required before the PR | ✅ No ADR needed> — <one-line justification, citing the ADR if any>
 
 ## Verdict
 <✅ Ready for the PR | ⚠️ Ready for the PR, with risks | ❌ Not ready for the PR>

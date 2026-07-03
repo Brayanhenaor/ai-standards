@@ -101,8 +101,10 @@ Go's file model) and the repo's existing convention.
 
 ## Architecture
 
-The change respects the project's existing architecture and introduces no inconsistency. Flag a new
-pattern that fights the established one. Use `architect`/`domain` judgment for cross-boundary design.
+The change respects the project's existing architecture **and the decisions recorded in its ADRs**.
+Read the ADRs that touch what the change modifies (see SKILL.md §1C): a change that contradicts or
+silently supersedes a recorded decision is a finding — cite the ADR. Flag a new pattern that fights
+the established one. Use `architect`/`domain` judgment for cross-boundary design.
 
 ---
 

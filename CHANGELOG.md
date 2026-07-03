@@ -4,6 +4,20 @@ All notable changes are documented here. Format: [Semantic Versioning](https://s
 
 ---
 
+## [0.1.8] — 2026-07-03
+
+### Changed
+- `pre-pr`: the ADR check no longer assumes none exists. For an architectural change it **searches
+  for an existing ADR** (repo location + common paths, matched by topic) and, if none is found,
+  **asks the developer whether one exists and where** before concluding. New outcomes: ✅ covered by
+  an existing ADR (cited), ⚠️ an existing ADR should be updated (change diverges/supersedes it), in
+  addition to ⚠️ recommended / ❗ required / ✅ not needed. Prevents a false "ADR required" when one
+  already exists.
+- `pre-pr`: relevant ADRs are now **read as context that feeds the whole report**, not just checked
+  for existence. They provide intent, constraints, and the architectural baseline — used both to
+  suppress false positives (a documented, deliberate decision) and to catch real problems (a change
+  that contradicts or silently supersedes a recorded decision is an architecture finding, cited).
+
 ## [0.1.7] — 2026-07-03
 
 ### Changed

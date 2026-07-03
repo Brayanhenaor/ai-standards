@@ -35,12 +35,19 @@ Read `reference/rules.md` (what to check + how to avoid false positives), `refer
 - If working tree is chosen, confirm staged / unstaged / both.
 
 **B) Change context — infer first, ask only what's ambiguous.** Auto-derive from branch name,
-commit messages, an embedded ticket, the PR template, `CLAUDE.md`, and existing ADRs. Then ask,
-dynamically, only what's still material and unknown: the goal / problem solved, the change type
-(feature / bugfix / refactor), the ticket, technical or business constraints, prior architectural
-decisions to respect. **Prefer a question over a hallucination** — if something matters and can't be
-derived, ask before continuing. Questions are a primary tool and stay open through the whole review,
-not just here (see step 6). In `--ci` mode, skip the questions and state the assumptions used.
+commit messages, an embedded ticket, the PR template, and `CLAUDE.md`. Then ask, dynamically, only
+what's still material and unknown: the goal / problem solved, the change type (feature / bugfix /
+refactor), the ticket, technical or business constraints, prior architectural decisions to respect.
+**Prefer a question over a hallucination** — if something matters and can't be derived, ask before
+continuing. Questions are a primary tool and stay open through the whole review, not just here (see
+step 6). In `--ci` mode, skip the questions and state the assumptions used.
+
+**C) Read the relevant ADRs as context — not just to check they exist.** Find the ADRs that touch
+what this change modifies and **read them**. They carry intent, constraints, and the architectural
+baseline the change must respect. Use them two ways: to **suppress false positives** (what looks
+wrong may be a deliberate, documented decision) and to **catch real problems** (a change that
+contradicts or silently supersedes a recorded decision is an architecture finding). This feeds the
+whole report, not only the ADR verdict in step 7.
 
 ## 2. Resolve the diff — real PR scope
 
@@ -100,7 +107,10 @@ explanation, and a concrete fix — never a cryptic one-liner for a real issue.
 
 - Map severities → verdict with the **deterministic rule** in `reference/severity.md`
   (✅ ready · ⚠️ ready with risks · ❌ not ready).
-- Evaluate the **ADR** recommendation (✅ / ⚠️ / ❗) using the `adr` skill's criteria.
+- Evaluate the **ADR** recommendation. If the change is architectural, **search for an existing ADR
+  first, then ask the developer if one exists and where** before concluding — never assume none
+  exists (see `reference/severity.md`). Emit ✅ covered / ⚠️ update / ⚠️ recommended / ❗ required /
+  ✅ not needed, citing the ADR when one is involved.
 - Render the report from `reference/report-template.md`, **write it to `pre-pr-review.md`** at the
   repo root (overwrite each run; don't commit or gitignore it — it's PR evidence), and print the same
   report. End with: `Evidence written to ./pre-pr-review.md`.

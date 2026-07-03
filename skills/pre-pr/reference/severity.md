@@ -90,15 +90,27 @@ Use the developer's step-1 answers to **suppress** findings the context already 
 that looks magic but is a documented constant, validation that happens at a boundary outside the
 diff, an intentional design the ticket calls for).
 
-## ADR recommendation — reuse the `adr` skill's criteria
+## ADR recommendation — search, then ask, then conclude
 
-Emit exactly one:
+Never assume no ADR exists. If the change makes an architectural decision with lasting, cross-cutting
+impact — a new external integration, a new persistence/messaging pattern, a public-contract change,
+swapping a core library/framework, a change to the security model — run these steps **before** the
+verdict, so the recommendation reflects reality, not a guess:
 
-- **❗ ADR required before the PR** — the change makes an architectural decision with lasting,
-  cross-cutting impact and **no ADR records it**: a new external integration, a new
-  persistence/messaging pattern, a public-contract change, swapping a core library/framework, or a
-  change to the security model.
-- **⚠️ ADR recommended** — a significant but reversible / borderline decision.
-- **✅ No ADR needed** — a local change with no architectural decision.
+1. **Search for an existing ADR** that covers this decision. Look in the repo's ADR location (defer to
+   the `adr` skill for where/format) and common ones: `docs/adr/`, `docs/decisions/`, `adr/`, `ADR/`,
+   `architecture/decisions/`. Match by topic, not just filename.
+2. **If none is found, ask the developer** — *"this change looks like an architectural decision (…);
+   is there an ADR for it, and where?"* Don't conclude "missing" from a failed search alone; the dev
+   may know it lives elsewhere or is in review.
+3. **Then emit exactly one:**
+   - **✅ Covered** — an ADR already records this decision and the change stays consistent with it.
+     Cite it (`ADR-XXXX`).
+   - **⚠️ ADR should be updated** — an ADR exists but this change diverges from or supersedes it.
+     Say which one and what changed.
+   - **⚠️ ADR recommended** — a significant but reversible / borderline decision with no ADR.
+   - **❗ ADR required before the PR** — a lasting, cross-cutting decision with **confirmed** no ADR.
+   - **✅ No ADR needed** — a local change with no architectural decision.
 
-Always justify the choice in one line. Do not invent ADR criteria — defer to the `adr` skill.
+Always justify the choice in one line, and cite the ADR when one is involved. Do not invent ADR
+criteria — defer to the `adr` skill.
