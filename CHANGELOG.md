@@ -4,6 +4,19 @@ All notable changes are documented here. Format: [Semantic Versioning](https://s
 
 ---
 
+## [0.1.9] — 2026-07-03
+
+### Fixed
+- `pre-pr`: report language no longer mixes English into a non-English report. The **whole** report —
+  section headings, field labels, severity names, verdict — is rendered in the developer's language;
+  English is kept only for what is genuinely English (code, identifiers, `file:line`, snippets, and
+  dev-domain terms teams say in English). Removed the earlier "keep verdict/severity tokens in
+  English" rule that was the source of the gratuitous mixing — the deterministic verdict is internal
+  logic, not a reason to print English labels.
+- `pre-pr`: findings now render as a **structured block** (heading + bold labels + fenced code block),
+  never a paragraph with code inlined. `What` / `Why it matters` / `Fix` / `Confidence` each on its
+  own line, the offending code always in its own fence — so the evidence scans cleanly.
+
 ## [0.1.8] — 2026-07-03
 
 ### Changed

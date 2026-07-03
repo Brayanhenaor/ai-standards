@@ -27,36 +27,37 @@ Look at the **highest** severity present:
 
 State the reason in one or two lines, tied to the specific blockers.
 
-## Finding format — legible, tiered by severity
+## Finding format — a structured block, never a paragraph
 
-A finding is evidence someone else reads on the PR. It must stand on its own: show the actual code,
-explain the problem in **plain language** (gloss any term in one line — never assume jargon), and
-give a **concrete** fix. Spend words in proportion to severity — don't wrap a one-line nit in a
-template, but never leave a real issue cryptic.
+A finding is evidence someone else reads on the PR. It must be a **scannable block with a fixed
+shape**, not running prose. Show the actual code, explain in **plain language** (gloss any term in
+one line — never assume jargon), and give a **concrete** fix. Render the headings and labels in the
+developer's language (the skeleton below is English only because plugin content is; `**What:**` →
+`**Qué:**`, etc.).
 
-**Critical / High — the full, readable form:**
+**Critical / High / Medium — the full block (Markdown, exactly this structure):**
 
-```
-[CRITICAL] · <category> · path:line
-  <One plain sentence: what is wrong and to whom it matters.>
+    ### [<Severity>] <category> · path:line
+    **What:** <one plain sentence — what is wrong and to whom it matters>
 
-  <lang>
-  <the actual offending lines, quoted from the diff>
+    ```<lang>
+    <the actual offending lines, quoted from the diff>
+    ```
 
-  Why it matters: <the concrete consequence — the bug it causes, the attack it enables, the cost it
-                   incurs — not just the name of the rule>
-  Fix: <the concrete change; show before → after when that makes it unambiguous>
-       (Effort: quick-fix | needs-design)                                        ← optional
-  Confidence: high | needs confirmation — <what must be checked, when not high>
-```
+    **Why it matters:** <the concrete consequence — the bug it causes, the attack it enables, the cost
+    it incurs — not just the name of the rule>
+    **Fix:** <the concrete change; show before → after when it makes it unambiguous>
+    **Confidence:** <high | needs confirmation: what to check>   ·   **Effort:** <quick-fix | needs-design> *(optional)*
 
-**Medium** — problem · why · one-line fix, with a short code excerpt when the line alone is unclear.
+Never merge these into one paragraph. Every field on its own line, the code always in its own fenced
+block. A Medium may omit the code fence only when the location alone is self-evident.
 
-**Low / Suggestion** — one line each. Show at most **5**; collapse the rest into
-`+N minor items (naming/local structure) — not shown`. The report is PR evidence, not a lint dump.
+**Low / Suggestion — one line each**, under a single bulleted list. Show at most **5**; collapse the
+rest into `+N minor items (naming/local structure) — not shown`. PR evidence, not a lint dump.
 
 There is **no separate "priority" field** — severity implies it. The only optional extra axis is
-**Effort** (`quick-fix` / `needs-design`), and only on Critical/High where it helps planning.
+**Effort** (`quick-fix` / `needs-design`), and only on Critical/High where it helps planning. The
+severity label itself (`Critical`, `Alto`, …) is rendered in the developer's language.
 
 ## Confidence & context — how false positives are prevented
 

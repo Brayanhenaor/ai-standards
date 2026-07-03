@@ -116,7 +116,11 @@ explanation, and a concrete fix — never a cryptic one-liner for a real issue.
   report. End with: `Evidence written to ./pre-pr-review.md`.
 
 This skill **reviews and reports — it does not fix code**. Hand fixes back to the relevant skill.
-Write the report (on screen and in `pre-pr-review.md`) in the developer's language, since it's a
-generated deliverable attached to the PR. Keep in English only what is always English: code,
-identifiers, `file:line`, snippets, and the fixed verdict/severity tokens (`Critical`, `High`,
-`✅ Ready`, …) so the deterministic mapping stays stable.
+Write the **entire report** (on screen and in `pre-pr-review.md`) in the developer's language — every
+section heading, field label, severity name, and the verdict included. It's a deliverable attached to
+the PR. Keep in English **only** what is genuinely English and would look forced translated: code,
+identifiers, file paths and `file:line`, code snippets, and established dev-domain terms teams say in
+English (endpoint, middleware, deadlock, race condition, N+1, async/await…), used naturally in the
+sentence. Don't leave headings, labels, or ordinary words in English out of habit — the deterministic
+verdict is internal logic, not a reason to print English labels. See `reference/report-template.md`
+for the language rule and the finding block structure.

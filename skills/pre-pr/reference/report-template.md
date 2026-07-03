@@ -1,13 +1,42 @@
 # Pre-PR — report template
 
 The report is written to `pre-pr-review.md` (repo root, overwritten each run) **and** printed. It is
-the evidence attached to the PR, so it must be self-contained and traceable. Write the body in the
-**developer's language** (it's a generated deliverable — same rule as `adr`/`changelog`). Keep in
-English only what is always English: code, identifiers, `file:line`, snippets, and the fixed
-verdict/severity tokens (`Critical`, `High`, `✅ Ready`, …) that keep the mapping deterministic.
+the evidence attached to the PR, so it must be self-contained and traceable.
 
-Fill every section. Omit a section only when it is genuinely empty, and say so ("None.") rather than
-dropping it silently. Render findings with the tiered format from `severity.md`.
+## Language — read carefully (this is where reports go wrong)
+
+- Write the **entire report in the developer's language** — every section heading, every field label,
+  all prose, the severity names, and the verdict. The skeleton below is in English **only because
+  plugin content is English**; **translate the headings and labels** when you render (a Spanish report
+  has Spanish headings: `## Resumen ejecutivo`, `**Qué:**`, `Veredicto`, `Crítico`…).
+- Keep in English **only** what is genuinely English and would look forced translated:
+  - code, identifiers, file paths and `file:line`, and code snippets — always;
+  - established dev-domain terms teams say in English (endpoint, middleware, deadlock, race condition,
+    N+1, async/await, thread-safety, nullable…) — used naturally inside the sentence.
+- Do **not** leave headings, labels, or ordinary words in English out of habit. The deterministic
+  verdict is internal logic — it is not a reason to print English labels.
+
+## Findings — structured blocks, never paragraphs
+
+Render each finding with the fixed block from `severity.md` (heading + bold labels + fenced code),
+grouped by severity, highest first. Never write a finding as running prose. Cap Low/Suggestion at 5
+plus a collapsed line. Labels shown here in English are rendered in the developer's language.
+
+    ### [<Severity>] <category> · path:line
+    **What:** <one plain sentence>
+
+    ```<lang>
+    <the actual offending lines from the diff>
+    ```
+
+    **Why it matters:** <the concrete consequence>
+    **Fix:** <the concrete change; before → after when it helps>
+    **Confidence:** <high | needs confirmation: what to check>   ·   **Effort:** <quick-fix | needs-design> *(optional)*
+
+## Structure
+
+Fill every section. Omit one only when genuinely empty, and say so ("None.") rather than drop it.
+Headings below are the canonical set — **render them in the developer's language.**
 
 ```markdown
 # Pre-PR Review
@@ -22,7 +51,7 @@ dropping it silently. Render findings with the tiered format from `severity.md`.
 <2–4 lines: what the change is, and the verdict at a glance.>
 
 ## Findings by severity
-<Grouped, highest first, using the tiered format. Cap Low/Suggestion at 5 + a collapsed line.>
+<The structured finding blocks, grouped highest-first. Cap Low/Suggestion at 5 + a collapsed line.>
 
 ## Count
 Critical <n> · High <n> · Medium <n> · Low <n> · Suggestion <n>
@@ -39,9 +68,9 @@ Critical <n> · High <n> · Medium <n> · Low <n> · Suggestion <n>
 <Risks that remain even if the PR is opened as-is.>
 
 ## Assumptions & things to verify
-<Context-dependent observations the reviewer could not confirm from what it read — phrased as
-questions, not findings. E.g. "Validation of `userId` is assumed to happen in the controller, outside
-this diff — confirm." If everything was confirmable, say "None.">
+<Context-dependent observations the reviewer could not confirm — phrased as questions, not findings.
+E.g. "`userId` validation is assumed to happen in the controller, outside this diff — confirm." If
+everything was confirmable, say "None.">
 
 ## Priority recommendations
 <Ordered list of what to fix before opening the PR.>
