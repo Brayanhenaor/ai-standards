@@ -100,4 +100,7 @@ more than a missed nitpick.
   report. End with: `Evidence written to ./pre-pr-review.md`.
 
 This skill **reviews and reports — it does not fix code**. Hand fixes back to the relevant skill.
-Reply in the developer's language; keep code, identifiers, and the report body in English.
+Write the report (on screen and in `pre-pr-review.md`) in the developer's language, since it's a
+generated deliverable attached to the PR. Keep in English only what is always English: code,
+identifiers, `file:line`, snippets, and the fixed verdict/severity tokens (`Critical`, `High`,
+`✅ Ready`, …) so the deterministic mapping stays stable.

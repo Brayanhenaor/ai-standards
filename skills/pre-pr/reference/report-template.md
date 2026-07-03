@@ -1,8 +1,10 @@
 # Pre-PR — report template
 
 The report is written to `pre-pr-review.md` (repo root, overwritten each run) **and** printed. It is
-the evidence attached to the PR, so it must be self-contained and traceable. Keep the body in
-English; write the developer-facing narration in the developer's language.
+the evidence attached to the PR, so it must be self-contained and traceable. Write the body in the
+**developer's language** (it's a generated deliverable — same rule as `adr`/`changelog`). Keep in
+English only what is always English: code, identifiers, `file:line`, snippets, and the fixed
+verdict/severity tokens (`Critical`, `High`, `✅ Ready`, …) that keep the mapping deterministic.
 
 Fill every section. Omit a section only when it is genuinely empty, and say so ("None.") rather than
 dropping it silently. Render findings with the tiered format from `severity.md`.

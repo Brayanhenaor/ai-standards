@@ -4,6 +4,14 @@ All notable changes are documented here. Format: [Semantic Versioning](https://s
 
 ---
 
+## [0.1.6] — 2026-07-03
+
+### Fixed
+- `pre-pr`: the report is written in the developer's language (same rule as `adr`/`changelog`), since
+  it's a generated deliverable attached to the PR — not forced to English. Only code, identifiers,
+  `file:line`, snippets, and the fixed verdict/severity tokens stay in English so the deterministic
+  mapping is unaffected.
+
 ## [0.1.5] — 2026-07-03
 
 ### Added
