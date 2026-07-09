@@ -10,6 +10,52 @@ between flagging a nitpick and staying silent, stay silent.
 
 ---
 
+## Context tool
+
+`pre-pr` gets most of its callers/definitions/architecture/reachability/ADR context from a connected
+knowledge-graph MCP instead of raw file reads — see the detect → confirm → index → freshness flow in
+SKILL.md §0. That flow is written against **capabilities**, not a fixed tool contract: match whatever
+is connected by role, don't require an exact function name.
+
+**Preference order:** `codebase-memory-mcp` (org default) first; any other connected graph/context MCP
+(e.g. Graphify or similar) as a fallback, or to fill a role `codebase-memory-mcp` doesn't cover; direct
+reads only when nothing connected covers a role.
+
+**Capability → what it replaces** (`codebase-memory-mcp` names shown as the preferred mapping — for
+any other connected tool, discover its actual tool names from its own schema instead of assuming they
+match; re-derive both mappings against what's actually connected each run, don't hardcode either):
+
+| Capability needed | Replaces | `codebase-memory-mcp` (preferred) |
+|---|---|---|
+| Index status / trigger index / detect drift | Confirming the graph is usable before trusting it | `index_status`, `index_repository`, `detect_changes` |
+| Direct callers/definitions of a changed symbol | Opening the whole file to trace usage by hand | `trace_path`, `search_graph` |
+| Exact code range for a symbol | Reading a full file to find one function | `get_code_snippet` |
+| Project architecture/structure summary | Each engine exploring folders independently | `get_architecture` |
+| Cross-cutting graph query (reachability, test coverage, custom traversal) | Manual grep across the repo, or guessing | `query_graph` |
+| ADR lookup by topic | Grepping and reading every file under a docs/adr folder | `manage_adr`, `query_graph` |
+
+A different connected tool satisfies the same row through whatever it calls its own equivalent — match
+by the "Capability needed" column, not by the exact names in the last one. If the connected tool(s)
+don't cover a role at all, fall back to a direct read for that piece only — don't block the whole
+review on a partially-covering graph.
+
+## Dispatch — what triggers what
+
+Not every engine runs on every diff. `code-reviewer` always runs above the small-diff threshold
+(< 5 files and < 150 changed lines → one combined pass instead, see SKILL.md §3). The rest are gated:
+
+| Engine | Trigger |
+|---|---|
+| `security-auditor` | Files matching auth/authz/secrets/token/policy/permission patterns, input validation, CORS, external API calls, or any new endpoint |
+| `performance` | Hot-path/loop code over real data, new or changed queries, new collections, async changes |
+| `concurrency` | Shared mutable state, threading, background workers/consumers, async coordination — skip entirely on stacks with no concurrency surface |
+| `migrate` | Any file under `**/Migrations/**` or equivalent schema-change path |
+
+When unsure whether a trigger applies, run the engine — a missed trigger costs more than an extra
+agent call on an ambiguous diff. The gate is for the clearly-inapplicable case, not a coin flip.
+
+---
+
 ## Correctness & safety (always outranks everything)
 
 - **Potential bugs** — null/none dereferences, unhandled edge cases, missing validation, logic
@@ -35,6 +81,12 @@ Changes that break compatibility: public APIs, contracts, method signatures, ser
 DB schema (→ `migrate`), config keys, event/message schemas, DTOs, behavior changes on an existing
 path. **Nuance:** distinguish **published/consumed** surface (real breaking change) from purely
 internal symbols (not one). Say who breaks and how.
+
+**Cross-repo check (opportunistic).** If the connected graph tool exposes cross-repo/service
+reachability (e.g. `codebase-memory-mcp`'s `cross-repo-intelligence` mode) over **already-indexed**
+projects, use it to confirm real external consumers of a changed public contract — stronger evidence
+than reading the changed file alone. Only query against repos already indexed; never trigger a fresh
+index of an unrelated repo just for this check — that cost isn't worth one reachability check.
 
 ## Clean code (`clean-code-core`)
 
@@ -102,7 +154,8 @@ Go's file model) and the repo's existing convention.
 ## Architecture
 
 The change respects the project's existing architecture **and the decisions recorded in its ADRs**.
-Read the ADRs that touch what the change modifies (see SKILL.md §1C): a change that contradicts or
+ADR search is gated to diffs that look architectural — not run unconditionally (see SKILL.md §1C).
+When triggered, read the ADRs that touch what the change modifies: a change that contradicts or
 silently supersedes a recorded decision is a finding — cite the ADR. Flag a new pattern that fights
 the established one. Use `architect`/`domain` judgment for cross-boundary design.
 

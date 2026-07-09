@@ -4,6 +4,50 @@ All notable changes are documented here. Format: [Semantic Versioning](https://s
 
 ---
 
+## [0.1.10] — 2026-07-09
+
+### Changed
+- `pre-pr`: dispatch is now **gated**, not a fixed fan-out. `security-auditor`/`performance`/
+  `concurrency` only run when the diff triggers them (auth files, hot paths, shared state — see the
+  trigger table in `reference/rules.md`); a small diff (< 5 files, < 150 lines) gets one combined
+  `code-reviewer` pass instead of four separate agent calls.
+- `pre-pr`: engines no longer each independently re-read the same files. A single shared context pass
+  (architecture, direct callers/definitions, config) runs once and is handed to every dispatched
+  engine.
+- `pre-pr`: ADR search is now gated to diffs that look architectural, instead of running on every diff.
+- `pre-pr`: "read freely" is now **bounded to direct callers/definitions** (one hop), not the
+  transitive closure of everything a changed line touches.
+- `pre-pr`: large diffs cap module-parallel review at 4 concurrent modules and state what's batched,
+  instead of unbounded fan-out.
+- `pre-pr`: incremental re-runs reuse the previous `pre-pr-review.md` commit range and only re-review
+  new commits, instead of re-deriving every finding from scratch each run.
+- `pre-pr`: terminal output is now a **condensed echo** (summary, count, verdict, priority
+  recommendations, full Critical blocks) instead of reprinting the entire file content a second time.
+- `pre-pr`: adopted a knowledge-graph MCP as the primary context tool for bounded caller context,
+  architecture summaries, breaking-change reachability, test-coverage checks, and ADR lookup — new
+  step 0 detects it **by capability, not by a hardcoded tool name**, so the mapping (today
+  `codebase-memory-mcp`) can change without rewriting the skill. Falls back to raw reads when nothing
+  is connected or a capability isn't covered.
+- `pre-pr`: not locked to a single vendor — prefers `codebase-memory-mcp` (org default) but falls back
+  to any other connected graph/context MCP (e.g. Graphify or similar) for a role `codebase-memory-mcp`
+  doesn't cover or when it isn't connected at all. Staleness check also has a generic heuristic
+  fallback (compare last-indexed commit vs `HEAD`) for tools with no explicit drift-detection call.
+- `pre-pr`: breaking-change reachability now opportunistically checks cross-repo/service consumers
+  (e.g. `cross-repo-intelligence` mode) against **already-indexed** projects only — never triggers a
+  fresh index of an unrelated repo just for this check.
+- `pre-pr`: all developer-facing questions (MCP install decision, PR scope, change context) are now
+  batched into **one question round** instead of sequential prompts, each of which reloads context.
+- `pre-pr`: the report now records which context tool was used (`Context tool` metadata line). An
+  incremental rerun reads this first and skips straight to the freshness check instead of re-running
+  capability detection from scratch every time.
+- `pre-pr`: step 0 now handles the full lifecycle before relying on the graph — detect whether an MCP
+  is connected (**ask the developer for confirmation** before suggesting installation; never installs
+  it or blocks on the answer), index the project if it isn't yet (no confirmation needed, local and
+  non-destructive), and refresh the graph if it's stale for the current branch, before any engine
+  trusts it for context.
+- `pre-pr`: clarified that the confidence-gate consolidation is one orchestrator pass, not a second
+  fan-out of verifier agents — reachability re-verification is reserved for Critical/High only.
+
 ## [0.1.9] — 2026-07-03
 
 ### Fixed

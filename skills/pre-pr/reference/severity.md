@@ -61,10 +61,12 @@ severity label itself (`Critical`, `Alto`, …) is rendered in the developer's l
 
 ## Confidence & context — how false positives are prevented
 
-The reviewer **reads freely to judge, but reports only on the diff.** Reading the whole changed file,
-the definitions and callers a changed line references, config, and the context the developer gave in
-step 1 is not "out of scope" — only *findings* are scoped to the diff. Judging a line blind is how
-false positives are born.
+The reviewer **reads enough to judge, but reports only on the diff.** Pull the changed symbol's
+direct callers/definitions (via the graph's call-chain capability when connected and fresh —
+see SKILL.md §0 and `rules.md` § Context tool), touched config, and the context the developer gave in
+step 1 — this is not "out of scope," only *findings* are scoped to the diff. Judging a line blind is
+how false positives are born. This gathering is a single shared pass reused across every dispatched
+engine (SKILL.md §3), not repeated per engine.
 
 Before any finding is reported, all must hold — otherwise drop it or demote it:
 
@@ -72,7 +74,13 @@ Before any finding is reported, all must hold — otherwise drop it or demote it
 2. It is **justified against a named rule** — not a personal style preference.
 3. Its judgment is **grounded in context actually read** — not inferred from a line in isolation. If
    the verdict depends on code/config/runtime the reviewer could not see, it **reads it first**.
-4. For **Critical/High**: reachability/impact is **confirmed**, not assumed.
+4. For **Critical/High**: reachability/impact is **confirmed**, not assumed — for a breaking-change
+   claim on a public API/contract, confirm via the graph's cross-cutting query capability (SKILL.md §0)
+   rather than guessing from the diff alone.
+
+This confidence gate is applied by **the orchestrator in one pass** over the consolidated findings —
+it is not a second fan-out of verifier agents. Reserve the reachability check above for Critical/High
+breaking-change claims specifically; Medium/Low findings don't need independent re-verification.
 
 **Ask the developer — throughout, not only at the start.** Questions are the primary tool against
 false positives, and they don't stop after step 1. Whenever a potential finding hinges on context

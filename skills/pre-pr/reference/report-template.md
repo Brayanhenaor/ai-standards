@@ -46,6 +46,7 @@ Headings below are the canonical set — **render them in the developer's langua
 **Commit range:** <merge-base-sha>..<source-head-sha>  (<N> commits)
 **Change type:** <feature | bugfix | refactor>   **Ticket:** <id or —>
 **Date:** <YYYY-MM-DD>
+**Context tool:** <tool name (e.g. codebase-memory-mcp) | none> — <fresh | refreshed | stale-fallback-to-reads>
 
 ## Executive summary
 <2–4 lines: what the change is, and the verdict at a glance.>
@@ -87,8 +88,32 @@ everything was confirmable, say "None.">
 <1–2 lines: the reason, tied to the blockers.>
 ```
 
-After writing the file, print the same content and finish with:
+## Terminal echo — condensed, not a repeat of the full file
+
+The full report above is for the file only. Printing it a second time in the terminal doubles the
+output tokens for no reader benefit — print a condensed echo instead:
+
+```markdown
+# Pre-PR Review — <source> → <target>
+
+## Executive summary
+<same 2-4 lines as the file>
+
+## Count
+Critical <n> · High <n> · Medium <n> · Low <n> · Suggestion <n>
+
+## Verdict
+<✅ | ⚠️ | ❌> — <the one-line reason>
+
+## Priority recommendations
+<same ordered list as the file>
+```
+
+If there are **Critical** findings, also echo their full `### [Critical] ...` blocks — a blocker must
+be visible without opening the file. High/Medium/Low findings stay in the file only.
+
+Then finish with:
 
 ```
-Evidence written to ./pre-pr-review.md
+Evidence written to ./pre-pr-review.md — full findings, tests, risks, and ADR notes there.
 ```
