@@ -47,6 +47,10 @@ All notable changes are documented here. Format: [Semantic Versioning](https://s
   trusts it for context.
 - `pre-pr`: clarified that the confidence-gate consolidation is one orchestrator pass, not a second
   fan-out of verifier agents — reachability re-verification is reserved for Critical/High only.
+
+## [0.1.11] — 2026-07-15
+
+### Changed
 - `clean-code-core`: added an explicit "Comments — default to none" rule (zero unnecessary
   comments; never narrate *what* the code does or address the developer in-code; only a
   non-obvious *why*). Previously this was only implied via a code-smell table row, easy to miss.
