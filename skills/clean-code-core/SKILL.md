@@ -39,6 +39,22 @@ This skill covers the whole discipline, not a short checklist. Load the relevant
 Stack-specific depth (e.g. .NET) lives in the active pack and layers on top of this core. The core
 holds for every language; never assume one stack's idioms apply to another.
 
+## Comments — default to none
+
+Clean code explains itself through naming and structure. Default to **zero comments**.
+
+- Never narrate *what* the code does — that's what reading the code is for. If a block needs a
+  comment to explain what it does, extract it into a function named after that comment instead
+  (see `reference/functions.md`).
+- Never address the developer in a comment — no "changed this to fix X", no "added for the Y
+  flow", no reference to the current task. That belongs in the commit message or PR description,
+  not the source; it rots the moment the code moves on.
+- The only comment worth writing explains a non-obvious **why**: a hidden constraint, a workaround
+  for a specific bug, an invariant the reader can't see from the code alone. If removing the
+  comment wouldn't confuse a future reader, don't write it.
+- This applies to code you generate, not just code you review — don't let review-only skills be
+  the sole place this rule is enforced.
+
 ## How you work
 
 - **Question the developer, don't flatter.** Surface trade-offs and risks, challenge shaky

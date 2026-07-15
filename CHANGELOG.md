@@ -47,6 +47,14 @@ All notable changes are documented here. Format: [Semantic Versioning](https://s
   trusts it for context.
 - `pre-pr`: clarified that the confidence-gate consolidation is one orchestrator pass, not a second
   fan-out of verifier agents — reachability re-verification is reserved for Critical/High only.
+- `clean-code-core`: added an explicit "Comments — default to none" rule (zero unnecessary
+  comments; never narrate *what* the code does or address the developer in-code; only a
+  non-obvious *why*). Previously this was only implied via a code-smell table row, easy to miss.
+
+### Added
+- New `PreToolUse` hook (`hooks/skill-reminder.sh`) on `Write|Edit` for code files: injects a
+  non-blocking reminder to apply `clean-code-core` + `anti-overengineering` before the edit lands,
+  instead of relying solely on the model choosing to invoke those skills on its own judgment.
 
 ## [0.1.9] — 2026-07-03
 
