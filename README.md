@@ -60,6 +60,7 @@ is passed as input.
 /supercode:plan add idempotent payment retries
 /supercode:security-audit --diff
 /supercode:gate                               # pre-PR go / no-go
+/supercode:pre-pr                             # Staff-Engineer review of the PR diff → pre-pr-review.md
 /supercode:adr use the outbox pattern for order events
 ```
 
@@ -76,6 +77,7 @@ Every skill works both ways. The list below groups them by how you'll *usually* 
 | `/supercode:plan <what you want to build>` | Architectural consultant — options, trade-offs, challenges you, no code until agreed. |
 | `/supercode:grill` | Pressure-tests your plan one sharp question at a time. |
 | `/supercode:gate` | Pre-PR orchestrator: build, tests, review, security, migration, hygiene → go/no-go. |
+| `/supercode:pre-pr [--ci]` | Final review of **only the PR diff** (merge-base), like a Staff Engineer: gated security/performance/concurrency/migration engines, high-impact defect patterns, claimed-fix verification, severity-ranked findings with the real code and a concrete fix, a deterministic verdict, and an ADR recommendation. Writes `pre-pr-review.md` as PR evidence. |
 | `/supercode:scaffold <feature>` | Lays down a feature mirroring your project's real architecture. |
 | `/supercode:test <target>` | Generates behavior-focused tests in your project's own stack. |
 | `/supercode:refactor <target>` | Behavior-preserving cleanup in small, test-backed steps. |
@@ -102,13 +104,20 @@ These work as background lenses while you code, and you can still call any of th
 
 ### Agents (deep, isolated, read-only)
 
-`review` and `security-audit` hand the heavy lifting to background subagents — **`code-reviewer`** and
-**`security-auditor`** — so a large audit runs thoroughly without cluttering your main session.
+`review`, `security-audit`, and `pre-pr` hand the heavy lifting to background subagents —
+**`code-reviewer`** and **`security-auditor`** — so a large audit runs thoroughly without cluttering
+your main session.
 
-### Hook (fully automatic)
+`pre-pr` works best with a knowledge-graph MCP connected (recommended: `codebase-memory-mcp`): it
+pulls callers, architecture, and reachability from the graph instead of reading whole files. Without
+one it falls back to direct reads.
+
+### Hooks (fully automatic)
 
 - **`secret-scan`** — before any `git commit`, it scans the staged changes and **blocks the commit**
   if it finds a likely secret (private key, AWS/GitHub token, JWT, password, connection string).
+- **`skill-reminder`** — before every code edit (not docs/config), it nudges `clean-code-core` and
+  `anti-overengineering` into context. Never blocks.
 
 ---
 
@@ -119,6 +128,13 @@ over-engineering.** It steers between the two opposite failures — the god-meth
 framework — by one test: *does this earn its place with real value today?* It questions you (trade-offs,
 risks), questions itself (self-review), verifies with teeth, adapts to your project's conventions, and
 replies in your language while keeping code in English.
+
+### Project conventions
+
+Reviews follow your repo's own rules before the defaults. Put them in the project's `CLAUDE.md` (or let
+`/supercode:init` write the profile). For example, the language policy for new code: identifiers stay
+English by default, but a team can allow comments in its own language — then reviews stop flagging
+them. Log messages and user-facing text are never flagged for language.
 
 ## Architecture — three layers
 
