@@ -46,7 +46,7 @@ Not every engine runs on every diff. `code-reviewer` always runs above the small
 
 | Engine | Trigger |
 |---|---|
-| `security-auditor` | Files matching auth/authz/secrets/token/policy/permission patterns, input validation, CORS, external API calls, or any new endpoint |
+| `security-auditor` | Files matching auth/authz/secrets/token/policy/permission patterns, input validation, CORS, external API calls, any new endpoint, any added/removed auth attribute (e.g. `[AllowAnonymous]`, `[Authorize]`), or a change to a global request filter/middleware |
 | `performance` | Hot-path/loop code over real data, new or changed queries, new collections, async changes |
 | `concurrency` | Shared mutable state, threading, background workers/consumers, async coordination — skip entirely on stacks with no concurrency surface |
 | `migrate` | Any file under `**/Migrations/**` or equivalent schema-change path |
@@ -67,6 +67,10 @@ agent call on an ambiguous diff. The gate is for the clearly-inapplicable case, 
   unnecessary locking, misused async/await, unsafe parallelism.
 - **Memory & resources** (`performance`) — memory/resource leaks, undisposed objects, unbounded
   growth, badly-implemented caches, possible OOM.
+- **Connections & pool** — every manually opened connection/command/reader is closed in
+  `finally`/`using`; no DB context or connection captured by a singleton or a long-lived background
+  service; no new context/connection per item inside a loop. A leak here saturates the pool and takes
+  the whole service down under load — always check it when the diff touches data access.
 
 ## Performance (`performance`)
 
@@ -113,11 +117,14 @@ lifetime is non-trivial** (a field, a public method, a variable that lives many 
 flag single-letter parameters in short, idiomatic lambdas/loops (`x`, `i` in `.Select(x => x.Id)`
 or a two-line loop) — that is idiomatic and a senior reviewer waves it through.
 
-## English-only — new code only
+## Language of new code — follow the project's policy
 
-Flag Spanish (or mixed-language) identifiers, methods, and comments in **new** code. **Nuance:**
-never flag legacy/untouched code; keep domain terms with no English equivalent (proper nouns,
-legal/business terms) as-is.
+Default: identifiers, methods, and comments in **new** code are in English; flag non-English or
+mixed-language ones. **The project's own policy wins** — read it from `CLAUDE.md`, the `init`
+profile, or `CONTRIBUTING` before flagging. A team may keep English identifiers but allow comments in
+its own language; then flag only identifiers. **Nuance:** never flag legacy/untouched code; keep domain
+terms with no English equivalent (proper nouns, legal/business terms) as-is; never flag log messages
+or user-facing text (UI, API error messages, localization) for language.
 
 ## Comments
 
@@ -161,10 +168,70 @@ the established one. Use `architect`/`domain` judgment for cross-boundary design
 
 ---
 
+## High-impact patterns — check these explicitly
+
+Defects that look harmless line by line but cost money, data, or a breach in production. Each one has
+slipped through real reviews; apply them whenever the diff touches the area. Same confidence gate as
+everything else: confirm the path is reachable before calling it Critical.
+
+- **Unauthenticated surface that mutates or exposes data.** A new endpoint opted out of auth
+  (`[AllowAnonymous]`, a route excluded from a middleware, a public handler) that creates/updates
+  records, triggers side effects, or returns business data for a tenant id taken from the request.
+  Also read the global filter/middleware it relies on: a filter that **fails open** (lets the request
+  through when the token is unknown, or only fails when a header is missing) or a **hardcoded bypass
+  value** in code makes every opted-out endpoint effectively public.
+- **Client-controlled state used before persisted state is loaded.** A status/flag that comes in the
+  request payload (`posted`, `processed`, `paid`, `emitted`, `contabilized`…) used to skip a
+  validation or choose a branch, when the authoritative value is only read from the DB later — or
+  never. The caller sets the flag and bypasses the rule. Decide on the persisted value.
+- **Idempotency scope.** Idempotency keys must be unique per tenant/owner (e.g. per establishment or
+  company), not globally — and keys **derived** from a request key (`prefix:{key}`) inherit that scope.
+  When an "already exists" lookup short-circuits a side effect (a debit, a stock movement, an
+  emission), verify the existing record belongs to **the same entity** before skipping; otherwise one
+  tenant's key silently cancels another tenant's operation.
+- **Side effects outside the transaction.** Notifications, push, e-mail, realtime events, webhooks, or
+  external calls emitted before commit, or emitted regardless of whether the operation failed and
+  rolled back. Users get told about things that never happened. Emit after commit (outbox / post-commit
+  hook) and drop the queue on failure.
+- **Check-then-act without a constraint.** "Look it up, insert if missing" (or "count, then use
+  count+1") without a unique index or atomic statement creates duplicates under concurrency. Watch the
+  consumer too: converting such data with a uniqueness-assuming call (`ToDictionary`, `Single`, a map
+  keyed by id) turns one duplicate row into a permanent exception on every later request.
+- **Culture-sensitive parsing of money, quantities, and dates.** Parsing numbers/dates that come from
+  text produced elsewhere (another system, a comment field, a file) with the server's culture —
+  e.g. `decimal.Parse("1234.56")` on a server whose culture uses `,` as decimal separator silently
+  yields `123456`. Parse/format with an invariant culture and explicit date kind/offset.
+- **Insecure defaults in code.** Config fallbacks that pick the unsafe option when a key is missing:
+  a development secret as the default value, `GetValue("UseInMemory", true)`, auth checks that turn
+  off when an option is unset. Missing config must fail fast at startup (e.g. options validation on
+  start), never degrade silently into an insecure or non-persistent mode.
+- **Startup seeders and init jobs.** Demo/sample data seeded in every environment, seeders that
+  **overwrite** live state on each boot (re-enable a record an operator disabled, reassign ownership),
+  or migrations/seeding that run concurrently from every replica. Seed demo data only in development,
+  insert-only, and keep schema migration as a deploy step or behind a lock.
+- **Background jobs and batches.** One bad item aborting the whole batch with a single save — and the
+  next run picking the same items first — blocks the job forever. Process and persist per item/group,
+  quarantine failures, and claim work across replicas (`FOR UPDATE SKIP LOCKED`, advisory lock). Also
+  flag queues/outbox tables that receive messages nobody consumes or purges (unbounded growth, and
+  retained personal data).
+- **Partial updates that clear data.** An update endpoint that maps absent fields to empty/false
+  (proto3 scalars without `Has*`, non-optional booleans, JSON fields defaulting to `null`) wipes
+  values the caller never meant to change. Map "not sent" to "keep current".
+
+---
+
 ## Checks `pre-pr` adds (not covered by the other engines)
 
 - **Tests** — see SKILL.md §4. Missing regression test for a bugfix, or new public behavior with no
-  test → **High**.
+  test → **High**. A test that claims to cover transactions, concurrency, unique constraints, or
+  migrations but runs on an in-memory provider or a mocked mediator/repository **does not count** as
+  coverage for that behavior — those providers don't enforce any of it.
+- **Claimed fixes** — when the change says it fixes tracked defects (bug ids, audit findings), list
+  each one and verify it point by point in the diff: fixed / partial / still open. Then check the fix
+  didn't regress adjacent behavior: a handler emptied or removed, an early `return` that now skips
+  logic that used to run, an authorization marker added without the matching route/registration.
+- **Merge artifacts** — duplicated entries in project/manifest files (e.g. the same
+  `<Compile Include>` twice), leftover conflict markers, files re-added by a bad merge.
 - **PR size & cohesion** — a PR that does several unrelated things should be split. High-value, very
   low false-positive. Flag mixed concerns ("this PR changes auth *and* reformats an unrelated
   module — split it").

@@ -17,6 +17,18 @@ map from the highest severity to the verdict.
 **"A High that will break production" does not exist as a category** — if it will break, it *is*
 Critical. Keeping severity impact-based is what makes the mapping below a pure function.
 
+**Calibration examples** (impact, not category):
+
+- **Critical** — money, points, or stock moved without the matching debit/credit or moved twice; an
+  endpoint that writes data or returns another tenant's data without valid authentication; account
+  takeover; data loss or corruption on a normal path; insecure default that activates when a config key
+  is missing.
+- **High** — the same classes of defect behind a realistic precondition (concurrent requests, a
+  specific config, a second replica); side effects (notifications, events) emitted for operations that
+  rolled back; a background job that one bad record can block.
+- **Medium** — a partial update that clears an optional field; a missing index on a query that is
+  slow but correct; tests that run on an in-memory provider for transactional behavior.
+
 ## Verdict — deterministic mapping
 
 Look at the **highest** severity present:

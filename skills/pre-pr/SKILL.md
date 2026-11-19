@@ -83,6 +83,9 @@ nothing.
 commit messages, an embedded ticket, the PR template, and `CLAUDE.md`. Then ask, dynamically, only
 what's still material and unknown: the goal / problem solved, the change type (feature / bugfix /
 refactor), the ticket, technical or business constraints, prior architectural decisions to respect.
+Also read the project's review conventions from `CLAUDE.md` / the `init` profile — in particular its
+language policy for new code (some teams allow comments in their own language) — and apply them
+instead of the defaults.
 **Prefer a question over a hallucination** — if something matters and can't be derived, ask before
 continuing. Questions are a primary tool and stay open through the whole review, not just here (see
 step 6). In `--ci` mode, skip the questions and state the assumptions used.
@@ -142,7 +145,8 @@ diff doesn't need four specialists to each say "clean".
 only when triggered:
 
 - **`code-reviewer`** agent — clean code, SOLID, naming, smells, over-engineering, potential bugs,
-  breaking changes, English-only new code, comments, magic strings, idiomatic language/framework use.
+  breaking changes, language of new code (per project policy), comments, magic strings, idiomatic
+  language/framework use, and the **high-impact patterns** in `reference/rules.md`.
 - **`security-auditor`** agent — triggered by auth/authz/secrets/token/policy files, input validation,
   CORS, external API calls, or any new endpoint.
 - **`performance`** — triggered by hot-path/loop code over real data, new or changed queries, new
@@ -161,6 +165,10 @@ API/contract/DTO changed, confirm real consumers with the graph's cross-cutting 
   (does the changed symbol have an incoming edge from a test node?) before scanning test directories
   by hand.
 - Tests are **behavior-focused**, not implementation-locked.
+- Tests for transactions, concurrency, constraints, or migrations run against the **real engine**
+  (e.g. Testcontainers) — in-memory providers and mocked mediators don't count for those behaviors.
+- If the change claims to fix tracked defects, verify each one (see *Claimed fixes* in
+  `reference/rules.md`).
 - The suite **runs and passes** (`verify`).
 
 A bugfix with no regression test, or new public behavior with no test, is **High** (see

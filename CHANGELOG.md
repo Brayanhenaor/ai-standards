@@ -4,6 +4,35 @@ All notable changes are documented here. Format: [Semantic Versioning](https://s
 
 ---
 
+## [0.1.12] — 2026-11-19
+
+### Added
+- `pre-pr`: **High-impact patterns** section in `reference/rules.md` — defects that look harmless line
+  by line but cost money, data, or a breach: unauthenticated endpoints that mutate/expose data and
+  fail-open global filters; client-controlled state flags trusted before the persisted value;
+  idempotency keys not scoped per tenant (including derived keys); side effects emitted outside the
+  transaction; check-then-act without a constraint and uniqueness-assuming conversions; culture-
+  sensitive parsing of money/dates; insecure config defaults; seeders that overwrite live state or run
+  in every environment; background batches blocked by one bad item; partial updates that clear data.
+- `pre-pr`: **Connections & pool** check under Correctness & safety (connections closed, no context
+  captured by singletons/background services, no per-item context in loops).
+- `pre-pr`: **Claimed fixes** check — when a change says it fixes tracked defects, verify each one
+  (fixed / partial / open) and look for regressions introduced by the fix.
+- `pre-pr`: **Merge artifacts** check (duplicated project-file entries, conflict leftovers).
+- `pre-pr`: severity **calibration examples** in `reference/severity.md`.
+- `security-auditor`: fail-open auth filters, hardcoded bypass values, anonymous mutating endpoints,
+  tenant-unscoped keys, missing TLS, insecure config defaults, demo credentials or test bypasses in
+  production code.
+
+### Changed
+- `pre-pr`: the language rule for new code now follows the **project's policy** (`CLAUDE.md` / `init`
+  profile) instead of always flagging non-English comments; identifiers stay English by default; log
+  messages and user-facing text are never flagged for language.
+- `pre-pr`: tests for transactions, concurrency, constraints, or migrations that run on an in-memory
+  provider or a mocked mediator no longer count as coverage for those behaviors.
+- `pre-pr`: `security-auditor` is also triggered by added/removed auth attributes and changes to
+  global request filters/middleware.
+
 ## [0.1.10] — 2026-07-09
 
 ### Changed

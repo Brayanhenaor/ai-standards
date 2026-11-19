@@ -16,6 +16,11 @@ only flag it when the answer is yes.
 Audit against OWASP Top 10 and common weaknesses, in priority of exploitability:
 
 1. **Access control** — missing authorization, IDOR, privilege escalation, missing ownership checks.
+   Endpoints opted out of auth (`[AllowAnonymous]` or equivalent) that write data or return tenant
+   data; global auth filters that fail open (unknown token passes) or contain a hardcoded bypass value;
+   client-supplied state flags or tenant ids trusted instead of the persisted/authenticated value;
+   idempotency or lookup keys not scoped to the tenant, letting one tenant read or cancel another's
+   operation.
 2. **Injection** — SQL/NoSQL/command/LDAP; unparameterized queries; user input reaching an
    interpreter or shell.
 3. **Authentication & session** — token validation gaps, missing expiry, secrets/tokens in logs,
@@ -24,7 +29,10 @@ Audit against OWASP Top 10 and common weaknesses, in priority of exploitability:
 5. **Sensitive data exposure** — PII/secrets in logs or responses, leaked stack traces,
    over-permissive serialization.
 6. **SSRF / input validation** — user-controlled URLs/paths, missing boundary validation.
-7. **Misconfiguration** — permissive CORS, missing security headers, debug surfaces in prod.
+7. **Misconfiguration** — permissive CORS, missing security headers, debug surfaces in prod, no TLS
+   on exposed ports, insecure defaults that activate when a config key is missing (dev secrets,
+   in-memory stores, disabled checks), demo/test credentials or test-only bypasses shipped in
+   production code or seeded in every environment.
 8. **Vulnerable dependencies** — outdated/known-risky packages where visible.
 
 Apply the active stack pack's security guidance (e.g. the dotnet pack's `security.md`) on top of
