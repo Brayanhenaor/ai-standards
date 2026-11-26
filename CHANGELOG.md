@@ -4,6 +4,23 @@ All notable changes are documented here. Format: [Semantic Versioning](https://s
 
 ---
 
+## [0.1.13] — 2026-11-26
+
+### Added
+- `pre-pr`: **Structural measurement** pass that runs before every engine — method length and growth,
+  mixed responsibilities, parameter counts (methods and endpoints), constructor dependencies, public
+  types per new file, and input validation inside endpoints. Every hit is reported or explicitly
+  justified, so structural debt no longer slips through hunk by hunk.
+- `pre-pr`: request validation belongs in the request model (DataAnnotations / `IValidatableObject` /
+  FluentValidation per project).
+
+### Changed
+- `pre-pr`: clean-code rule measures before judging instead of deferring to "no absolute line count";
+  organization rule is one public top-level type per new file; Medium calibration examples cover
+  oversized service methods, long query parameter lists, and DTOs inside service files.
+
+---
+
 ## [0.1.12] — 2026-11-19
 
 ### Added

@@ -27,7 +27,9 @@ Critical. Keeping severity impact-based is what makes the mapping below a pure f
   specific config, a second replica); side effects (notifications, events) emitted for operations that
   rolled back; a background job that one bad record can block.
 - **Medium** — a partial update that clears an optional field; a missing index on a query that is
-  slow but correct; tests that run on an in-memory provider for transactional behavior.
+  slow but correct; tests that run on an in-memory provider for transactional behavior; a new
+  150-line service method that validates, calls out, and audits in one body; an endpoint with eleven
+  query parameters and hand-written input checks; three DTOs declared inside a service file.
 
 ## Verdict — deterministic mapping
 

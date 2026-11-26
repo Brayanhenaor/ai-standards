@@ -95,8 +95,34 @@ index of an unrelated repo just for this check — that cost isn't worth one rea
 ## Clean code (`clean-code-core`)
 
 Over-long methods, over-large classes/files, high complexity, duplication, high coupling, low
-cohesion, poor readability, hard-to-maintain code. **Nuance:** judge against the project's real
-conventions, not an absolute line count. Flag the pattern with impact, not a metric for its own sake.
+cohesion, poor readability, hard-to-maintain code. Flag the pattern with impact, not a metric for its
+own sake — but **measure first** (next section): structural debt is invisible hunk by hunk.
+
+## Structural measurement — measure, don't eyeball
+
+A 236-line method reads fine one diff hunk at a time; so does the eleventh `[FromQuery]` parameter.
+These slipped through real reviews because nobody counted. Before the fan-out (SKILL.md §3), measure
+every **new or changed** symbol in the diff and hand the hits to `code-reviewer` as evidence. Use the
+graph's symbol ranges/signatures when connected (step 0); otherwise read the changed files and count.
+
+| Measure | Flag when |
+|---|---|
+| Method/function length | > 50 lines, or an existing method grew by > 20 lines in this diff |
+| Responsibilities per method | One method validates **and** coordinates side effects **and** persists/audits (e.g. validate → lock → call external → compensate → audit) |
+| Parameters | > 4 on a method; > 4 query/route parameters on an endpoint (→ a request/query object) |
+| Constructor dependencies | > 7 injected dependencies (the class does too much) |
+| Public top-level types per new file | > 1 (each model/DTO/interface in its own file; private nested helpers are fine) |
+| Request validation in endpoints | `if (...) return BadRequest(...)` checks on the input shape inside the action |
+
+**Every hit is either reported or explicitly justified** in the report (e.g. "generated code",
+"framework-mandated signature") — never silently dropped. Severity: **Medium** by default; **High**
+when the method mixes side effects with error compensation (where a bug costs data). Existing
+oversized code the diff doesn't touch stays out of scope; code the diff makes worse is in scope.
+
+**Validation belongs in the request model**, using the project's mechanism (DataAnnotations plus
+`IValidatableObject` for per-item rules, or FluentValidation if the project already uses it) so the
+framework rejects bad input before the action runs (`[ApiController]` returns 400 automatically).
+Domain rules that need persisted state stay in the service.
 
 ## SOLID (`clean-code-core`)
 
@@ -154,9 +180,9 @@ dependency** → apply the license & consent gate (commercial-free license; deve
 
 ## Organization
 
-Prefer one class per file and a clear, consistent structure **when it fits the project's
-architecture**. **Nuance:** not an absolute — respect language norms (nested/private helper types,
-Go's file model) and the repo's existing convention.
+One public top-level type per file in **new** files (measured above), and a clear, consistent
+structure. **Nuance:** respect language norms (nested/private helper types, Go's file model,
+TypeScript barrel files) — the rule targets models, DTOs, and interfaces piled into a service file.
 
 ## Architecture
 
