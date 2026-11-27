@@ -102,27 +102,44 @@ own sake — but **measure first** (next section): structural debt is invisible 
 
 A 236-line method reads fine one diff hunk at a time; so does the eleventh `[FromQuery]` parameter.
 These slipped through real reviews because nobody counted. Before the fan-out (SKILL.md §3), measure
-every **new or changed** symbol in the diff and hand the hits to `code-reviewer` as evidence. Use the
-graph's symbol ranges/signatures when connected (step 0); otherwise read the changed files and count.
+every **new or changed** symbol in the diff and hand the measurements to `code-reviewer` as evidence.
+Use the graph's symbol ranges/signatures when connected (step 0); otherwise read the changed files and
+count.
 
-| Measure | Flag when |
+**Measurements are signals, not limits.** They tell the reviewer where to look; whether a symbol is a
+finding depends on the project and on the change:
+
+- **Calibrate to the project.** Compare against the repo's own norms — the typical size of methods in
+  the same layer, how its controllers bind input, how it organizes models, its `CLAUDE.md` / `init`
+  profile. A 70-line method can be normal in one codebase and an outlier in another; what matters is
+  the outlier and the trend the diff sets.
+- **Calibrate to the change.** Some code is long or wide by nature and reads fine: DI registration
+  lists, mappings, declarative pipeline/query builders, generated code, framework-mandated
+  signatures, test arrange blocks, a record/DTO whose fields *are* the parameter list. A small bugfix
+  inside a legacy method is not the place to demand a rewrite.
+- **What makes it a finding is the cost, not the number:** the symbol mixes responsibilities, a
+  reader can't follow it, a change in one concern forces edits in another, or a rule is duplicated.
+
+| Signal to inspect | What usually turns it into a finding |
 |---|---|
-| Method/function length | > 50 lines, or an existing method grew by > 20 lines in this diff |
-| Responsibilities per method | One method validates **and** coordinates side effects **and** persists/audits (e.g. validate → lock → call external → compensate → audit) |
-| Parameters | > 4 on a method; > 4 query/route parameters on an endpoint (→ a request/query object) |
-| Constructor dependencies | > 7 injected dependencies (the class does too much) |
-| Public top-level types per new file | > 1 (each model/DTO/interface in its own file; private nested helpers are fine) |
-| Request validation in endpoints | `if (...) return BadRequest(...)` checks on the input shape inside the action |
+| Method length, and growth of an existing method in this diff | It does several things (e.g. validate → lock → call external → compensate → audit in one body) or is an outlier for the project |
+| Parameter count (methods, endpoint query/route parameters) | Values that travel together without a name (→ a request/query or parameter object) |
+| Constructor dependencies | The class serves unrelated use cases |
+| Public top-level types per new file | Models, DTOs, or interfaces piled into a service or interface file, against the project's convention |
+| Input checks inside an endpoint | Rules about the shape of the request that belong to the request model (see below) |
 
-**Every hit is either reported or explicitly justified** in the report (e.g. "generated code",
-"framework-mandated signature") — never silently dropped. Severity: **Medium** by default; **High**
-when the method mixes side effects with error compensation (where a bug costs data). Existing
-oversized code the diff doesn't touch stays out of scope; code the diff makes worse is in scope.
+**Every outlier is either reported or explicitly justified** in the report with the context that
+explains it (project norm, nature of the code, scope of the change) — never silently dropped.
+Severity: **Medium** by default; **High** when the method mixes side effects with error compensation
+(where a bug costs data). Existing code the diff doesn't touch stays out of scope; code the diff makes
+worse is in scope.
 
 **Validation belongs in the request model**, using the project's mechanism (DataAnnotations plus
-`IValidatableObject` for per-item rules, or FluentValidation if the project already uses it) so the
-framework rejects bad input before the action runs (`[ApiController]` returns 400 automatically).
-Domain rules that need persisted state stay in the service.
+`IValidatableObject` for per-item rules, FluentValidation if the project already uses it, or a
+validation method on the model). Check the error contract first: framework validation can change the
+response clients receive (e.g. `[ApiController]`'s automatic 400 `ProblemDetails` instead of the
+project's own response envelope) — when it would, keep the rule in the model but return the existing
+response. Domain rules that need persisted state stay in the service.
 
 ## SOLID (`clean-code-core`)
 

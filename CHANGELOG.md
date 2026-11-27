@@ -4,6 +4,17 @@ All notable changes are documented here. Format: [Semantic Versioning](https://s
 
 ---
 
+## [0.1.14] — 2026-11-27
+
+### Changed
+- `pre-pr`: structural measurements are **signals calibrated to the project and the change**, not fixed
+  limits. The reviewer compares against the repo's own norms, accounts for code that is long or wide by
+  nature (DI registrations, mappings, pipeline builders, generated code, DTO fields), and reports an
+  outlier when it has a real cost (mixed responsibilities, unreadable, duplicated rules). Every outlier
+  is still reported or justified with its context.
+
+---
+
 ## [0.1.13] — 2026-11-26
 
 ### Added

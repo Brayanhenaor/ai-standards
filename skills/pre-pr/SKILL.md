@@ -135,11 +135,12 @@ fetch independently: the graph's architecture summary (once, step 0), the bounde
 context from step 2, and touched config. Hand this as evidence to every engine below instead of
 letting each re-read the same files. This is the single biggest cost cut — don't skip it.
 
-**Structural measurement, always, before any engine.** Measure every new or changed symbol against
-the table in `reference/rules.md` § Structural measurement (method length and growth, mixed
-responsibilities, parameter counts, constructor dependencies, types per new file, validation inside
-endpoints) and pass the hits to the engines as evidence. Each hit ends up reported or explicitly
-justified in the report — this is what keeps structural debt from slipping through hunk by hunk.
+**Structural measurement, always, before any engine.** Measure every new or changed symbol (see
+`reference/rules.md` § Structural measurement: method length and growth, mixed responsibilities,
+parameter counts, constructor dependencies, types per new file, validation inside endpoints) and pass
+the measurements to the engines as evidence. They are signals calibrated to the project and the
+change, not fixed limits; each outlier ends up reported or justified with its context in the report —
+this is what keeps structural debt from slipping through hunk by hunk.
 
 **Small diff (< 5 files and < 150 changed lines): one combined pass.** Run a single `code-reviewer`
 call covering the full checklist (clean code, security, performance, concurrency) instead of spinning
